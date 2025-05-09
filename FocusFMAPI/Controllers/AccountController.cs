@@ -17,7 +17,7 @@ using FocusFM.Common.CommonMethod;
 
 namespace FocusFMAPI.Controllers
 {
-    [Route("api/[controller]")]
+    [Route("api/account")]
     [ApiController]
     public class AccountController : ControllerBase
     {

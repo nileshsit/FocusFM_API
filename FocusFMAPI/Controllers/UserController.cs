@@ -18,7 +18,7 @@ using static FocusFM.Common.EmailNotification.EmailNotification;
 
 namespace FocusFMAPI.Controllers
 {
-    [Route("api/[controller]")]
+    [Route("api/user")]
     [Authorize]
     [ApiController]
     public class UserController : ControllerBase
