@@ -35,9 +35,9 @@ namespace FocusFM.Service.Account
             return await _repository.GetUserSalt(EmailId, IsAdmin);
         }
 
-        public async Task<long> LogoutUser(long UserId, bool IsAdmin)
+        public async Task<long> LogoutUser(long UserId, string jwtToken)
         {
-            return await _repository.LogoutUser(UserId, IsAdmin);
+            return await _repository.LogoutUser(UserId, jwtToken);
         }
         public async Task<ForgetPasswordResponseModel> ForgetPassword(string EmailId, bool IsAdmin)
         {

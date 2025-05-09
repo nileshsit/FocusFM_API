@@ -162,8 +162,9 @@ namespace FocusFMAPI.Controllers
         public async Task<BaseApiResponse> Logout()
         {
             BaseApiResponse response = new BaseApiResponse();
-            TokenModel tokenModel = _jwtAuthenticationService.GetUserTokenData();
-            var data = await _accountService.LogoutUser(tokenModel.UserId, true);
+            string jwtToken = _httpContextAccessor.HttpContext.Request.Headers[HeaderNames.Authorization].ToString().Replace(JwtBearerDefaults.AuthenticationScheme + " ", "");
+            TokenModel tokenModel = _jwtAuthenticationService.GetUserTokenData(jwtToken);
+            var data = await _accountService.LogoutUser(tokenModel.UserId, jwtToken);
             if (data > 0)
             {
                 response.Message = ErrorMessages.LogoutSuccess;

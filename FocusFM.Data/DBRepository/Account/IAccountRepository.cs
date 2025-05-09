@@ -10,7 +10,7 @@ namespace FocusFM.Data.DBRepository.Account
         Task<LoginResponseModel> LoginUser(LoginRequestModel model);
         Task<SaltResponseModel> GetUserSalt(string EmailId, bool IsAdmin);
         Task<long> UpdateLoginToken(string Token, long UserId, bool IsAdmin);
-        Task<long> LogoutUser(long UserId, bool IsAdmin);
+        Task<long> LogoutUser(long UserId, string jwtToken);
         Task<ForgetPasswordResponseModel> ForgetPassword(string EmailId, bool IsAdmin);
         Task<int> SaveOTP(long UserId, int randomNumer, string EmailId, bool IsAdmin);
         Task<long> GetUserIDByEmail(string EmailId, bool IsAdmin);

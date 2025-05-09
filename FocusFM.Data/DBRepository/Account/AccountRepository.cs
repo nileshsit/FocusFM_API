@@ -52,11 +52,11 @@ namespace FocusFM.Data.DBRepository.Account
             return await QueryFirstOrDefaultAsync<long>(StoredProcedures.UpdateLoginToken, param, commandType: CommandType.StoredProcedure);
         }
 
-        public async Task<long> LogoutUser(long UserId, bool IsAdmin)
+        public async Task<long> LogoutUser(long UserId, string jwtToken)
         {
             var param = new DynamicParameters();
             param.Add("@UserId", UserId);
-            param.Add("@IsAdmin", IsAdmin);
+            param.Add("@Token", jwtToken);
             return await QueryFirstOrDefaultAsync<long>(StoredProcedures.LogoutUser, param, commandType: CommandType.StoredProcedure);
         }
 
