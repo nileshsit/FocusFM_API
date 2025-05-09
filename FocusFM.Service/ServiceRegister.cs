@@ -1,0 +1,20 @@
+﻿
+
+using FocusFM.Service.Account;
+using FocusFM.Service.User;
+
+namespace FocusFM.Service
+{
+    public static class ServiceRegister
+    {
+        public static Dictionary<Type, Type> GetTypes()
+        {
+            var serviceDictonary = new Dictionary<Type, Type>
+            {
+                { typeof(IAccountService), typeof(AccountService) },
+                { typeof(IUserService), typeof(UserService) },
+            };
+            return serviceDictonary;
+        }
+    }
+}

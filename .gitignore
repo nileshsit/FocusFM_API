@@ -1,0 +1,11 @@
+/.vs
+/FocusFM.Common/bin
+/FocusFM.Common/obj
+/FocusFM.Data/bin
+/FocusFM.Data/obj
+/FocusFM.Model/bin
+/FocusFM.Model/obj
+/FocusFM.Service/bin
+/FocusFM.Service/obj
+/FocusFMAPI/bin
+/FocusFMAPI/obj
