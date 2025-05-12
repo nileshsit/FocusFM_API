@@ -187,10 +187,12 @@ namespace FocusFMAPI.Controllers
             var result = await _accountService.ForgetPassword(model.EmailId, true);
             var url = _httpContextAccessor.HttpContext.Request.Headers["Referer"].ToString() + "verification-code";
             var portalUrl = _httpContextAccessor.HttpContext.Request.Headers["Referer"].ToString().TrimEnd('/');
+
             if (result.AdminUserId > 0)
             {
                 string EncryptedUserId = HttpUtility.UrlEncode(EncryptionDecryption.GetEncrypt(result.AdminUserId.ToString()));
                 string EncryptedEamilId = HttpUtility.UrlEncode(EncryptionDecryption.GetEncrypt(model.EmailId.ToString()));
+
                 EmailNotification.EmailSetting setting = new EmailSetting
                 {
                     EmailEnableSsl = Convert.ToBoolean(_smtpSettings.EmailEnableSsl),
@@ -202,6 +204,7 @@ namespace FocusFMAPI.Controllers
                     FromName = _smtpSettings.FromName,
                     EmailUsername = _smtpSettings.EmailUsername,
                 };
+
                 string RandomNumer = CommonMethods.GenerateNewRandom();
                 int OtpRandom = Convert.ToInt32(RandomNumer);
                 string emailBody = string.Empty;
@@ -210,20 +213,15 @@ namespace FocusFMAPI.Controllers
                 {
                     Directory.CreateDirectory(BasePath);
                 }
-                bool isSuccess = false;
-                string LastForgetPasswordSend = Convert.ToString(String.Format("{0:yyyy-MM-dd HH:mm:ss}", result.LastForgetPasswordSend));
-                string LastForgetPasswordDateTime = HttpUtility.UrlEncode(EncryptionDecryption.GetEncrypt(LastForgetPasswordSend));
+
                 using (StreamReader reader = new StreamReader(Path.Combine(BasePath, Constants.ForgetPasswordEmailtem)))
                 {
                     emailBody = reader.ReadToEnd();
                 }
+
                 var path = _httpContextAccessor.HttpContext.Request.Scheme + "://" + HttpContext.Request.Host.Value;
-                TokenModel tokenModel = new TokenModel();
-                string jwtToken = _httpContextAccessor.HttpContext.Request.Headers[HeaderNames.Authorization].ToString().Replace(JwtBearerDefaults.AuthenticationScheme + " ", "");
-                if (!string.IsNullOrEmpty(jwtToken))
-                {
-                    tokenModel = _jwtAuthenticationService.GetUserTokenData(jwtToken);
-                }
+                TokenModel tokenModel = GetTokenModelFromHeader();
+
                 emailBody = emailBody.Replace("##userName##", result.FullName.ToString());
                 if (result.IsEaziBusinessPartner == true)
                 {
@@ -239,9 +237,11 @@ namespace FocusFMAPI.Controllers
                 emailBody = emailBody.Replace("##currentYear##", DateTime.Now.Year.ToString());
                 emailBody = emailBody.Replace("##Link##", (url + '/' + EncryptedEamilId).ToString());
                 emailBody = emailBody.Replace("##portalUrl##", portalUrl.ToString());
-                isSuccess = await Task.Run(() => SendMailMessage(model.EmailId, null, null, "Reset Password OTP", emailBody, setting, null));
+
+                bool isSuccess = await Task.Run(() => SendMailMessage(model.EmailId, null, null, "Reset Password OTP", emailBody, setting, null));
                 int issaveopt = await _accountService.SaveOTP(result.AdminUserId, OtpRandom, result.EmailId, true);
-                if (isSuccess == true && issaveopt == 1)
+
+                if (isSuccess && issaveopt == 1)
                 {
                     response.Message = ErrorMessages.ForgetPasswordSuccess;
                     response.Success = true;
@@ -260,7 +260,6 @@ namespace FocusFMAPI.Controllers
                 return response;
             }
         }
-
         /// <summary>
         /// Validate Whether The Reset Passowrd OTP Is Correct Or Not
         /// </summary>
@@ -371,24 +370,25 @@ namespace FocusFMAPI.Controllers
         public async Task<BaseApiResponse> UserChangePassword([FromBody] ChangePasswordRequestModel model)
         {
             BaseApiResponse response = new BaseApiResponse();
-            TokenModel tokenModel = new TokenModel();
-            string jwtToken = _httpContextAccessor.HttpContext.Request.Headers[HeaderNames.Authorization].ToString().Replace(JwtBearerDefaults.AuthenticationScheme + " ", "");
-            if (!string.IsNullOrEmpty(jwtToken))
-            {
-                tokenModel = _jwtAuthenticationService.GetUserTokenData(jwtToken);
-            }
+            TokenModel tokenModel = GetTokenModelFromHeader();
+
             model.OldPassword = EncryptionDecryption.GetEncrypt(model.OldPassword.Trim());
             model.CreatePassword = EncryptionDecryption.GetEncrypt(model.CreatePassword.Trim());
             model.ConfirmPassword = EncryptionDecryption.GetEncrypt(model.ConfirmPassword.Trim());
+
             var res = await _accountService.GetUserSalt(tokenModel.EmailId, true);
+
             bool isPasswordSame = true;
             bool isPasswordMatched = true;
-            if (tokenModel.UserId == 0 || string.IsNullOrEmpty(model.OldPassword) || string.IsNullOrEmpty(model.CreatePassword) || string.IsNullOrEmpty(model.ConfirmPassword))
+
+            if (tokenModel.UserId == 0 || string.IsNullOrEmpty(model.OldPassword) ||
+                string.IsNullOrEmpty(model.CreatePassword) || string.IsNullOrEmpty(model.ConfirmPassword))
             {
                 response.Message = ErrorMessages.PasswordFieldValidation;
                 response.Success = false;
                 return response;
             }
+
             if (res != null)
             {
                 string Hash = EncryptionDecryption.GetDecrypt(res.Password);
@@ -429,7 +429,9 @@ namespace FocusFMAPI.Controllers
             string[] segments = hashed.Split(":");
             string EncryptedHash = EncryptionDecryption.GetEncrypt(segments[0]);
             string EncryptedSalt = EncryptionDecryption.GetEncrypt(segments[1]);
+
             var result = await _accountService.ChangePassword(tokenModel.UserId, EncryptedHash, EncryptedSalt, true);
+
             if (string.IsNullOrEmpty(result))
             {
                 response.Message = ErrorMessages.ResetPasswordSuccess;
@@ -443,6 +445,23 @@ namespace FocusFMAPI.Controllers
             }
             return response;
         }
+
+        #region Helper Method
+
+        private TokenModel GetTokenModelFromHeader()
+        {
+            string jwtToken = _httpContextAccessor.HttpContext.Request.Headers[HeaderNames.Authorization]
+                .ToString().Replace(JwtBearerDefaults.AuthenticationScheme + " ", "");
+
+            if (!string.IsNullOrEmpty(jwtToken))
+            {
+                return _jwtAuthenticationService.GetUserTokenData(jwtToken);
+            }
+
+            return new TokenModel();
+        }
+
+        #endregion
         #endregion
     }
 }
