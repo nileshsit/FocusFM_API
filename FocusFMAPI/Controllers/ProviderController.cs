@@ -1,71 +1,67 @@
-﻿using System.IdentityModel.Tokens.Jwt;
+﻿using System.Configuration;
+using System.Globalization;
+using System.IdentityModel.Tokens.Jwt;
 using FocusFM.Common.CommonMethod;
-using FocusFM.Common.EmailNotification;
 using FocusFM.Common.Enum;
 using FocusFM.Common.Helpers;
-using FocusFM.Model.AdminUser;
 using FocusFM.Model.CommonPagination;
-using FocusFM.Model.Settings;
+using FocusFM.Model.Providers;
 using FocusFM.Model.Token;
-using FocusFM.Model.User;
 using FocusFM.Service.JWTAuthentication;
-using FocusFM.Service.User;
+using FocusFM.Service.Providers;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
-using Microsoft.Extensions.Options;
 using Microsoft.Net.Http.Headers;
 using Newtonsoft.Json;
-using static FocusFM.Common.EmailNotification.EmailNotification;
 
 namespace FocusFMAPI.Controllers
 {
-    [Route("api/user")]
+    [Route("api/provider")]
     [ApiController]
     [Authorize]
-    public class UserController : ControllerBase
+    public class ProviderController : ControllerBase
     {
         #region Fields
-        private readonly IUserService _userService;
+        private readonly IProviderService _ProviderService;
         private readonly IHttpContextAccessor _httpContextAccessor;
         private readonly IJWTAuthenticationService _jwtAuthenticationService;
+        private readonly IConfiguration _config;
         #endregion
 
         #region Constructor
-        public UserController
+        public ProviderController
         (
-            IUserService UserService,
+            IProviderService ProviderService,
             IHttpContextAccessor httpContextAccessor,
-            IJWTAuthenticationService jwtAuthenticationService
+            IJWTAuthenticationService jwtAuthenticationService,
+            IConfiguration config
         )
         {
-            _userService = UserService;
+            _ProviderService = ProviderService;
             _httpContextAccessor = httpContextAccessor;
             _jwtAuthenticationService = jwtAuthenticationService;
+            _config = config;
         }
         #endregion
 
         [HttpPost("save")]
-        public async Task<BaseApiResponse> SaveUser([FromBody] UserRequestModel model)
+        public async Task<BaseApiResponse> SaveProvider([FromForm] ProviderRequestModel model, IFormFile? file)
         {
-            BaseApiResponse response = new BaseApiResponse();
-
-            model.FirstName = model.FirstName.Trim();
-            model.PinCode = model.PinCode.Trim();
-            model.Address = model.Address.Trim();
-            model.City = model.City.Trim();
-            model.Country = model.Country.Trim();
-            var password = "";
-            var passSalt = "";
-            var Generatepassword = "";
-            if (!CommonMethods.IsValidEmail(model.EmailId))
+            ApiResponse<ProviderResponseModel> response = new ApiResponse<ProviderResponseModel>();
+            if (model.ProviderId == null)
             {
-                response.Message = ErrorMessages.InvalidEmailId;
-                response.Success = false;
-                return response;
+                if (file == null || file.Length == 0)
+                {
+                    response.Data = null;
+                    response.Success = false;
+                    response.Message = ErrorMessages.NoFile;
+                    return response;
+                }
             }
-            long UserId = 0;
+            long UserId=0;
+            string fileName=null;
             if (Request.Headers.TryGetValue("Authorization", out var authHeader))
             {
                 // Parse the JWT token
@@ -78,18 +74,22 @@ namespace FocusFMAPI.Controllers
 
                 UserId = long.TryParse(j["UserId"], out var val) ? val : 0;
             }
-            var result = await _userService.SaveUser(model, UserId);
+            if (file != null)
+            {
+                fileName= await CommonMethods.UploadDocument(file, _config["AppSettings:ProviderTemplateFilePath"]+"/" + model.ProviderName + "/");
+            }
+            var result = await _ProviderService.SaveProvider(model, UserId, fileName);
             var issend = false;
             if (result == Status.Success)
             {
-                if (model.UserId > 0)
+                if (model.ProviderId > 0)
                 {
-                    response.Message = ErrorMessages.UpdateUserSuccess;
+                    response.Message = ErrorMessages.UpdateProviderSuccess;
                     response.Success = true;
                 }
                 else
                 {
-                    response.Message = ErrorMessages.SaveUserSuccess;
+                    response.Message = ErrorMessages.SaveProviderSuccess;
                     response.Success = true;
                 }
             }
@@ -105,13 +105,27 @@ namespace FocusFMAPI.Controllers
                 response.Success = false;
             }
             return response;
+            return response;
         }
 
         [HttpPost("list")]
-        public async Task<ApiResponse<UserResponseModel>> GetUserList(CommonPaginationModel model)
+        public async Task<ApiResponse<ProviderResponseModel>> GetProviderList(CommonPaginationModel model)
         {
-            ApiResponse<UserResponseModel> response = new ApiResponse<UserResponseModel>() { Data = new List<UserResponseModel>() };
-            var result = await _userService.GetUserList(model);
+            ApiResponse<ProviderResponseModel> response = new ApiResponse<ProviderResponseModel>() { Data = new List<ProviderResponseModel>() };
+            var result = await _ProviderService.GetProviderList(model);
+            foreach (var record in result)
+            {
+                // Example: Update file path if it exists
+                if (record.ProviderTemplate != null)
+                {
+                    string originalPath = record.ProviderTemplate.ToString();
+
+
+                    // Example: Replace part of the path or add prefix
+                    record.ProviderTemplate = originalPath.Replace(Directory.GetCurrentDirectory(), _config["AppSettings:APIURL"]);
+                    record.ProviderTemplate = record.ProviderTemplate.Replace("\\","/");
+                }
+            }
             if (result != null)
             {
                 response.Data = result;
@@ -121,13 +135,13 @@ namespace FocusFMAPI.Controllers
         }
 
         [HttpDelete("delete/{id}")]
-        public async Task<BaseApiResponse> DeleteUser(long id)
+        public async Task<BaseApiResponse> DeleteProvider(int id)
         {
             BaseApiResponse response = new BaseApiResponse();
-            var result = await _userService.DeleteUser(id);
+            var result = await _ProviderService.DeleteProvider(id);
             if (result == 0)
             {
-                response.Message = ErrorMessages.DeleteUserSuccess;
+                response.Message = ErrorMessages.DeleteProviderSuccess;
                 response.Success = true;
             }
             else
@@ -139,18 +153,18 @@ namespace FocusFMAPI.Controllers
         }
 
         [HttpGet("active-inactive/{id}")]
-        public async Task<BaseApiResponse> ActiveInActiveUser(long id)
+        public async Task<BaseApiResponse> ActiveInActiveProvider(int id)
         {
             BaseApiResponse response = new BaseApiResponse();
-            var result = await _userService.ActiveInActiveUser(id);
+            var result = await _ProviderService.ActiveInActiveProvider(id);
             if (result == ActiveStatus.Inactive)
             {
-                response.Message = ErrorMessages.UserInactive;
+                response.Message = ErrorMessages.ProviderInactive;
                 response.Success = true;
             }
             else if (result == ActiveStatus.Active)
             {
-                response.Message = ErrorMessages.UserActive;
+                response.Message = ErrorMessages.ProviderActive;
                 response.Success = true;
             }
             else
@@ -158,19 +172,6 @@ namespace FocusFMAPI.Controllers
                 response.Message = ErrorMessages.SomethingWentWrong;
                 response.Success = false;
             }
-            return response;
-        }
-
-        [HttpPost("user-type-dropdown")]
-        public async Task<ApiResponse<UserTypeResponseModel>> GetUserTypeDropdown()
-        {
-            ApiResponse<UserTypeResponseModel> response = new ApiResponse<UserTypeResponseModel>() { Data = new List<UserTypeResponseModel>() };
-            var result = await _userService.GetUserTypeDropdown();
-            if (result != null)
-            {
-                response.Data = result;
-            }
-            response.Success = true;
             return response;
         }
     }

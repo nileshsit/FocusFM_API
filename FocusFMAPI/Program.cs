@@ -5,6 +5,7 @@ using FocusFM.Service.JWTAuthentication;
 using FocusFMAPI;
 using FocusFMAPI.Middleware;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
+using Microsoft.Extensions.FileProviders;
 using Microsoft.IdentityModel.Tokens;
 using Microsoft.OpenApi.Models;
 
@@ -96,7 +97,18 @@ app.UseSwaggerUI();
 
 app.UseMiddleware<CustomMiddleware>();
 app.UseCors("AllRequests");
-app.UseStaticFiles();
+app.UseStaticFiles(new StaticFileOptions
+{
+    FileProvider = new PhysicalFileProvider(
+                  Path.Combine(System.IO.Directory.GetCurrentDirectory(), builder.Configuration["AppSettings:ProviderTemplateFilePath"])),
+    RequestPath = "/"+ builder.Configuration["AppSettings:ProviderTemplateFilePath"]
+});
+app.UseDirectoryBrowser(new DirectoryBrowserOptions
+{
+    FileProvider = new PhysicalFileProvider(
+                    Path.Combine(System.IO.Directory.GetCurrentDirectory(), builder.Configuration["AppSettings:ProviderTemplateFilePath"])),
+    RequestPath = "/" + builder.Configuration["AppSettings:ProviderTemplateFilePath"]
+});
 
 app.UseHttpsRedirection();
 

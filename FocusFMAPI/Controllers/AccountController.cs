@@ -83,7 +83,6 @@ namespace FocusFMAPI.Controllers
                         LoginResponseModel result = await _accountService.LoginUser(model);
                         if (result != null && result.AdminUserId > 0)
                         {
-
                             TokenModel objTokenData = new TokenModel();
                             objTokenData.EmailId = model.EmailId;
                             objTokenData.UserId = result.AdminUserId != null ? result.AdminUserId : 0;

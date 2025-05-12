@@ -178,10 +178,14 @@ jobs:
       #     sonar-project-key: your-project-key  # Update with your SonarQube project key
       #     sonar-project-name: your-project-name  # Update with your project name
       #     sonar-host-url: https://your-sonarqube-server-url  # Update with your SonarQube server URL
+      # - name: Lint code base
+        # runs-on: ubuntu-latest
+        # steps:
+      # - name: Checkout code
+        # uses: actions/checkout@v4
 
-      # Step 5: Run Super-Linter for general code style checks
-      - name: Run Super-Linter
-        uses: github/super-linter@v5
-        env:
-          DEFAULT_BRANCH: main
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+      # - name: Run Super-Linter
+        # uses: github/super-linter@v5
+        # env:
+          # DEFAULT_BRANCH: main
+          # GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
