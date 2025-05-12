@@ -6,12 +6,40 @@ jobs:
   super-lint:
     name: Lint code base
     runs-on: ubuntu-latest
+
     steps:
       - name: Checkout code
         uses: actions/checkout@v4
 
       - name: Run Super-Linter
+        id: lint
         uses: github/super-linter@v5
         env:
           DEFAULT_BRANCH: main
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: Process Super-Linter Output and Count Errors
+        run: |
+          # Capture Super-Linter output
+          LINTER_OUTPUT=$(cat $GITHUB_WORKSPACE/super-linter.log)
+          
+          # Count the number of errors
+          ERROR_COUNT=$(echo "$LINTER_OUTPUT" | grep -c "ERROR")
+          
+          # Add annotation to the log with the error count
+          echo "::notice title=Linting Complete::Found $ERROR_COUNT errors."
+
+          # Output only the error lines in the log
+          echo "::group::Errors"
+          echo "$LINTER_OUTPUT" | grep "ERROR"
+          echo "::endgroup::"
+          
+          # Optionally, add a GitHub annotation if you want to show them in the PR interface
+          echo "$LINTER_OUTPUT" | grep "ERROR" | while read -r line; do
+            FILE=$(echo "$line" | cut -d' ' -f1)
+            LINE=$(echo "$line" | cut -d' ' -f2)
+            MESSAGE=$(echo "$line" | cut -d' ' -f3-)
+
+            # Create GitHub annotation
+            echo "::error file=$FILE,line=$LINE:: $MESSAGE"
+          done
