@@ -26,7 +26,6 @@ namespace FocusFMAPI.Controllers
         private IAccountService _accountService;
         private readonly AppSettings _appSettings;
         private readonly SMTPSettings _smtpSettings;
-        private readonly IWebHostEnvironment _webHostEnvironment;
         private readonly IHttpContextAccessor _httpContextAccessor;
         private readonly IJWTAuthenticationService _jwtAuthenticationService;
         private readonly Microsoft.AspNetCore.Hosting.IHostingEnvironment _hostingEnvironment;
@@ -50,7 +49,6 @@ namespace FocusFMAPI.Controllers
             _appSettings = appSettings.Value;
             _smtpSettings = smtpSettings.Value;
             _hostingEnvironment = hostingEnvironment;
-            _webHostEnvironment = webHostEnvironment;
             _httpContextAccessor = httpContextAccessor;
             _jwtAuthenticationService = jwtAuthenticationService;
         }
@@ -85,7 +83,6 @@ namespace FocusFMAPI.Controllers
                         LoginResponseModel result = await _accountService.LoginUser(model);
                         if (result != null && result.AdminUserId > 0)
                         {
-
                             TokenModel objTokenData = new TokenModel();
                             objTokenData.EmailId = model.EmailId;
                             objTokenData.UserId = result.AdminUserId != null ? result.AdminUserId : 0;

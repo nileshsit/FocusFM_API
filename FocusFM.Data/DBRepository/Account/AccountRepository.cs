@@ -147,7 +147,7 @@ namespace FocusFM.Data.DBRepository.Account
             param.Add("@CurrencyId", model.CurrencyId);
             param.Add("@MarginInPer", model.MarginInPer);
             return await QueryFirstOrDefaultAsync<long>(StoredProcedures.UpdateProfile, param, commandType: CommandType.StoredProcedure);
-        } 
+        }
         #endregion
     }
 }

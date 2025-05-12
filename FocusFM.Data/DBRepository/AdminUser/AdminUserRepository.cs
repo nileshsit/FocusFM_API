@@ -1,5 +1,4 @@
 ﻿
-using System.Data;
 using Dapper;
 using FocusFM.Common.Helpers;
 using FocusFM.Model.AdminUser;
@@ -7,6 +6,7 @@ using FocusFM.Model.CommonPagination;
 using FocusFM.Model.Config;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.Options;
+using System.Data;
 
 namespace FocusFM.Data.DBRepository.AdminUser
 {
@@ -19,7 +19,7 @@ namespace FocusFM.Data.DBRepository.AdminUser
         #region Constructor
         public AdminUserRepository
         (
-            IConfiguration config, 
+            IConfiguration config,
             IOptions<DataConfig> dataConfig
         ) : base(dataConfig)
         {
@@ -92,7 +92,7 @@ namespace FocusFM.Data.DBRepository.AdminUser
             param.Add("@UserId", UserId);
             var result = await QueryFirstOrDefaultAsync<int>(StoredProcedures.InActiveAdminUser, param, commandType: CommandType.StoredProcedure);
             return result;
-        } 
+        }
         #endregion
     }
 }

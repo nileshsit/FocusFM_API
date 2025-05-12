@@ -1,21 +1,15 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Data;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using Dapper;
+﻿using Dapper;
 using FocusFM.Common.Helpers;
-using FocusFM.Model.AdminUser;
 using FocusFM.Model.CommonPagination;
 using FocusFM.Model.Config;
 using FocusFM.Model.User;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.Options;
+using System.Data;
 
 namespace FocusFM.Data.DBRepository.User
 {
-    public class UserRepository:BaseRepository, IUserRepository
+    public class UserRepository : BaseRepository, IUserRepository
     {
         #region Fields
         private IConfiguration _config;
@@ -39,7 +33,7 @@ namespace FocusFM.Data.DBRepository.User
             return data.ToList();
         }
 
-        public async Task<int> SaveUser(UserRequestModel model,long CurrentUserId)
+        public async Task<int> SaveUser(UserRequestModel model, long CurrentUserId)
         {
             var param = new DynamicParameters();
             param.Add("@UserId", model.UserId);
