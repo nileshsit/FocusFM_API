@@ -28,7 +28,7 @@ namespace FocusFM.Data.DBRepository.AdminUser
         #endregion
 
         #region Methods
-        public async Task<int> SaveUser(AdminUserRequestModel model, long id, string password, string passSalt)
+        public async Task<int> SaveUser(AdminUserRequestModel model, long id, string password, string passSalt, string? ProfileImage)
         {
             var param = new DynamicParameters();
             if (model.UserId == 0)
@@ -46,7 +46,11 @@ namespace FocusFM.Data.DBRepository.AdminUser
             param.Add("@LastName", model.LastName);
             param.Add("@EmailId", model.EmailId);
             param.Add("@MobileNo", model.MobileNo);
-            param.Add("@ReceiveDocEmail", model.ReceiveDocEmail);
+            param.Add("@Address", model.Address);
+            param.Add("@City", model.City);
+            param.Add("@Country", model.Country);
+            param.Add("@PinCode", model.PinCode);
+            param.Add("@Photo", ProfileImage);
             param.Add("@CreatedBy", id);
             var result = await QueryFirstOrDefaultAsync<int>(StoredProcedures.SaveAdminUser, param, commandType: CommandType.StoredProcedure);
             return result;

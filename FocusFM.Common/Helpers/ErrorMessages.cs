@@ -57,5 +57,8 @@
         public const string ProviderActive = "Provider activated successfully.";
         public const string DeleteProviderSuccess = "Provider deleted successfully.";
         public const string NoFile = "No file uploaded.";
+        public const string InvalidImageFile = "Only .PNG and .JPG files allowed.";
+        public const string InvalidExcelFile = "Only .xls and .xlsx files allowed.";
+        public const string FileSizeExceeds = "File Size Exceeds.";
     }
 }

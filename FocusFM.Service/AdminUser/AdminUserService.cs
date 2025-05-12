@@ -19,9 +19,9 @@ namespace FocusFM.Service.AdminUser
         #endregion
 
         #region Methods
-        public Task<int> SaveUser(AdminUserRequestModel model, long id, string password, string passSalt)
+        public Task<int> SaveUser(AdminUserRequestModel model, long id, string password, string passSalt, string? ProfileImage)
         {
-            return _repository.SaveUser(model, id, password, passSalt);
+            return _repository.SaveUser(model, id, password, passSalt,ProfileImage);
         }
 
         public Task<List<AdminUserResponseModel>> GetUserListAdmin(CommonPaginationModel model)

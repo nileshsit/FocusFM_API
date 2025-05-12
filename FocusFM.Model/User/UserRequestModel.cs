@@ -9,7 +9,7 @@ namespace FocusFM.Model.User
 {
     public class UserRequestModel
     {
-        public long UserId { get; set; }
+        public long? UserId { get; set; }
         [Required(ErrorMessage = "UserType is required.")]
         public int UserTypeId { get; set; }
         [Required(ErrorMessage = "FirstName is required.")]

@@ -3,10 +3,11 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using FocusFM.Model.Common;
 
 namespace FocusFM.Model.User
 {
-    public class UserResponseModel
+    public class UserResponseModel: CommonResponseModel
     {
         public long UserId { get; set; }
         public int UserTypeId { get; set; }

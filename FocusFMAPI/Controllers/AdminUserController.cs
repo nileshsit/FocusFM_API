@@ -59,7 +59,7 @@ namespace FocusFMAPI.Controllers
         /// <param name="UserModel"></param>
         /// <returns></returns>
         [HttpPost("save")]
-        public async Task<BaseApiResponse> SaveUser([FromBody] AdminUserRequestModel model)
+        public async Task<BaseApiResponse> SaveUser([FromForm] AdminUserRequestModel model,IFormFile? file)
         {
             BaseApiResponse response = new BaseApiResponse();
 
@@ -75,6 +75,14 @@ namespace FocusFMAPI.Controllers
                 string[] segments = EncryptedPass.Split("||");
                 password = segments[0];
                 passSalt = segments[1];
+
+                //if (file == null || file.Length == 0)
+                //{
+                //    response.Data = null;
+                //    response.Success = false;
+                //    response.Message = ErrorMessages.NoFile;
+                //    return response;
+                //}
             }
             if (!CommonMethods.IsValidEmail(model.EmailId))
             {
@@ -88,7 +96,31 @@ namespace FocusFMAPI.Controllers
             {
                 tokenModel = _jwtAuthenticationService.GetUserTokenData(jwtToken);
             }
-            var result = await _userService.SaveUser(model, tokenModel.UserId, password, passSalt);
+            string fileName = null;
+            if (file != null)
+            {
+                string[] arrExtension = _config["FileConfiguration:AllowedProfileFileFormat"].Split(",");
+                var extension = Path.GetExtension(file.FileName).ToLowerInvariant();
+
+                if (!arrExtension.Contains(extension))
+                {
+                    response.Success = false;
+                    response.Message = ErrorMessages.InvalidImageFile;
+                    return response;
+                }
+
+                long allowedSize = long.Parse(_config["FileConfiguration:AllowedProfileFileSize"]);
+
+                if (file.Length>allowedSize)
+                {
+                    response.Success = false;
+                    response.Message = ErrorMessages.FileSizeExceeds;
+                    return response;
+                }
+
+                fileName = await CommonMethods.UploadDocument(file, _config["FileConfiguration:UserProfileFilePath"] + "/" + model.FirstName+"_"+model.LastName + "/");
+            }
+            var result = await _userService.SaveUser(model, tokenModel.UserId, password, passSalt,fileName);
             var issend = false;
             if (result == Status.Success)
             {
@@ -194,6 +226,19 @@ namespace FocusFMAPI.Controllers
         {
             ApiResponse<AdminUserResponseModel> response = new ApiResponse<AdminUserResponseModel>() { Data = new List<AdminUserResponseModel>() };
             var result = await _userService.GetUserListAdmin(model);
+            foreach (var record in result)
+            {
+                // Example: Update file path if it exists
+                if (record.Photo != null)
+                {
+                    string originalPath = record.Photo.ToString();
+
+
+                    // Example: Replace part of the path or add prefix
+                    record.Photo = originalPath.Replace(Directory.GetCurrentDirectory(), _config["AppSettings:APIURL"]);
+                    record.Photo = record.Photo.Replace("\\", "/");
+                }
+            }
             if (result != null)
             {
                 response.Data = result;

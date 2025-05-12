@@ -76,7 +76,26 @@ namespace FocusFMAPI.Controllers
             }
             if (file != null)
             {
-                fileName= await CommonMethods.UploadDocument(file, _config["AppSettings:ProviderTemplateFilePath"]+"/" + model.ProviderName + "/");
+                string[] arrExtension = _config["FileConfiguration:AllowedProviderFileFormat"].Split(",");
+                var extension = Path.GetExtension(file.FileName).ToLowerInvariant();
+
+                if (!arrExtension.Contains(extension))
+                {
+                    response.Success = false;
+                    response.Message = ErrorMessages.InvalidExcelFile;
+                    return response;
+                }
+
+                long allowedSize = long.Parse(_config["FileConfiguration:AllowedProviderFileSize"]);
+
+                if (file.Length > allowedSize)
+                {
+                    response.Success = false;
+                    response.Message = ErrorMessages.FileSizeExceeds;
+                    return response;
+                }
+
+                fileName = await CommonMethods.UploadDocument(file, _config["FileConfiguration:ProviderTemplateFilePath"] +"/" + model.ProviderName + "/");
             }
             var result = await _ProviderService.SaveProvider(model, UserId, fileName);
             var issend = false;

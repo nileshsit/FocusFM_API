@@ -7,7 +7,7 @@ namespace FocusFM.Service.AdminUser
 {
     public interface IAdminUserService
     {
-        Task<int> SaveUser(AdminUserRequestModel model,long id, string password, string passSalt);
+        Task<int> SaveUser(AdminUserRequestModel model,long id, string password, string passSalt,string? ProfileImage);
         Task<List<AdminUserResponseModel>> GetUserListAdmin(CommonPaginationModel model);
         Task<List<AdminUserResponseModel>> GetUserById(long UserId);
         Task<string> GetUserByReceiveDocEmail();
