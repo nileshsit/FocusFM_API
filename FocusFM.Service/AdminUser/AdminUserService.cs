@@ -1,5 +1,4 @@
-﻿
-using FocusFM.Data.DBRepository.AdminUser;
+﻿using FocusFM.Data.DBRepository.AdminUser;
 using FocusFM.Model.AdminUser;
 using FocusFM.Model.CommonPagination;
 
@@ -47,7 +46,7 @@ namespace FocusFM.Service.AdminUser
         public Task<int> InActiveUser(long UserId)
         {
             return _repository.InActiveUser(UserId);
-        } 
+        }
         #endregion
     }
 }

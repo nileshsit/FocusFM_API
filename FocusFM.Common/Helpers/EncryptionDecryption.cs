@@ -11,12 +11,10 @@ namespace FocusFM.Common.Helpers
         /// key String
         /// </summary>
         private const string keyString = "EA34FF3E-JU84-1974-AW70-BB81D9564426";
-
         private const int _saltSize = 16; // 128 bits
         private const int _keySize = 32; // 256 bits
         private const int _iterations = 100000;
         private static readonly HashAlgorithmName _algorithm = HashAlgorithmName.SHA512;
-
         private const char segmentDelimiter = ':';
 
 

@@ -1,9 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using FocusFM.Model.CommonPagination;
+﻿using FocusFM.Model.CommonPagination;
 using FocusFM.Model.User;
 
 namespace FocusFM.Service.User

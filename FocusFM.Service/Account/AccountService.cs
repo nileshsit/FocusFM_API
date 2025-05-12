@@ -1,6 +1,4 @@
-﻿
-
-using FocusFM.Data.DBRepository.Account;
+﻿using FocusFM.Data.DBRepository.Account;
 using FocusFM.Model.Login;
 using FocusFM.Model.Profile;
 
@@ -82,7 +80,7 @@ namespace FocusFM.Service.Account
         public async Task<long> UpdateProfile(ProfileRequestModel model)
         {
             return await _repository.UpdateProfile(model);
-        } 
+        }
         #endregion
     }
 }

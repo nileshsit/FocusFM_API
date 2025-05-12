@@ -5,7 +5,7 @@ using FocusFM.Model.User;
 
 namespace FocusFM.Service.User
 {
-    public class UserService:IUserService
+    public class UserService : IUserService
     {
         #region Fields
         private readonly IUserRepository _repository;

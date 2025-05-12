@@ -1,13 +1,12 @@
-﻿
-using FocusFM.Model.Login;
+﻿using FocusFM.Model.Login;
 using FocusFM.Model.Profile;
 
 namespace FocusFM.Service.Account
 {
-    public interface IAccountService 
+    public interface IAccountService
     {
         Task<LoginResponseModel> LoginUser(LoginRequestModel model);
-        Task<SaltResponseModel> GetUserSalt(string EmailId,bool IsAdmin);
+        Task<SaltResponseModel> GetUserSalt(string EmailId, bool IsAdmin);
         Task<long> UpdateLoginToken(string Token, long UserId, bool IsAdmin);
         Task<long> LogoutUser(long UserId, string jwtToken);
         Task<ForgetPasswordResponseModel> ForgetPassword(string EmailId, bool IsAdmin);

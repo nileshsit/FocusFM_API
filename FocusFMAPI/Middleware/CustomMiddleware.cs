@@ -1,20 +1,20 @@
-﻿using Microsoft.AspNetCore.Authentication.JwtBearer;
+﻿using FocusFM.Common.CommonMethod;
+using FocusFM.Common.EmailNotification;
+using FocusFM.Common.Helpers;
+using FocusFM.Model.ReqResponse;
+using FocusFM.Model.Settings;
+using FocusFM.Model.Token;
+using FocusFM.Service.Account;
+using FocusFM.Service.JWTAuthentication;
+using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Http.Extensions;
 using Microsoft.Extensions.Options;
 using Microsoft.Net.Http.Headers;
+using Newtonsoft.Json;
 using System.Diagnostics;
 using System.Net;
 using System.Text;
-using Newtonsoft.Json;
-using FocusFM.Service.JWTAuthentication;
-using FocusFM.Model.Settings;
-using FocusFM.Model.Token;
-using FocusFM.Common.Helpers;
-using FocusFM.Common.EmailNotification;
 using static FocusFM.Common.EmailNotification.EmailNotification;
-using FocusFM.Common.CommonMethod;
-using FocusFM.Model.ReqResponse;
-using FocusFM.Service.Account;
 
 namespace FocusFMAPI.Middleware
 {
@@ -68,7 +68,7 @@ namespace FocusFMAPI.Middleware
                 if (!string.IsNullOrEmpty(jwtToken))
                 {
                     TokenModel userTokenModel = _jwtAuthenticationService.GetUserTokenData(jwtToken);
-                    var result = await _accountService.ValidateUserTokenData(userTokenModel.UserId, jwtToken, userTokenModel.TokenValidTo,userTokenModel.IsAdmin);
+                    var result = await _accountService.ValidateUserTokenData(userTokenModel.UserId, jwtToken, userTokenModel.TokenValidTo, userTokenModel.IsAdmin);
                     if (result == 1)
                     {
                         if (userTokenModel != null)
@@ -127,7 +127,6 @@ namespace FocusFMAPI.Middleware
 
                         await responseBodyStream.CopyToAsync(originalResponseBody);
 
-
                     }
                     catch (Exception ex)
                     {
@@ -139,7 +138,7 @@ namespace FocusFMAPI.Middleware
                         context.Response.ContentType = "application/json";
                         context.Response.StatusCode = (int)HttpStatusCode.InternalServerError;
 
-                        byte[   ] data = System.Text.Encoding.UTF8.GetBytes(new BaseApiResponse()
+                        byte[] data = System.Text.Encoding.UTF8.GetBytes(new BaseApiResponse()
                         {
                             Success = false,
                             Message = ex.Message
@@ -152,7 +151,6 @@ namespace FocusFMAPI.Middleware
                             SendExceptionEmail(ex, context, requestBodyText);
                         }
                         AddExceptionLogsToLoggerFile(context, ex, requestBodyText);
-
 
                         return;
                     }
