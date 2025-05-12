@@ -145,8 +145,8 @@ namespace FocusFM.Common.CommonMethod
             {
                 await userDocument.CopyToAsync(stream);
             }
-            document = FileName;
-            return document;
+            //document = FileName;
+            return path;
         }
         public static string FormatNumber(decimal number)
         {
