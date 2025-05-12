@@ -1,5 +1,8 @@
-﻿
-
+﻿using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Text;
+using System.Threading.Tasks;
 using FocusFM.Model.CommonPagination;
 using FocusFM.Model.User;
 
@@ -7,11 +10,11 @@ namespace FocusFM.Data.DBRepository.User
 {
     public interface IUserRepository
     {
-        Task<int> SaveUser(UserRequestModel model, long id, string password, string passSalt);
-        Task<List<UserResponseModel>> GetUserListAdmin(CommonPaginationModel model);
-        Task<List<UserResponseModel>> GetUserById(long UserId);
-        Task<string> GetUserByReceiveDocEmail();
+        Task<List<UserTypeResponseModel>> GetUserTypeDropdown();
+        Task<List<UserResponseModel>> GetUserList(CommonPaginationModel model);
+        Task<int> SaveUser(UserRequestModel model,long CurrentUserId);
         Task<int> DeleteUser(long UserId);
-        Task<int> InActiveUser(long UserId);
+        Task<int> ActiveInActiveUser(long UserId);
+
     }
 }

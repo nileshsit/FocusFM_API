@@ -83,12 +83,12 @@ namespace FocusFMAPI.Controllers
                         model.Password = res.Password;
                         model.IsAdmin = true;
                         LoginResponseModel result = await _accountService.LoginUser(model);
-                        if (result != null && result.UserId > 0)
+                        if (result != null && result.AdminUserId > 0)
                         {
 
                             TokenModel objTokenData = new TokenModel();
                             objTokenData.EmailId = model.EmailId;
-                            objTokenData.UserId = result.UserId != null ? result.UserId : 0;
+                            objTokenData.UserId = result.AdminUserId != null ? result.AdminUserId : 0;
                             objTokenData.FullName = result.FullName;
                             objTokenData.IsAdmin = true;
                             objTokenData.IsEaziBusinessPartner = true;
@@ -98,7 +98,7 @@ namespace FocusFMAPI.Controllers
                             response.Message = ErrorMessages.LoginSuccess;
                             response.Success = true;
                             response.Data.JWTToken = result.JWTToken.ToString();
-                            response.Data.UserId = result.UserId;
+                            response.Data.AdminUserId = result.AdminUserId;
                             response.Data.FullName = result.FullName;
                             response.Data.EmailId = result.EmailId;
                             response.Data.IsFirstLogin = result.IsFirstLogin;
@@ -190,9 +190,9 @@ namespace FocusFMAPI.Controllers
             var result = await _accountService.ForgetPassword(model.EmailId, true);
             var url = _httpContextAccessor.HttpContext.Request.Headers["Referer"].ToString() + "verification-code";
             var portalUrl = _httpContextAccessor.HttpContext.Request.Headers["Referer"].ToString().TrimEnd('/');
-            if (result.UserId > 0)
+            if (result.AdminUserId > 0)
             {
-                string EncryptedUserId = HttpUtility.UrlEncode(EncryptionDecryption.GetEncrypt(result.UserId.ToString()));
+                string EncryptedUserId = HttpUtility.UrlEncode(EncryptionDecryption.GetEncrypt(result.AdminUserId.ToString()));
                 string EncryptedEamilId = HttpUtility.UrlEncode(EncryptionDecryption.GetEncrypt(model.EmailId.ToString()));
                 EmailNotification.EmailSetting setting = new EmailSetting
                 {
@@ -243,7 +243,7 @@ namespace FocusFMAPI.Controllers
                 emailBody = emailBody.Replace("##Link##", (url + '/' + EncryptedEamilId).ToString());
                 emailBody = emailBody.Replace("##portalUrl##", portalUrl.ToString());
                 isSuccess = await Task.Run(() => SendMailMessage(model.EmailId, null, null, "Reset Password OTP", emailBody, setting, null));
-                int issaveopt = await _accountService.SaveOTP(result.UserId, OtpRandom, result.EmailId, true);
+                int issaveopt = await _accountService.SaveOTP(result.AdminUserId, OtpRandom, result.EmailId, true);
                 if (isSuccess == true && issaveopt == 1)
                 {
                     response.Message = ErrorMessages.ForgetPasswordSuccess;

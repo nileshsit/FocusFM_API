@@ -1,9 +1,9 @@
 ﻿using Microsoft.AspNetCore.Http;
 using System.ComponentModel.DataAnnotations;
 
-namespace FocusFM.Model.User
+namespace FocusFM.Model.AdminUser
 {
-    public class UserModel
+    public class AdminUserModel
     {
 		[Required(ErrorMessage = "First Name required.")]
 		[MaxLength(100, ErrorMessage = "Maxlength is 100 characters.")]

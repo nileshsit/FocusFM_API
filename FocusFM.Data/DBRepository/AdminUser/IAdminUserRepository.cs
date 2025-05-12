@@ -1,0 +1,17 @@
+﻿
+
+using FocusFM.Model.AdminUser;
+using FocusFM.Model.CommonPagination;
+
+namespace FocusFM.Data.DBRepository.AdminUser
+{
+    public interface IAdminUserRepository
+    {
+        Task<int> SaveUser(AdminUserRequestModel model, long id, string password, string passSalt);
+        Task<List<AdminUserResponseModel>> GetUserListAdmin(CommonPaginationModel model);
+        Task<List<AdminUserResponseModel>> GetUserById(long UserId);
+        Task<string> GetUserByReceiveDocEmail();
+        Task<int> DeleteUser(long UserId);
+        Task<int> InActiveUser(long UserId);
+    }
+}

@@ -4,7 +4,7 @@ namespace FocusFM.Model.Login
 {
     public class LoginResponseModel
     {
-        public int UserId { get; set; }
+        public int AdminUserId { get; set; }
         public string FullName { get; set; }
         public string EmailId { get; set; }    
         public string JWTToken { get; set; }
@@ -20,7 +20,7 @@ namespace FocusFM.Model.Login
 
     public class ForgetPasswordResponseModel
     {
-        public long UserId { get; set; }
+        public long AdminUserId { get; set; }
         public DateTime LastForgetPasswordSend { get; set; }
         public string FullName { get; set; }
         public string EmailId { get; set; }

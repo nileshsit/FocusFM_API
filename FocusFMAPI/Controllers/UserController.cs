@@ -2,6 +2,7 @@
 using FocusFM.Common.EmailNotification;
 using FocusFM.Common.Enum;
 using FocusFM.Common.Helpers;
+using FocusFM.Model.AdminUser;
 using FocusFM.Model.CommonPagination;
 using FocusFM.Model.Settings;
 using FocusFM.Model.Token;
@@ -19,8 +20,8 @@ using static FocusFM.Common.EmailNotification.EmailNotification;
 namespace FocusFMAPI.Controllers
 {
     [Route("api/user")]
-    [Authorize]
     [ApiController]
+    [Authorize]
     public class UserController : ControllerBase
     {
         #region Fields
@@ -52,30 +53,19 @@ namespace FocusFMAPI.Controllers
         }
         #endregion
 
-        #region Methods
-        /// <summary>
-        /// Save User
-        /// </summary>
-        /// <param name="UserModel"></param>
-        /// <returns></returns>
         [HttpPost("save")]
         public async Task<BaseApiResponse> SaveUser([FromBody] UserRequestModel model)
         {
             BaseApiResponse response = new BaseApiResponse();
 
             model.FirstName = model.FirstName.Trim();
-            model.LastName = model.LastName.Trim();
+            model.PinCode = model.PinCode.Trim();
+            model.Address = model.Address.Trim();
+            model.City = model.City.Trim();
+            model.Country = model.Country.Trim();
             var password = "";
             var passSalt = "";
             var Generatepassword = "";
-            if (model.UserId == 0)
-            {
-                Generatepassword = Utility.GeneratePassword();
-                var EncryptedPass = Utility.GetEncryptPassword(Generatepassword);
-                string[] segments = EncryptedPass.Split("||");
-                password = segments[0];
-                passSalt = segments[1];
-            }
             if (!CommonMethods.IsValidEmail(model.EmailId))
             {
                 response.Message = ErrorMessages.InvalidEmailId;
@@ -84,11 +74,7 @@ namespace FocusFMAPI.Controllers
             }
             TokenModel tokenModel = new TokenModel();
             string jwtToken = _httpContextAccessor.HttpContext.Request.Headers[HeaderNames.Authorization].ToString().Replace(JwtBearerDefaults.AuthenticationScheme + " ", "");
-            if (!string.IsNullOrEmpty(jwtToken))
-            {
-                tokenModel = _jwtAuthenticationService.GetUserTokenData(jwtToken);
-            }
-            var result = await _userService.SaveUser(model, tokenModel.UserId, password, passSalt);
+            var result = await _userService.SaveUser(model, tokenModel.UserId);
             var issend = false;
             if (result == Status.Success)
             {
@@ -99,73 +85,6 @@ namespace FocusFMAPI.Controllers
                 }
                 else
                 {
-                    EmailNotification.EmailSetting setting = new EmailSetting
-                    {
-                        EmailEnableSsl = Convert.ToBoolean(_smtpSettings.EmailEnableSsl),
-                        EmailHostName = _smtpSettings.EmailHostName,
-                        EmailPassword = _smtpSettings.EmailPassword,
-                        EmailAppPassword = _smtpSettings.EmailAppPassword,
-                        EmailPort = Convert.ToInt32(_smtpSettings.EmailPort),
-                        FromEmail = _smtpSettings.FromEmail,
-                        FromName = _smtpSettings.FromName,
-                        EmailUsername = _smtpSettings.EmailUsername,
-                    };
-
-                    string emailBody = string.Empty;
-                    string adminEmailBody = string.Empty;
-                    string adminEmail = _config["AppSettings:AdminEmail"];
-
-                    string BasePath = Path.Combine(Directory.GetCurrentDirectory(), Constants.ExceptionReportPath);
-                    var path = _httpContextAccessor.HttpContext.Request.Scheme + "://" + HttpContext.Request.Host.Value;
-
-                    using (StreamReader reader = new StreamReader(Path.Combine(BasePath, Constants.UserPasswordEmail)))
-                    {
-                        emailBody = reader.ReadToEnd();
-                    }
-
-                    using (StreamReader reader = new StreamReader(Path.Combine(BasePath, Constants.UserRegisterEmailToAdmin)))
-                    {
-                        adminEmailBody = reader.ReadToEnd();
-                    }
-
-                    #region Send Mail to User
-                    emailBody = emailBody.Replace("##userName##", model.FirstName);
-                    if (tokenModel.IsEaziBusinessPartner == true)
-                    {
-                        emailBody = emailBody.Replace("##LogoURL##", path + "/" + _config["Path:Logo"]);
-                        emailBody = emailBody.Replace("##BrandName##", "EAZI-BUSINESS");
-                    }
-                    else
-                    {
-                        emailBody = emailBody.Replace("##LogoURL##", path + "/" + _config["Path:NonBrandLogo"]);
-                        emailBody = emailBody.Replace("##BrandName##", "Cost Calculator");
-                    }
-                    emailBody = emailBody.Replace("##Password##", Generatepassword);
-                    emailBody = emailBody.Replace("##currentYear##", DateTime.Now.Year.ToString());
-                    emailBody = emailBody.Replace("##PortalURL##", _config["AppSettings:AdminPortalUrl"]);
-
-                    issend = await Task.Run(() => SendMailMessage(model.EmailId, null, null, "User Password", emailBody, setting, null));
-                    #endregion
-
-                    #region Send Mail to Admin
-                    adminEmailBody = adminEmailBody.Replace("##userName##", model.FirstName + " " + model.LastName);
-                    if (tokenModel.IsEaziBusinessPartner == true)
-                    {
-                        adminEmailBody = adminEmailBody.Replace("##LogoURL##", path + "/" + _config["Path:Logo"]);
-                        adminEmailBody = adminEmailBody.Replace("##BrandName##", "Focus FM");
-                    }
-                    else
-                    {
-                        adminEmailBody = adminEmailBody.Replace("##LogoURL##", path + "/" + _config["Path:NonBrandLogo"]);
-                        adminEmailBody = adminEmailBody.Replace("##BrandName##", "Focus FM");
-                    }
-                    adminEmailBody = adminEmailBody.Replace("##Email##", model.EmailId);
-                    adminEmailBody = adminEmailBody.Replace("##RegisteredOn##", DateTime.Now.ToString("dd/MM/yyyy"));
-                    adminEmailBody = adminEmailBody.Replace("##currentYear##", DateTime.Now.Year.ToString());
-
-                    bool isAdminMailSent = await Task.Run(() => SendMailMessage(adminEmail, null, null, "New User Registration", adminEmailBody, setting, null));
-                    #endregion
-
                     response.Message = ErrorMessages.SaveUserSuccess;
                     response.Success = true;
                 }
@@ -184,16 +103,11 @@ namespace FocusFMAPI.Controllers
             return response;
         }
 
-        /// <summary>
-        /// User List With Pagination
-        /// </summary>
-        /// <param name="model"></param>
-        /// <returns></returns>
         [HttpPost("list")]
-        public async Task<ApiResponse<UserResponseModel>> GetUserListAdmin(CommonPaginationModel model)
+        public async Task<ApiResponse<UserResponseModel>> GetUserList(CommonPaginationModel model)
         {
             ApiResponse<UserResponseModel> response = new ApiResponse<UserResponseModel>() { Data = new List<UserResponseModel>() };
-            var result = await _userService.GetUserListAdmin(model);
+            var result = await _userService.GetUserList(model);
             if (result != null)
             {
                 response.Data = result;
@@ -202,29 +116,6 @@ namespace FocusFMAPI.Controllers
             return response;
         }
 
-        /// <summary>
-        /// Get User Details By ID
-        /// </summary>
-        /// <param name="UserId"></param>
-        /// <returns></returns>
-        [HttpGet("{id}")]
-        public async Task<ApiResponse<UserResponseModel>> GetUserById(long id)
-        {
-            ApiResponse<UserResponseModel> response = new ApiResponse<UserResponseModel>() { Data = new List<UserResponseModel>() };
-            var result = await _userService.GetUserById(id);
-            if (result != null)
-            {
-                response.Data = result;
-            }
-            response.Success = true;
-            return response;
-        }
-
-        /// <summary>
-        /// Delete User
-        /// </summary>
-        /// <param name="UserId"></param>
-        /// <returns></returns>
         [HttpDelete("delete/{id}")]
         public async Task<BaseApiResponse> DeleteUser(long id)
         {
@@ -243,16 +134,11 @@ namespace FocusFMAPI.Controllers
             return response;
         }
 
-        /// <summary>
-        /// Active / InActive User
-        /// </summary>
-        /// <param name="UserId"></param>
-        /// <returns></returns>
         [HttpGet("active-inactive/{id}")]
-        public async Task<BaseApiResponse> InActiveUser(long id)
+        public async Task<BaseApiResponse> ActiveInActiveUser(long id)
         {
             BaseApiResponse response = new BaseApiResponse();
-            var result = await _userService.InActiveUser(id);
+            var result = await _userService.ActiveInActiveUser(id);
             if (result == ActiveStatus.Inactive)
             {
                 response.Message = ErrorMessages.UserInactive;
@@ -270,6 +156,18 @@ namespace FocusFMAPI.Controllers
             }
             return response;
         }
-        #endregion
+
+        [HttpPost("user-type-dropdown")]
+        public async Task<ApiResponse<UserTypeResponseModel>> GetUserTypeDropdown()
+        {
+            ApiResponse<UserTypeResponseModel> response = new ApiResponse<UserTypeResponseModel>() { Data = new List<UserTypeResponseModel>() };
+            var result = await _userService.GetUserTypeDropdown();
+            if (result != null)
+            {
+                response.Data = result;
+            }
+            response.Success = true;
+            return response;
+        }
     }
 }

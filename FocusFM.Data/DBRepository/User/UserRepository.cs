@@ -1,7 +1,12 @@
-﻿
+﻿using System;
+using System.Collections.Generic;
 using System.Data;
+using System.Linq;
+using System.Text;
+using System.Threading.Tasks;
 using Dapper;
 using FocusFM.Common.Helpers;
+using FocusFM.Model.AdminUser;
 using FocusFM.Model.CommonPagination;
 using FocusFM.Model.Config;
 using FocusFM.Model.User;
@@ -10,7 +15,7 @@ using Microsoft.Extensions.Options;
 
 namespace FocusFM.Data.DBRepository.User
 {
-    public class UserRepository : BaseRepository, IUserRepository
+    public class UserRepository:BaseRepository, IUserRepository
     {
         #region Fields
         private IConfiguration _config;
@@ -19,7 +24,7 @@ namespace FocusFM.Data.DBRepository.User
         #region Constructor
         public UserRepository
         (
-            IConfiguration config, 
+            IConfiguration config,
             IOptions<DataConfig> dataConfig
         ) : base(dataConfig)
         {
@@ -28,31 +33,30 @@ namespace FocusFM.Data.DBRepository.User
         #endregion
 
         #region Methods
-        public async Task<int> SaveUser(UserRequestModel model, long id, string password, string passSalt)
+        public async Task<List<UserTypeResponseModel>> GetUserTypeDropdown()
+        {
+            var data = await QueryAsync<UserTypeResponseModel>(StoredProcedures.GetUserTyeDropdown, null, commandType: CommandType.StoredProcedure);
+            return data.ToList();
+        }
+
+        public async Task<int> SaveUser(UserRequestModel model,long CurrentUserId)
         {
             var param = new DynamicParameters();
-            if (model.UserId == 0)
-            {
-                param.Add("@Password", password);
-                param.Add("@PassSalt", passSalt);
-            }
-            else
-            {
-                param.Add("@Password", null);
-                param.Add("@PassSalt", null); ;
-            }
             param.Add("@UserId", model.UserId);
+            param.Add("@UserTypeId", model.UserTypeId);
             param.Add("@FirstName", model.FirstName);
-            param.Add("@LastName", model.LastName);
+            param.Add("@PinCode", model.PinCode);
             param.Add("@EmailId", model.EmailId);
             param.Add("@MobileNo", model.MobileNo);
-            param.Add("@ReceiveDocEmail", model.ReceiveDocEmail);
-            param.Add("@CreatedBy", id);
+            param.Add("@Address", model.Address);
+            param.Add("@City", model.City);
+            param.Add("@Country", model.Country);
+            param.Add("@CreatedBy", CurrentUserId);
             var result = await QueryFirstOrDefaultAsync<int>(StoredProcedures.SaveUser, param, commandType: CommandType.StoredProcedure);
             return result;
         }
 
-        public async Task<List<UserResponseModel>> GetUserListAdmin(CommonPaginationModel model)
+        public async Task<List<UserResponseModel>> GetUserList(CommonPaginationModel model)
         {
             var param = new DynamicParameters();
             param.Add("@pageIndex", model.PageNumber);
@@ -63,21 +67,6 @@ namespace FocusFM.Data.DBRepository.User
             var data = await QueryAsync<UserResponseModel>(StoredProcedures.GetUserList, param, commandType: CommandType.StoredProcedure);
             return data.ToList();
         }
-
-        public async Task<List<UserResponseModel>> GetUserById(long UserId)
-        {
-            var param = new DynamicParameters();
-            param.Add("@UserId", UserId);
-            var data = await QueryAsync<UserResponseModel>(StoredProcedures.GetUserById, param, commandType: CommandType.StoredProcedure);
-            return data.ToList();
-        }
-
-        public async Task<string> GetUserByReceiveDocEmail()
-        {
-            var data = await QueryFirstOrDefaultAsync<string>(StoredProcedures.GetUserByReceiveDocEmail, commandType: CommandType.StoredProcedure);
-            return data;
-        }
-
         public async Task<int> DeleteUser(long UserId)
         {
             var param = new DynamicParameters();
@@ -86,13 +75,13 @@ namespace FocusFM.Data.DBRepository.User
             return result;
         }
 
-        public async Task<int> InActiveUser(long UserId)
+        public async Task<int> ActiveInActiveUser(long UserId)
         {
             var param = new DynamicParameters();
             param.Add("@UserId", UserId);
-            var result = await QueryFirstOrDefaultAsync<int>(StoredProcedures.InActiveUser, param, commandType: CommandType.StoredProcedure);
+            var result = await QueryFirstOrDefaultAsync<int>(StoredProcedures.ActiveInActiveUser, param, commandType: CommandType.StoredProcedure);
             return result;
-        } 
+        }
         #endregion
     }
 }

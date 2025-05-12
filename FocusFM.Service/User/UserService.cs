@@ -1,10 +1,11 @@
-﻿using FocusFM.Data.DBRepository.User;
+﻿
+using FocusFM.Data.DBRepository.User;
 using FocusFM.Model.CommonPagination;
 using FocusFM.Model.User;
 
 namespace FocusFM.Service.User
 {
-    public class UserService : IUserService
+    public class UserService:IUserService
     {
         #region Fields
         private readonly IUserRepository _repository;
@@ -18,24 +19,19 @@ namespace FocusFM.Service.User
         #endregion
 
         #region Methods
-        public Task<int> SaveUser(UserRequestModel model, long id, string password, string passSalt)
+        public Task<List<UserTypeResponseModel>> GetUserTypeDropdown()
         {
-            return _repository.SaveUser(model, id, password, passSalt);
+            return _repository.GetUserTypeDropdown();
         }
 
-        public Task<List<UserResponseModel>> GetUserListAdmin(CommonPaginationModel model)
+        public Task<int> SaveUser(UserRequestModel model, long id)
         {
-            return _repository.GetUserListAdmin(model);
+            return _repository.SaveUser(model, id);
         }
 
-        public Task<List<UserResponseModel>> GetUserById(long UserId)
+        public Task<List<UserResponseModel>> GetUserList(CommonPaginationModel model)
         {
-            return _repository.GetUserById(UserId);
-        }
-
-        public Task<string> GetUserByReceiveDocEmail()
-        {
-            return _repository.GetUserByReceiveDocEmail();
+            return _repository.GetUserList(model);
         }
 
         public Task<int> DeleteUser(long UserId)
@@ -43,10 +39,10 @@ namespace FocusFM.Service.User
             return _repository.DeleteUser(UserId);
         }
 
-        public Task<int> InActiveUser(long UserId)
+        public Task<int> ActiveInActiveUser(long UserId)
         {
-            return _repository.InActiveUser(UserId);
-        } 
+            return _repository.ActiveInActiveUser(UserId);
+        }
         #endregion
     }
 }

@@ -1,6 +1,7 @@
 ﻿
 
 using FocusFM.Service.Account;
+using FocusFM.Service.AdminUser;
 using FocusFM.Service.User;
 
 namespace FocusFM.Service
@@ -12,6 +13,7 @@ namespace FocusFM.Service
             var serviceDictonary = new Dictionary<Type, Type>
             {
                 { typeof(IAccountService), typeof(AccountService) },
+                { typeof(IAdminUserService), typeof(AdminUserService) },
                 { typeof(IUserService), typeof(UserService) },
             };
             return serviceDictonary;
