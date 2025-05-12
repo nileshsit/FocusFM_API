@@ -345,17 +345,17 @@ namespace FocusFMAPI.Controllers
             string EncryptedHash = EncryptionDecryption.GetEncrypt(segments[0]);
             string EncryptedSalt = EncryptionDecryption.GetEncrypt(segments[1]);
             long UserId = await _accountService.GetUserIDByEmail(model.EmailId, true);
-            var result = await _accountService.ResetPassword(UserId, model.EmailId, EncryptedHash, EncryptedSalt, true);
-            if (string.IsNullOrEmpty(result))
+            var resultResponse = await _accountService.ResetPassword(UserId, model.EmailId, EncryptedHash, EncryptedSalt, true);
+            if (string.IsNullOrEmpty(resultResponse))
             {
-                response.Message = ErrorMessages.ResetPasswordSuccess;
                 response.Success = true;
+                response.Message = ErrorMessages.ResetPasswordSuccess;
             }
             else
             {
-                response.Message = ErrorMessages.SomethingWentWrong;
                 response.Success = false;
                 Response.StatusCode = StatusCodes.Status403Forbidden;
+                response.Message = ErrorMessages.SomethingWentWrong;
             }
             return response;
         }
