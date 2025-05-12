@@ -103,7 +103,7 @@ namespace FocusFM.Common.CommonMethod
             string Hash = EncryptionDecryption.GetDecrypt(EncryptedHash);
             string Salt = EncryptionDecryption.GetDecrypt(EncryptedSalt);
 
-            return  EncryptedHash +" || " + EncryptedSalt;
+            return EncryptedHash + " || " + EncryptedSalt;
         }
 
         public static async Task<string> UploadImage(IFormFile userProfile, string Imagepath)

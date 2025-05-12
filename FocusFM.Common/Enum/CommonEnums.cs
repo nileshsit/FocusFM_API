@@ -28,6 +28,6 @@
     {
         public const int Pending = 0;
         public const int Success = 1;
-        public const int Rejected =2;
+        public const int Rejected = 2;
     }
 }

@@ -167,7 +167,7 @@ namespace FocusFM.Common.Helpers
             string EncryptedHash = EncryptionDecryption.GetEncrypt(segments[0]);
             string EncryptedSalt = EncryptionDecryption.GetEncrypt(segments[1]);
 
-            return EncryptedHash +"||"+ EncryptedSalt;
+            return EncryptedHash + "||" + EncryptedSalt;
         }
         public static string GetDisplayName(PropertyInfo propertyInfo)
         {
@@ -177,7 +177,7 @@ namespace FocusFM.Common.Helpers
                 return displayNameAttribute?.DisplayName ?? propertyInfo.Name;
             }
             return "-";
-        
+
         }
         public static string GetTimeZoneBaseOnDaylight(string Offset)
         {
