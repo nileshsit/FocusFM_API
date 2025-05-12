@@ -33,37 +33,6 @@ namespace FocusFM.Common.Helpers
         }
 
         /// <summary>
-        /// Encrypt value
-        /// </summary>
-        /// <param name="strKey">Passphrase for Encrypt</param>
-        /// <param name="strData">Message to Encrypt</param>
-        /// <returns>encrypted string</returns>
-        private static string Encrypt(string strKey, string strData)
-        {
-            string cipherText = "";
-            byte[] clearBytes = Encoding.Unicode.GetBytes(strData);
-            using (Aes encryptor = Aes.Create())
-            {
-                Rfc2898DeriveBytes pdb = new Rfc2898DeriveBytes(strKey, new byte[] { 0x56, 0x61, 0x69, 0x62, 0x48, 0x61, 0x76, 0x50, 0x61, 0x72, 0x65, 0x6b, 0x68 }, _iterations, _algorithm);
-                encryptor.Key = pdb.GetBytes(32);
-                encryptor.IV = pdb.GetBytes(16);
-                encryptor.Mode = CipherMode.CBC;
-                encryptor.Padding = PaddingMode.PKCS7;
-                using (MemoryStream ms = new MemoryStream())
-                {
-                    using (CryptoStream cs = new CryptoStream(ms, encryptor.CreateEncryptor(), CryptoStreamMode.Write))
-                    {
-                        cs.Write(clearBytes, 0, clearBytes.Length);
-                        cs.Close();
-                    }
-                    cipherText = Convert.ToBase64String(ms.ToArray());
-                }
-            }
-
-            return cipherText;
-        }
-
-        /// <summary>
         /// Get Decrypted value of passed encrypted string
         /// </summary>
         /// <param name="value">value to Decrypted</param>
@@ -73,34 +42,45 @@ namespace FocusFM.Common.Helpers
             return Decrypt(keyString, value);
         }
 
-        /// <summary>
-        /// decrypt value
-        /// </summary>
-        /// <param name="strKey">Passphrase for Decrypt</param>
-        /// <param name="strData">Message to Decrypt</param>
-        /// <returns>Decrypted string</returns>
+        private static Aes CreateAesEncryptor(string strKey)
+        {
+            Aes encryptor = Aes.Create();
+            var pdb = new Rfc2898DeriveBytes(strKey, new byte[] { 0x56, 0x61, 0x69, 0x62, 0x48, 0x61, 0x76, 0x50, 0x61, 0x72, 0x65, 0x6b, 0x68 }, _iterations, _algorithm);
+            encryptor.Key = pdb.GetBytes(32);
+            encryptor.IV = pdb.GetBytes(16);
+            encryptor.Mode = CipherMode.CBC;
+            encryptor.Padding = PaddingMode.PKCS7;
+            return encryptor;
+        }
+
         private static string Decrypt(string strKey, string strData)
         {
-            string clearText = "";
             byte[] cipherBytes = Convert.FromBase64String(strData);
-            using (Aes encryptor = Aes.Create())
+            using (Aes encryptor = CreateAesEncryptor(strKey))
+            using (MemoryStream ms = new MemoryStream())
             {
-                Rfc2898DeriveBytes pdb = new Rfc2898DeriveBytes(strKey, new byte[] { 0x56, 0x61, 0x69, 0x62, 0x48, 0x61, 0x76, 0x50, 0x61, 0x72, 0x65, 0x6b, 0x68 }, _iterations, _algorithm);
-                encryptor.Key = pdb.GetBytes(32);
-                encryptor.IV = pdb.GetBytes(16);
-                encryptor.Mode = CipherMode.CBC;
-                encryptor.Padding = PaddingMode.PKCS7;
-                using (MemoryStream ms = new MemoryStream())
+                using (CryptoStream cs = new CryptoStream(ms, encryptor.CreateDecryptor(), CryptoStreamMode.Write))
                 {
-                    using (CryptoStream cs = new CryptoStream(ms, encryptor.CreateDecryptor(), CryptoStreamMode.Write))
-                    {
-                        cs.Write(cipherBytes, 0, cipherBytes.Length);
-                        cs.Close();
-                    }
-                    clearText = Encoding.Unicode.GetString(ms.ToArray());
+                    cs.Write(cipherBytes, 0, cipherBytes.Length);
+                    cs.Close();
                 }
+                return Encoding.Unicode.GetString(ms.ToArray());
             }
-            return clearText;
+        }
+
+        private static string Encrypt(string strKey, string strData)
+        {
+            byte[] clearBytes = Encoding.Unicode.GetBytes(strData);
+            using (Aes encryptor = CreateAesEncryptor(strKey))
+            using (MemoryStream ms = new MemoryStream())
+            {
+                using (CryptoStream cs = new CryptoStream(ms, encryptor.CreateEncryptor(), CryptoStreamMode.Write))
+                {
+                    cs.Write(clearBytes, 0, clearBytes.Length);
+                    cs.Close();
+                }
+                return Convert.ToBase64String(ms.ToArray());
+            }
         }
 
         public static string Hash(string input)

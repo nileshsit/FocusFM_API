@@ -1,10 +1,9 @@
-﻿
-using Dapper;
-using System.Data.SqlClient;
-using System.Data;
+﻿using Dapper;
+using FocusFM.Common.Helpers;
 using FocusFM.Model.Config;
 using Microsoft.Extensions.Options;
-using FocusFM.Common.Helpers;
+using System.Data;
+using System.Data.SqlClient;
 
 namespace FocusFM.Data
 {
@@ -23,45 +22,39 @@ namespace FocusFM.Data
 
         #region SQL Methods
 
-        public async Task<T> QueryFirstOrDefaultAsync<T>(string sql, object param = null, IDbTransaction transaction = null, int? commandTimeout = null, CommandType? commandType = null)
+        private async Task<T> WithConnectionAsync<T>(Func<SqlConnection, Task<T>> getData)
         {
             string decryptedConn = EncryptionDecryption.GetDecrypt(_connectionString.Value.DefaultConnection);
             using (SqlConnection con = new SqlConnection(decryptedConn))
             {
                 await con.OpenAsync();
-                return await con.QueryFirstOrDefaultAsync<T>(sql, param, commandType: CommandType.StoredProcedure);
+                return await getData(con);
             }
+        }
+        public Task<T> QueryFirstOrDefaultAsync<T>(string sql, object param = null, IDbTransaction transaction = null, int? commandTimeout = null, CommandType? commandType = null)
+        {
+            return WithConnectionAsync(con =>
+                con.QueryFirstOrDefaultAsync<T>(sql, param, commandType: CommandType.StoredProcedure));
         }
 
-        public async Task<IEnumerable<T>> QueryAsync<T>(string sql, object param = null, IDbTransaction transaction = null, int? commandTimeout = null, CommandType? commandType = null)
+        public Task<IEnumerable<T>> QueryAsync<T>(string sql, object param = null, IDbTransaction transaction = null, int? commandTimeout = null, CommandType? commandType = null)
         {
-            string decryptedConn = EncryptionDecryption.GetDecrypt(_connectionString.Value.DefaultConnection);
-            using (SqlConnection con = new SqlConnection(decryptedConn))
-            {
-                await con.OpenAsync();
-                return await con.QueryAsync<T>(sql, param, commandType: CommandType.StoredProcedure);
-            }
+            return WithConnectionAsync(con =>
+                con.QueryAsync<T>(sql, param, commandType: CommandType.StoredProcedure));
         }
 
-        public async Task<int> ExecuteAsync<T>(string sql, object param = null, IDbTransaction transaction = null, int? commandTimeout = null, CommandType? commandType = null)
+        public Task<int> ExecuteAsync<T>(string sql, object param = null, IDbTransaction transaction = null, int? commandTimeout = null, CommandType? commandType = null)
         {
-            string decryptedConn = EncryptionDecryption.GetDecrypt(_connectionString.Value.DefaultConnection);
-            using (SqlConnection con = new SqlConnection(decryptedConn))
-            {
-                await con.OpenAsync();
-                return await con.ExecuteAsync(sql, param, commandType: CommandType.StoredProcedure);
-            }
+            return WithConnectionAsync(con =>
+                con.ExecuteAsync(sql, param, commandType: CommandType.StoredProcedure));
         }
 
-        public async Task<SqlMapper.GridReader> QueryMultipleAsync<T>(string sql, object param = null, IDbTransaction transaction = null, int? commandTimeout = null, CommandType? commandType = null)
+        public Task<SqlMapper.GridReader> QueryMultipleAsync<T>(string sql, object param = null, IDbTransaction transaction = null, int? commandTimeout = null, CommandType? commandType = null)
         {
-            string decryptedConn = EncryptionDecryption.GetDecrypt(_connectionString.Value.DefaultConnection);
-            using (SqlConnection con = new SqlConnection(decryptedConn))
-            {
-                await con.OpenAsync();
-                return await con.QueryMultipleAsync(sql, param, commandType: CommandType.StoredProcedure);
-            }
+            return WithConnectionAsync(con =>
+                con.QueryMultipleAsync(sql, param, commandType: CommandType.StoredProcedure));
         }
+
         #endregion
     }
 }

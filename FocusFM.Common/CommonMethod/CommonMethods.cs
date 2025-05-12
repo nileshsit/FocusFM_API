@@ -106,48 +106,40 @@ namespace FocusFM.Common.CommonMethod
             return EncryptedHash + " || " + EncryptedSalt;
         }
 
-        public static async Task<string> UploadImage(IFormFile userProfile, string Imagepath)
+        public static async Task<string> UploadFile(IFormFile file, string destinationPath, bool returnFullPath = false, bool includeOriginalName = false)
         {
             Guid guidFile = Guid.NewGuid();
-            string FileName;
-            string BasePath;
-            string path;
-            string Photo = string.Empty;
-            FileName = guidFile + Path.GetExtension(userProfile.FileName);
-            BasePath = Path.Combine(Directory.GetCurrentDirectory(), Imagepath);
-            if (!Directory.Exists(BasePath))
+            string fileName = includeOriginalName
+                ? Path.GetFileNameWithoutExtension(file.FileName) + "_" + guidFile + Path.GetExtension(file.FileName)
+                : guidFile + Path.GetExtension(file.FileName);
+
+            string basePath = Path.Combine(Directory.GetCurrentDirectory(), destinationPath);
+
+            if (!Directory.Exists(basePath))
             {
-                Directory.CreateDirectory(BasePath);
+                Directory.CreateDirectory(basePath);
             }
-            path = Path.Combine(BasePath, FileName);
-            using (FileStream stream = new FileStream(path, FileMode.Create))
+
+            string fullPath = Path.Combine(basePath, fileName);
+
+            using (FileStream stream = new FileStream(fullPath, FileMode.Create))
             {
-                await userProfile.CopyToAsync(stream);
+                await file.CopyToAsync(stream);
             }
-            Photo = FileName;
-            return Photo;
+
+            return returnFullPath ? fullPath : fileName;
         }
-        public static async Task<string> UploadDocument(IFormFile userDocument, string Imagepath)
+
+        public static Task<string> UploadImage(IFormFile userProfile, string imagePath)
         {
-            Guid guidFile = Guid.NewGuid();
-            string FileName;
-            string BasePath;
-            string path;
-            string document = string.Empty;
-            FileName = userDocument.FileName.Split(".")[0] + "_" + guidFile + Path.GetExtension(userDocument.FileName);
-            BasePath = Path.Combine(Directory.GetCurrentDirectory(), Imagepath);
-            if (!Directory.Exists(BasePath))
-            {
-                Directory.CreateDirectory(BasePath);
-            }
-            path = Path.Combine(BasePath, FileName);
-            using (FileStream stream = new FileStream(path, FileMode.Create))
-            {
-                await userDocument.CopyToAsync(stream);
-            }
-            //document = FileName;
-            return path;
+            return UploadFile(userProfile, imagePath, returnFullPath: false, includeOriginalName: false);
         }
+
+        public static Task<string> UploadDocument(IFormFile userDocument, string imagePath)
+        {
+            return UploadFile(userDocument, imagePath, returnFullPath: true, includeOriginalName: true);
+        }
+
         public static string FormatNumber(decimal number)
         {
             return number % 1 == 0 ? number.ToString("0") : number.ToString("0.00");

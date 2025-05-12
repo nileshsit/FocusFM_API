@@ -17,11 +17,5 @@ namespace FocusFMAPI
             foreach (var type in types)
                 services.AddScoped(type.Key, type.Value);
         }
-
-        public static void ConfigureLoggerService(this IServiceCollection services) 
-        {
-            //services.AddSingleton<ILoggerManager, LoggerManager>();
-            //services.AddSingleton<IJWTAuthenticationService, JWTAuthenticationService>();
-        }
     }
 }

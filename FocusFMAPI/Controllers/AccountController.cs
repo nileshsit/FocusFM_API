@@ -423,12 +423,6 @@ namespace FocusFMAPI.Controllers
                 response.Success = false;
                 return response;
             }
-            //if (!CommonMethods.IsPasswordStrong(EncryptionDecryption.GetDecrypt(model.CreatePassword)))
-            //{
-            //    response.Message = ErrorMessages.StrongPassword;
-            //    response.Success = false;
-            //    return response;
-            //}
             #endregion
 
             string hashed = EncryptionDecryption.Hash(model.CreatePassword);

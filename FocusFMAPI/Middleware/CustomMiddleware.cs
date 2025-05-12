@@ -165,23 +165,16 @@ namespace FocusFMAPI.Middleware
         }
 
         #region Send Exeption Email
+       
         /// <summary>
         /// Send Exception Email
         /// </summary>
         public async Task<bool> SendExceptionEmail(Exception ex, HttpContext context, string requestBodyText)
         {
-            TokenModel userTokenData = null;
+            TokenModel userTokenData = GetUserTokenFromRequest();
 
-            var paramValues = JsonConvert.DeserializeObject(requestBodyText);
-            if (paramValues == null)
-            {
-                paramValues = ErrorMessages.NoParametersPassed;
-            }
-            string jwtToken = _httpContextAccessor.HttpContext.Request.Headers[HeaderNames.Authorization].ToString().Replace(JwtBearerDefaults.AuthenticationScheme + " ", "");
-            if (!string.IsNullOrEmpty(jwtToken))
-            {
-                userTokenData = _jwtAuthenticationService.GetUserTokenData(jwtToken);
-            }
+            var paramValues = JsonConvert.DeserializeObject(requestBodyText) ?? ErrorMessages.NoParametersPassed;
+
             EmailNotification.EmailSetting setting = new EmailSetting
             {
                 EmailEnableSsl = Convert.ToBoolean(_smtpSettings.EmailEnableSsl),
@@ -195,80 +188,68 @@ namespace FocusFMAPI.Middleware
             };
 
             string emailBody = string.Empty;
-            string BasePath = Path.Combine(Directory.GetCurrentDirectory(), Constants.ExceptionReportPath);
+            string basePath = Path.Combine(Directory.GetCurrentDirectory(), Constants.ExceptionReportPath);
             string path = _httpContextAccessor.HttpContext.Request.Scheme + "://" + _httpContextAccessor.HttpContext.Request.Host.Value;
 
-            if (!Directory.Exists(BasePath))
+            if (!Directory.Exists(basePath))
             {
-                Directory.CreateDirectory(BasePath);
+                Directory.CreateDirectory(basePath);
             }
-            bool isSuccess = false;
 
-            using (StreamReader reader = new StreamReader(Path.Combine(BasePath, Constants.ExceptionReport)))
+            using (StreamReader reader = new StreamReader(Path.Combine(basePath, Constants.ExceptionReport)))
             {
                 emailBody = reader.ReadToEnd();
             }
+
             emailBody = emailBody.Replace("##LogoURL##", path + "/" + _config["Path:Logo"]);
             emailBody = emailBody.Replace("##DateTime##", Utility.ConvertFromUTC(DateTime.UtcNow, "India Standard Time").ToString("dd/MM/yyyy hh:mm:ss tt"));
             emailBody = emailBody.Replace("##RequestedURL##", context.Request.GetDisplayUrl());
             emailBody = emailBody.Replace("##ExceptionMessage##", ex.Message);
             emailBody = emailBody.Replace("##RequestParams##", paramValues?.ToString());
-            emailBody = ex.InnerException != null ? emailBody.Replace("##InnerException##", ex.InnerException.ToString()) : emailBody.Replace("##InnerException##", string.Empty);
-            emailBody = userTokenData != null && userTokenData.UserId != null ? emailBody = emailBody.Replace("##UserId##", userTokenData.UserId.ToString()) : emailBody.Replace("##UserId##", string.Empty);
-            emailBody = userTokenData != null && userTokenData.FullName != null ? emailBody = emailBody.Replace("##UserName##", userTokenData.FullName.ToString()) : emailBody.Replace("##UserName##", string.Empty);
-            //emailBody = userTokenData != null && userTokenData. != null && userTokenData.LastName != null ? emailBody.Replace("##UserName##", userTokenData.FirstName + " " + userTokenData.LastName) : emailBody.Replace("##UserName##", string.Empty);
+            emailBody = ex.InnerException != null
+                ? emailBody.Replace("##InnerException##", ex.InnerException.ToString())
+                : emailBody.Replace("##InnerException##", string.Empty);
+            emailBody = userTokenData?.UserId != null
+                ? emailBody.Replace("##UserId##", userTokenData.UserId.ToString())
+                : emailBody.Replace("##UserId##", string.Empty);
+            emailBody = userTokenData?.FullName != null
+                ? emailBody.Replace("##UserName##", userTokenData.FullName.ToString())
+                : emailBody.Replace("##UserName##", string.Empty);
 
-            isSuccess = await Task.Run(() => SendMailMessage(_appSettings.ErrorSendToEmail, null, null, "Exception Log Alert !", emailBody, setting, null));
-            if (isSuccess)
-            {
-                return true;
-            }
-            else
-            {
-                return false;
-            }
+            bool isSuccess = await Task.Run(() => SendMailMessage(
+                _appSettings.ErrorSendToEmail,
+                null,
+                null,
+                "Exception Log Alert !",
+                emailBody,
+                setting,
+                null
+            ));
+
+            return isSuccess;
         }
+
         #endregion
 
         #region AddReqResLogsToLoggerFile
         /// <summary>
         /// Store ReqRes in Logger Exception file
         /// </summary>
-        private void AddRequestLogsToLoggerFile(HttpContext context, String requestBodyText, String responseBody)
+        private void AddRequestLogsToLoggerFile(HttpContext context, string requestBodyText, string responseBody)
         {
             var logger = NLog.Web.NLogBuilder.ConfigureNLog("NLog.config").GetCurrentClassLogger();
             try
             {
-                TokenModel userTokenData = null;
-                ParamValue paramValues = CommonMethods.GetKeyValues(_httpContextAccessor.HttpContext);
-                string jwtToken = _httpContextAccessor.HttpContext.Request.Headers[HeaderNames.Authorization].ToString().Replace(JwtBearerDefaults.AuthenticationScheme + " ", "");
-                if (!string.IsNullOrEmpty(jwtToken))
-                {
-                    userTokenData = _jwtAuthenticationService.GetUserTokenData(jwtToken);
-                }
-                string userFullName = userTokenData != null ? userTokenData.UserId + " ( " + userTokenData.FullName + " )" : "";
-                StringBuilder sb = new StringBuilder();
-
-                sb.Append(Environment.NewLine +
-                          Environment.NewLine + "--------------------- " + DateTime.Now.ToString("dd/MM/yyyy hh:mm:ss tt") + " ---------------------------" +
-                          Environment.NewLine + "User : " + userFullName +
-                          Environment.NewLine + "Requested URL: " + context.Request.Path.Value +
-                          Environment.NewLine + "Request Body: " + requestBodyText +
-                          Environment.NewLine + "Query String Params: " + paramValues.QueryStringValue +
-                          Environment.NewLine + "Response: " + responseBody +
-                          Environment.NewLine + "Status Code: " + context.Response.StatusCode +
-                          Environment.NewLine);
-                logger.Info(sb.ToString());
+                string log = FormatLogEntry(context, requestBodyText, responseBody);
+                logger.Info(log);
                 DeleteOldReqResLogFiles();
-
             }
             catch (Exception ex)
             {
-                logger.Error("Exception in AddRequestLogsToLoggerFile: ", ex.Message.ToString());
+                logger.Error("Exception in AddRequestLogsToLoggerFile: " + ex.Message);
             }
-
-
         }
+
         #endregion
 
         #region AddExceptionLogsToLoggerFile
@@ -277,29 +258,9 @@ namespace FocusFMAPI.Middleware
         /// </summary>
         private void AddExceptionLogsToLoggerFile(HttpContext context, Exception ex, string requestBody)
         {
-            TokenModel userTokenData = null;
             var logger = NLog.Web.NLogBuilder.ConfigureNLog("NLog.config").GetCurrentClassLogger();
-            ParamValue paramValues = CommonMethods.GetKeyValues(_httpContextAccessor.HttpContext);
-            string jwtToken = _httpContextAccessor.HttpContext.Request.Headers[HeaderNames.Authorization].ToString().Replace(JwtBearerDefaults.AuthenticationScheme + " ", "");
-            if (!string.IsNullOrEmpty(jwtToken))
-            {
-                userTokenData = _jwtAuthenticationService.GetUserTokenData(jwtToken);
-            }
-            string userFullName = userTokenData != null ? userTokenData.UserId + " ( " + userTokenData.FullName + " )" : "";
-            StringBuilder sb = new StringBuilder();
-
-
-            sb.Append(Environment.NewLine +
-                      Environment.NewLine + "--------------------- " + DateTime.Now.ToString("dd/MM/yyyy hh:mm:ss tt") + " ---------------------------" +
-                      Environment.NewLine + "User : " + userFullName +
-                      Environment.NewLine + "Requested URL: " + context.Request.Path.Value +
-                      Environment.NewLine + "Request Params: " + requestBody +
-                      Environment.NewLine + "Query String Params: " + paramValues.QueryStringValue +
-                      Environment.NewLine + "Status Code: " + context.Response.StatusCode +
-                      Environment.NewLine + "Exception: " + ex.Message +
-                      Environment.NewLine + "Exception: " + ex.InnerException +
-                      Environment.NewLine);
-            logger.Error(sb.ToString());
+            string log = FormatLogEntry(context, requestBody, null, ex);
+            logger.Error(log);
             DeleteOldExceptionLogFiles();
         }
 
@@ -343,6 +304,48 @@ namespace FocusFMAPI.Middleware
             }
         }
         #endregion
+
+        private TokenModel GetUserTokenFromRequest()
+        {
+            string jwtToken = _httpContextAccessor.HttpContext.Request.Headers[HeaderNames.Authorization]
+                .ToString().Replace(JwtBearerDefaults.AuthenticationScheme + " ", "");
+
+            if (!string.IsNullOrEmpty(jwtToken))
+            {
+                return _jwtAuthenticationService.GetUserTokenData(jwtToken);
+            }
+
+            return null;
+        }
+
+        private string FormatLogEntry(HttpContext context, string requestBody, string responseBody = null, Exception ex = null)
+        {
+            TokenModel userTokenData = GetUserTokenFromRequest();
+            ParamValue paramValues = CommonMethods.GetKeyValues(_httpContextAccessor.HttpContext);
+            string userFullName = userTokenData != null ? userTokenData.UserId + " ( " + userTokenData.FullName + " )" : "";
+
+            StringBuilder sb = new StringBuilder();
+            sb.Append(Environment.NewLine);
+            sb.Append(Environment.NewLine + "--------------------- " + DateTime.Now.ToString("dd/MM/yyyy hh:mm:ss tt") + " ---------------------------");
+            sb.Append(Environment.NewLine + "User : " + userFullName);
+            sb.Append(Environment.NewLine + "Requested URL: " + context.Request.Path.Value);
+            sb.Append(Environment.NewLine + "Request Params: " + requestBody);
+            sb.Append(Environment.NewLine + "Query String Params: " + paramValues.QueryStringValue);
+            sb.Append(Environment.NewLine + "Status Code: " + context.Response.StatusCode);
+
+            if (!string.IsNullOrEmpty(responseBody))
+            {
+                sb.Append(Environment.NewLine + "Response: " + responseBody);
+            }
+
+            if (ex != null)
+            {
+                sb.Append(Environment.NewLine + "Exception: " + ex.Message);
+                sb.Append(Environment.NewLine + "Inner Exception: " + ex.InnerException?.ToString());
+            }
+
+            return sb.ToString();
+        }
 
     }
 }

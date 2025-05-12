@@ -1,4 +1,3 @@
-using System.Text;
 using FocusFM.Model.Config;
 using FocusFM.Model.Settings;
 using FocusFM.Service.JWTAuthentication;
@@ -8,6 +7,7 @@ using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.Extensions.FileProviders;
 using Microsoft.IdentityModel.Tokens;
 using Microsoft.OpenApi.Models;
+using System.Text;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -101,7 +101,7 @@ app.UseStaticFiles(new StaticFileOptions
 {
     FileProvider = new PhysicalFileProvider(
                   Path.Combine(System.IO.Directory.GetCurrentDirectory(), builder.Configuration["AppSettings:ProviderTemplateFilePath"])),
-    RequestPath = "/"+ builder.Configuration["AppSettings:ProviderTemplateFilePath"]
+    RequestPath = "/" + builder.Configuration["AppSettings:ProviderTemplateFilePath"]
 });
 app.UseDirectoryBrowser(new DirectoryBrowserOptions
 {

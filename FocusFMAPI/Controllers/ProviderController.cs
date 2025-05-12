@@ -1,20 +1,14 @@
-﻿using System.Configuration;
-using System.Globalization;
-using System.IdentityModel.Tokens.Jwt;
-using FocusFM.Common.CommonMethod;
+﻿using FocusFM.Common.CommonMethod;
 using FocusFM.Common.Enum;
 using FocusFM.Common.Helpers;
 using FocusFM.Model.CommonPagination;
 using FocusFM.Model.Providers;
-using FocusFM.Model.Token;
 using FocusFM.Service.JWTAuthentication;
 using FocusFM.Service.Providers;
-using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Authorization;
-using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
-using Microsoft.Net.Http.Headers;
 using Newtonsoft.Json;
+using System.IdentityModel.Tokens.Jwt;
 
 namespace FocusFMAPI.Controllers
 {
@@ -60,8 +54,8 @@ namespace FocusFMAPI.Controllers
                     return response;
                 }
             }
-            long UserId=0;
-            string fileName=null;
+            long UserId = 0;
+            string fileName = null;
             if (Request.Headers.TryGetValue("Authorization", out var authHeader))
             {
                 // Parse the JWT token
@@ -76,7 +70,7 @@ namespace FocusFMAPI.Controllers
             }
             if (file != null)
             {
-                fileName= await CommonMethods.UploadDocument(file, _config["AppSettings:ProviderTemplateFilePath"]+"/" + model.ProviderName + "/");
+                fileName = await CommonMethods.UploadDocument(file, _config["AppSettings:ProviderTemplateFilePath"] + "/" + model.ProviderName + "/");
             }
             var result = await _ProviderService.SaveProvider(model, UserId, fileName);
             var issend = false;
@@ -123,7 +117,7 @@ namespace FocusFMAPI.Controllers
 
                     // Example: Replace part of the path or add prefix
                     record.ProviderTemplate = originalPath.Replace(Directory.GetCurrentDirectory(), _config["AppSettings:APIURL"]);
-                    record.ProviderTemplate = record.ProviderTemplate.Replace("\\","/");
+                    record.ProviderTemplate = record.ProviderTemplate.Replace("\\", "/");
                 }
             }
             if (result != null)
