@@ -44,7 +44,6 @@ jobs:
           else
             echo "All controller files contain <summary> comments."
           fi
-
       # Step 3: Check API Route Naming Pattern and Uniqueness
       - name: Check API Route Naming Pattern and Uniqueness
         run: |
@@ -68,10 +67,8 @@ jobs:
               echo "$invalid_routes"
               has_errors=1
             fi
-
             # 2. Check if the controller has a valid main route
             first_route=$(grep -m 1 '\[Route("' "$file" || true)
-
             if [[ "$first_route" =~ \[Route\(\"api/[a-z-]+\"\)\] ]]; then
               echo "Valid main route found --> $first_route"
             else
