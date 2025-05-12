@@ -35,6 +35,13 @@
         public const string DeleteUser = "SP_DeleteUser";
         #endregion
 
+        #region Provider
+        public const string SaveProvider = "SP_SaveProvider";
+        public const string GetProviderList = "SP_GetProviderList";
+        public const string ActiveInActiveProvider = "SP_ActiveInActiveProvider";
+        public const string DeleteProvider = "SP_DeleteProvider";
+        #endregion
+
 
     }
 }
