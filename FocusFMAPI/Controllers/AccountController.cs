@@ -1,19 +1,19 @@
 ﻿
+using FocusFM.Common.CommonMethod;
+using FocusFM.Common.EmailNotification;
+using FocusFM.Common.Helpers;
+using FocusFM.Model.Login;
+using FocusFM.Model.Settings;
+using FocusFM.Model.Token;
+using FocusFM.Service.Account;
+using FocusFM.Service.JWTAuthentication;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Options;
 using Microsoft.Net.Http.Headers;
 using System.Web;
-using FocusFM.Service.Account;
-using FocusFM.Model.Settings;
-using FocusFM.Service.JWTAuthentication;
-using FocusFM.Common.Helpers;
-using FocusFM.Model.Login;
-using FocusFM.Model.Token;
-using FocusFM.Common.EmailNotification;
 using static FocusFM.Common.EmailNotification.EmailNotification;
-using FocusFM.Common.CommonMethod;
 
 namespace FocusFMAPI.Controllers
 {
@@ -26,7 +26,6 @@ namespace FocusFMAPI.Controllers
         private IAccountService _accountService;
         private readonly AppSettings _appSettings;
         private readonly SMTPSettings _smtpSettings;
-        private readonly IWebHostEnvironment _webHostEnvironment;
         private readonly IHttpContextAccessor _httpContextAccessor;
         private readonly IJWTAuthenticationService _jwtAuthenticationService;
         private readonly Microsoft.AspNetCore.Hosting.IHostingEnvironment _hostingEnvironment;
@@ -50,7 +49,6 @@ namespace FocusFMAPI.Controllers
             _appSettings = appSettings.Value;
             _smtpSettings = smtpSettings.Value;
             _hostingEnvironment = hostingEnvironment;
-            _webHostEnvironment = webHostEnvironment;
             _httpContextAccessor = httpContextAccessor;
             _jwtAuthenticationService = jwtAuthenticationService;
         }

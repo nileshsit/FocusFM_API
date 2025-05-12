@@ -1,6 +1,4 @@
-﻿
-
-using FocusFM.Model.AdminUser;
+﻿using FocusFM.Model.AdminUser;
 using FocusFM.Model.CommonPagination;
 
 namespace FocusFM.Data.DBRepository.AdminUser

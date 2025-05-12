@@ -1,11 +1,11 @@
-﻿using System.Web;
-using System.Text.RegularExpressions;
-using Newtonsoft.Json;
-using Newtonsoft.Json.Linq;
+﻿using FocusFM.Common.Helpers;
+using FocusFM.Model.ReqResponse;
 using Microsoft.AspNetCore.Http;
 using Microsoft.Extensions.Primitives;
-using FocusFM.Common.Helpers;
-using FocusFM.Model.ReqResponse;
+using Newtonsoft.Json;
+using Newtonsoft.Json.Linq;
+using System.Text.RegularExpressions;
+using System.Web;
 
 namespace FocusFM.Common.CommonMethod
 {
@@ -103,7 +103,7 @@ namespace FocusFM.Common.CommonMethod
             string Hash = EncryptionDecryption.GetDecrypt(EncryptedHash);
             string Salt = EncryptionDecryption.GetDecrypt(EncryptedSalt);
 
-            return  EncryptedHash +" || " + EncryptedSalt;
+            return EncryptedHash + " || " + EncryptedSalt;
         }
 
         public static async Task<string> UploadImage(IFormFile userProfile, string Imagepath)
