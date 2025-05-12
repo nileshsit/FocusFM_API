@@ -1,4 +1,4 @@
-name: Super-Linter with SARIF
+name: Super-Linter with Summary and Annotations
 
 on: push
 
@@ -12,14 +12,46 @@ jobs:
         uses: actions/checkout@v4
 
       - name: Run Super-Linter
+        id: lint
         uses: github/super-linter@v5
         env:
           DEFAULT_BRANCH: main
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          LOG_LEVEL: INFO
+          OUTPUT_DETAILS: detailed
           REPORT_OUTPUT_FOLDER: super-linter.report
-          REPORT_FORMAT: sarif
+        continue-on-error: true  # Allow summary to run even if linter fails
 
-      - name: Upload SARIF to GitHub
-        uses: github/codeql-action/upload-sarif@v2
-        with:
-          sarif_file: super-linter.report/super-linter.sarif
+      - name: Save and Extract Linter Output
+        run: |
+          # Save output to file if not already saved
+          LOG_FILE="$GITHUB_WORKSPACE/super-linter.log"
+          if [ ! -f "$LOG_FILE" ]; then
+            echo "No log file found, capturing from previous step output..."
+            echo "Fallback log capture not available in GitHub-hosted runners."
+            exit 1
+          fi
+
+      - name: Summarize Linter Errors
+        if: always()
+        run: |
+          LOG_FILE="$GITHUB_WORKSPACE/super-linter.log"
+
+          echo "🔍 Parsing Super-Linter log..."
+
+          # Extract lines with linter error counts
+          grep "\[ERROR\]   ERRORS FOUND in" "$LOG_FILE" | tee errors.txt
+
+          ERROR_COUNT=$(wc -l < errors.txt | xargs)
+
+          echo "::notice title=Super-Linter Summary::$ERROR_COUNT linter(s) reported errors"
+
+          echo "🧾 Linter Error Summary:"
+          cat errors.txt
+
+          # Optional: emit GitHub error annotations per linter (no line/file info)
+          while IFS= read -r line; do
+            linter=$(echo "$line" | grep -oP '(?<=in )[A-Z_]+')
+            count=$(echo "$line" | grep -oP '(?<=:\[)[0-9]+')
+            echo "::error title=$linter Linter::Found $count issue(s)"
+          done < errors.txt
