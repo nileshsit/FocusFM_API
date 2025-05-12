@@ -1,16 +1,11 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Data;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using Dapper;
+﻿using Dapper;
 using FocusFM.Common.Helpers;
 using FocusFM.Model.CommonPagination;
 using FocusFM.Model.Config;
 using FocusFM.Model.Providers;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.Options;
+using System.Data;
 
 namespace FocusFM.Data.DBRepository.Providers
 {
@@ -32,7 +27,7 @@ namespace FocusFM.Data.DBRepository.Providers
         #endregion
 
         #region Methods
-        public async Task<int> SaveProvider(ProviderRequestModel model, long CurrentProviderId,string? fileName)
+        public async Task<int> SaveProvider(ProviderRequestModel model, long CurrentProviderId, string? fileName)
         {
             var param = new DynamicParameters();
             param.Add("@ProviderId", model.ProviderId);

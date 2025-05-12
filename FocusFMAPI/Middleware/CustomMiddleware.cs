@@ -165,7 +165,7 @@ namespace FocusFMAPI.Middleware
         }
 
         #region Send Exeption Email
-       
+
         /// <summary>
         /// Send Exception Email
         /// </summary>
