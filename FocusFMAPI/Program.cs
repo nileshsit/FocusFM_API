@@ -97,30 +97,7 @@ app.UseSwaggerUI();
 
 app.UseMiddleware<CustomMiddleware>();
 app.UseCors("AllRequests");
-app.UseStaticFiles(new StaticFileOptions
-{
-    FileProvider = new PhysicalFileProvider(
-                  Path.Combine(System.IO.Directory.GetCurrentDirectory(), builder.Configuration["FileConfiguration:ProviderTemplateFilePath"])),
-    RequestPath = "/" + builder.Configuration["FileConfiguration:ProviderTemplateFilePath"]
-});
-app.UseStaticFiles(new StaticFileOptions
-{
-    FileProvider = new PhysicalFileProvider(
-                  Path.Combine(System.IO.Directory.GetCurrentDirectory(), builder.Configuration["FileConfiguration:UserProfileFilePath"])),
-    RequestPath = "/" + builder.Configuration["FileConfiguration:UserProfileFilePath"]
-});
-app.UseDirectoryBrowser(new DirectoryBrowserOptions
-{
-    FileProvider = new PhysicalFileProvider(
-                    Path.Combine(System.IO.Directory.GetCurrentDirectory(), builder.Configuration["FileConfiguration:ProviderTemplateFilePath"])),
-    RequestPath = "/" + builder.Configuration["FileConfiguration:ProviderTemplateFilePath"]
-});
-app.UseDirectoryBrowser(new DirectoryBrowserOptions
-{
-    FileProvider = new PhysicalFileProvider(
-                    Path.Combine(System.IO.Directory.GetCurrentDirectory(), builder.Configuration["FileConfiguration:UserProfileFilePath"])),
-    RequestPath = "/" + builder.Configuration["FileConfiguration:UserProfileFilePath"]
-});
+app.UseStaticFiles();
 app.UseHttpsRedirection();
 
 app.UseAuthorization();
