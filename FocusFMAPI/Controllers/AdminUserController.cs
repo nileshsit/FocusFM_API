@@ -59,8 +59,9 @@ namespace FocusFMAPI.Controllers
         /// <param name="UserModel"></param>
         /// <returns></returns>
         [HttpPost("save")]
-        public async Task<BaseApiResponse> SaveUser([FromForm] AdminUserRequestModel model,IFormFile? file)
+        public async Task<BaseApiResponse> SaveUser([FromForm] AdminUserRequestModel model)
         {
+            IFormFile file = model.File;
             BaseApiResponse response = new BaseApiResponse();
 
             model.FirstName = model.FirstName.Trim();

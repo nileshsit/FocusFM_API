@@ -1,4 +1,5 @@
-﻿using System.ComponentModel.DataAnnotations;
+﻿using Microsoft.AspNetCore.Http;
+using System.ComponentModel.DataAnnotations;
 
 namespace FocusFM.Model.AdminUser
 {
@@ -25,5 +26,6 @@ namespace FocusFM.Model.AdminUser
         [Required(ErrorMessage = "PinCode is required.")]
         [StringLength(6, ErrorMessage = "PinCode must be at least 6 characters long.", MinimumLength = 4)]
         public string PinCode { get; set; }
+        public IFormFile? File { get; set; }
     }
 }
