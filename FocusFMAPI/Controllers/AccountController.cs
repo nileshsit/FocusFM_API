@@ -79,60 +79,59 @@ namespace FocusFMAPI.Controllers
                     bool isPasswordMatched = EncryptionDecryption.Verify(model.Password, Hash, Salt);
                     if (isPasswordMatched)
                     {
-                        EmailNotification.EmailSetting setting = new EmailSetting
-                        {
-                            EmailEnableSsl = Convert.ToBoolean(_smtpSettings.EmailEnableSsl),
-                            EmailHostName = _smtpSettings.EmailHostName,
-                            EmailPassword = _smtpSettings.EmailPassword,
-                            EmailAppPassword = _smtpSettings.EmailAppPassword,
-                            EmailPort = Convert.ToInt32(_smtpSettings.EmailPort),
-                            FromEmail = _smtpSettings.FromEmail,
-                            FromName = _smtpSettings.FromName,
-                            EmailUsername = _smtpSettings.EmailUsername,
-                        };
+                        //EmailNotification.EmailSetting setting = new EmailSetting
+                        //{
+                        //    EmailEnableSsl = Convert.ToBoolean(_smtpSettings.EmailEnableSsl),
+                        //    EmailHostName = _smtpSettings.EmailHostName,
+                        //    EmailPassword = _smtpSettings.EmailPassword,
+                        //    EmailAppPassword = _smtpSettings.EmailAppPassword,
+                        //    EmailPort = Convert.ToInt32(_smtpSettings.EmailPort),
+                        //    FromEmail = _smtpSettings.FromEmail,
+                        //    FromName = _smtpSettings.FromName,
+                        //    EmailUsername = _smtpSettings.EmailUsername,
+                        //};
 
-                        string RandomNumer = CommonMethods.GenerateNewRandom();
-                        int OtpRandom = Convert.ToInt32(RandomNumer);
-                        string emailBody = string.Empty;
-                        string BasePath = Path.Combine(Directory.GetCurrentDirectory(), Constants.ExceptionReportPath);
-                        if (!Directory.Exists(BasePath))
-                        {
-                            Directory.CreateDirectory(BasePath);
-                        }
-                        bool isSuccess = false;
-                        using (StreamReader reader = new StreamReader(Path.Combine(BasePath, Constants.LoginVerificationEmailtem)))
-                        {
-                            emailBody = reader.ReadToEnd();
-                        }
-                        var path = _httpContextAccessor.HttpContext.Request.Scheme + "://" + HttpContext.Request.Host.Value;
-                        TokenModel tokenModel = new TokenModel();
-                        string jwtToken = _httpContextAccessor.HttpContext.Request.Headers[HeaderNames.Authorization].ToString().Replace(JwtBearerDefaults.AuthenticationScheme + " ", "");
-                        if (!string.IsNullOrEmpty(jwtToken))
-                        {
-                            tokenModel = _jwtAuthenticationService.GetUserTokenData(jwtToken);
-                        }
-                        var logo=path + "/" + _config["FileConfiguration:LogoPath"];
-                        emailBody = emailBody.Replace("##LogoURL##",logo );
-                        emailBody = emailBody.Replace("##BrandName##", "Focus FM");
-                        emailBody = emailBody.Replace("##Password##", RandomNumer);
-                        emailBody = emailBody.Replace("##currentYear##", DateTime.Now.Year.ToString());
-                        isSuccess = await Task.Run(() => SendMailMessage(model.EmailId, null, null, "Login OTP", emailBody, setting, null));
-                        if (res.AdminUserId != 0) {
-                            int issaveopt = await _accountService.SaveOTP(res.AdminUserId, OtpRandom, model.EmailId, true);
-                            if (isSuccess == true && issaveopt == 1)
-                            {
-                                response.Message = ErrorMessages.MailSuccess;
-                                response.Success = true;
-                            }
-                            else
-                            {
-                                response.Message = ErrorMessages.MailError;
-                                response.Success = false;
-                            }
-                        }
-                        //model.Password = res.Password;
-                        //model.IsAdmin = true;
-                        //
+                        //string RandomNumer = CommonMethods.GenerateNewRandom();
+                        //int OtpRandom = Convert.ToInt32(RandomNumer);
+                        //string emailBody = string.Empty;
+                        //string BasePath = Path.Combine(Directory.GetCurrentDirectory(), Constants.ExceptionReportPath);
+                        //if (!Directory.Exists(BasePath))
+                        //{
+                        //    Directory.CreateDirectory(BasePath);
+                        //}
+                        //bool isSuccess = false;
+                        //using (StreamReader reader = new StreamReader(Path.Combine(BasePath, Constants.LoginVerificationEmailtem)))
+                        //{
+                        //    emailBody = reader.ReadToEnd();
+                        //}
+                        //var path = _httpContextAccessor.HttpContext.Request.Scheme + "://" + HttpContext.Request.Host.Value;
+                        //TokenModel tokenModel = new TokenModel();
+                        //string jwtToken = _httpContextAccessor.HttpContext.Request.Headers[HeaderNames.Authorization].ToString().Replace(JwtBearerDefaults.AuthenticationScheme + " ", "");
+                        //if (!string.IsNullOrEmpty(jwtToken))
+                        //{
+                        //    tokenModel = _jwtAuthenticationService.GetUserTokenData(jwtToken);
+                        //}
+                        //var logo=path + "/" + _config["FileConfiguration:LogoPath"];
+                        //emailBody = emailBody.Replace("##LogoURL##",logo );
+                        //emailBody = emailBody.Replace("##BrandName##", "Focus FM");
+                        //emailBody = emailBody.Replace("##Password##", RandomNumer);
+                        //emailBody = emailBody.Replace("##currentYear##", DateTime.Now.Year.ToString());
+                        //isSuccess = await Task.Run(() => SendMailMessage(model.EmailId, null, null, "Login OTP", emailBody, setting, null));
+                        //if (res.AdminUserId != 0) {
+                        //    int issaveopt = await _accountService.SaveOTP(res.AdminUserId, OtpRandom, model.EmailId, true);
+                        //    if (isSuccess == true && issaveopt == 1)
+                        //    {
+                        //        response.Message = ErrorMessages.MailSuccess;
+                        //        response.Success = true;
+                        //    }
+                        //    else
+                        //    {
+                        //        response.Message = ErrorMessages.MailError;
+                        //        response.Success = false;
+                        //    }
+                        //}
+                        response.Success = true;
+                        response.Message = ErrorMessages.LoginSuccess;
                     }
                     else
                     {
