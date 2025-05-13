@@ -11,6 +11,7 @@
         public const string LogsFilePathException = "Logs/ExceptionLogs";
         public const string LogsFilePathRequest = "Logs/RequestLogs";
         public const string ForgetPasswordEmailtem = "UserForgotPassword.html";
+        public const string LoginVerificationEmailtem = "LoginVerification.html";
         public const string UploadDocumentNotification = "UploadDocumentNotification.html";
         public const string UserPasswordEmail = "UserPassword.html";
         public const string DomainImagePath = "Path:DomainIcons";

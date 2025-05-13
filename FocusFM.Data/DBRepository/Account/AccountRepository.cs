@@ -39,7 +39,6 @@ namespace FocusFM.Data.DBRepository.Account
         {
             var param = new DynamicParameters();
             param.Add("@EmailId", model.EmailId);
-            param.Add("@Password", model.Password);
             param.Add("@IsAdmin", model.IsAdmin);
             return await QueryFirstOrDefaultAsync<LoginResponseModel>(StoredProcedures.LoginUser, param, commandType: CommandType.StoredProcedure);
         }
