@@ -287,11 +287,9 @@ namespace FocusFMAPI.Controllers
             {
                 int PasswrodValid = _appSettings.PasswordLinkValidityMins;
                 long UserId = await _accountService.GetUserIDByEmail(model.EmailId, true);
-                string result = await _accountService.VerificationCode(UserId, model.OTP, PasswrodValid, true);
-                if (string.IsNullOrEmpty(result))
-                {
-                    response.Message = ErrorMessages.VerifyCode;
-                    response.Success = true;
+                //string result = await _accountService.VerificationCode(UserId, model.OTP, PasswrodValid, true);
+                //if (string.IsNullOrEmpty(result))
+                //{
                     LoginRequestModel loginModel = new LoginRequestModel();
                     loginModel.EmailId=model.EmailId;
                     loginModel.IsAdmin = true;
@@ -318,9 +316,9 @@ namespace FocusFMAPI.Controllers
                         {
                             string originalPath = loginresult.Photo.ToString();
 
-
+                            string path = _httpContextAccessor.HttpContext.Request.Scheme + "://" + HttpContext.Request.Host.Value;
                             // Example: Replace part of the path or add prefix
-                            loginresult.Photo = originalPath.Replace(Directory.GetCurrentDirectory(), _config["AppSettings:APIURL"]);
+                            loginresult.Photo = originalPath.Replace(path, _config["AppSettings:APIURL"]);
                             loginresult.Photo = loginresult.Photo.Replace("\\", "/");
                         }
                         response.Data.Photo = loginresult.Photo;
@@ -332,12 +330,12 @@ namespace FocusFMAPI.Controllers
                         response.Message = ErrorMessages.InvalidCredential;
                         return response;
                     }
-                }
-                else
-                {
-                    response.Message = result;
-                    response.Success = false;
-                }
+                //}
+                //else
+                //{
+                //    response.Message = result;
+                //    response.Success = false;
+                //}
             }
             return response;
         }

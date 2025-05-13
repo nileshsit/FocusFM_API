@@ -119,7 +119,8 @@ namespace FocusFMAPI.Controllers
                     return response;
                 }
 
-                fileName = await CommonMethods.UploadDocument(file, _config["FileConfiguration:UserProfileFilePath"] + "/" + model.FirstName+"_"+model.LastName + "/");
+                var path = _httpContextAccessor.HttpContext.Request.Scheme + "://" + HttpContext.Request.Host.Value;
+                fileName = await CommonMethods.UploadDocument(file, path+"/"+_config["FileConfiguration:UserProfileFilePath"] + "/" + model.FirstName+"_"+model.LastName + "/");
             }
             var result = await _userService.SaveUser(model, tokenModel.UserId, password, passSalt,fileName);
             var issend = false;
@@ -234,9 +235,9 @@ namespace FocusFMAPI.Controllers
                 {
                     string originalPath = record.Photo.ToString();
 
-
+                    string path = _httpContextAccessor.HttpContext.Request.Scheme + "://" + HttpContext.Request.Host.Value;
                     // Example: Replace part of the path or add prefix
-                    record.Photo = originalPath.Replace(Directory.GetCurrentDirectory(), _config["AppSettings:APIURL"]);
+                    record.Photo = originalPath.Replace(path, _config["AppSettings:APIURL"]);
                     record.Photo = record.Photo.Replace("\\", "/");
                 }
             }

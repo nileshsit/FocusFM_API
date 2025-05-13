@@ -210,7 +210,8 @@ namespace FocusFMAPI.Middleware
             {
                 emailBody = reader.ReadToEnd();
             }
-            emailBody = emailBody.Replace("##LogoURL##", path + "/" + _config["Path:Logo"]);
+            var logo=path + "/" + _config["FileConfiguration:LogoPath"];
+            emailBody = emailBody.Replace("##LogoURL##", logo);
             emailBody = emailBody.Replace("##DateTime##", Utility.ConvertFromUTC(DateTime.UtcNow, "India Standard Time").ToString("dd/MM/yyyy hh:mm:ss tt"));
             emailBody = emailBody.Replace("##RequestedURL##", context.Request.GetDisplayUrl());
             emailBody = emailBody.Replace("##ExceptionMessage##", ex.Message);

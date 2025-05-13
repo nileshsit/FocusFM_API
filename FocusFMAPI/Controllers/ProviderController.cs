@@ -95,7 +95,8 @@ namespace FocusFMAPI.Controllers
                     return response;
                 }
 
-                fileName = await CommonMethods.UploadDocument(file, _config["FileConfiguration:ProviderTemplateFilePath"] +"/" + model.ProviderName + "/");
+                var path = _httpContextAccessor.HttpContext.Request.Scheme + "://" + HttpContext.Request.Host.Value;
+                fileName = await CommonMethods.UploadDocument(file, path+"/"+_config["FileConfiguration:ProviderTemplateFilePath"] +"/" + model.ProviderName + "/");
             }
             var result = await _ProviderService.SaveProvider(model, UserId, fileName);
             var issend = false;
@@ -139,9 +140,10 @@ namespace FocusFMAPI.Controllers
                 {
                     string originalPath = record.ProviderTemplate.ToString();
 
+                    var path = _httpContextAccessor.HttpContext.Request.Scheme + "://" + HttpContext.Request.Host.Value;
 
                     // Example: Replace part of the path or add prefix
-                    record.ProviderTemplate = originalPath.Replace(Directory.GetCurrentDirectory(), _config["AppSettings:APIURL"]);
+                    record.ProviderTemplate = originalPath.Replace(path, _config["AppSettings:APIURL"]);
                     record.ProviderTemplate = record.ProviderTemplate.Replace("\\","/");
                 }
             }
