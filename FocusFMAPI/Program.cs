@@ -106,6 +106,12 @@ app.UseStaticFiles(new StaticFileOptions
 app.UseStaticFiles(new StaticFileOptions
 {
     FileProvider = new PhysicalFileProvider(
+                  Path.Combine(System.IO.Directory.GetCurrentDirectory(), "wwwroot")),
+    RequestPath = "/wwwroot"
+});
+app.UseStaticFiles(new StaticFileOptions
+{
+    FileProvider = new PhysicalFileProvider(
                   Path.Combine(System.IO.Directory.GetCurrentDirectory(), builder.Configuration["FileConfiguration:UserProfileFilePath"])),
     RequestPath = "/" + builder.Configuration["FileConfiguration:UserProfileFilePath"]
 });
@@ -121,6 +127,13 @@ app.UseDirectoryBrowser(new DirectoryBrowserOptions
                     Path.Combine(System.IO.Directory.GetCurrentDirectory(), builder.Configuration["FileConfiguration:UserProfileFilePath"])),
     RequestPath = "/" + builder.Configuration["FileConfiguration:UserProfileFilePath"]
 });
+app.UseDirectoryBrowser(new DirectoryBrowserOptions
+{
+    FileProvider = new PhysicalFileProvider(
+                    Path.Combine(System.IO.Directory.GetCurrentDirectory(), "wwwroot")),
+    RequestPath = "/wwwroot"
+});
+
 app.UseHttpsRedirection();
 
 app.UseAuthorization();

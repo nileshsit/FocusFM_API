@@ -111,7 +111,8 @@ namespace FocusFMAPI.Controllers
                         {
                             tokenModel = _jwtAuthenticationService.GetUserTokenData(jwtToken);
                         }
-                        emailBody = emailBody.Replace("##LogoURL##", path + "/" + _config["FileConfiguration:LogoPath"]);
+                        var logo=path + "/" + _config["FileConfiguration:LogoPath"];
+                        emailBody = emailBody.Replace("##LogoURL##",logo );
                         emailBody = emailBody.Replace("##BrandName##", "Focus FM");
                         emailBody = emailBody.Replace("##Password##", RandomNumer);
                         emailBody = emailBody.Replace("##currentYear##", DateTime.Now.Year.ToString());
