@@ -21,8 +21,8 @@
         public const string UpdateProfileSuccess = "Profile updated successfully.";
 
         // ForgetPassword
-        public const string ForgetPasswordSuccess = "Verification code sent successfully. Please check your inbox.";
-        public const string ForgetPasswordError = "An error occurred while sending the email! Please try again.";
+        public const string MailSuccess = "Verification code sent successfully. Please check your inbox.";
+        public const string MailError = "An error occurred while sending the email! Please try again.";
         public const string UserError = "You're not registered with us.";
 
         // ValidateResetPassword

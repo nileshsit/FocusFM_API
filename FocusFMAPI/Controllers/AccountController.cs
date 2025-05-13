@@ -14,6 +14,7 @@ using FocusFM.Model.Token;
 using FocusFM.Common.EmailNotification;
 using static FocusFM.Common.EmailNotification.EmailNotification;
 using FocusFM.Common.CommonMethod;
+using System;
 
 namespace FocusFMAPI.Controllers
 {
@@ -62,9 +63,9 @@ namespace FocusFMAPI.Controllers
         /// <returns></returns>
         [HttpPost]
         [Route("login")]
-        public async Task<ApiPostResponse<LoginResponseModel>> LoginUser([FromBody] LoginRequestModel model)
+        public async Task<BaseApiResponse> LoginUser([FromBody] LoginRequestModel model)
         {
-            ApiPostResponse<LoginResponseModel> response = new ApiPostResponse<LoginResponseModel>() { Data = new LoginResponseModel() };
+            BaseApiResponse response = new BaseApiResponse();
 
             var UserStatus = await _accountService.UserActiveInActive(model.EmailId, true);
             if (UserStatus == 1)
@@ -78,49 +79,59 @@ namespace FocusFMAPI.Controllers
                     bool isPasswordMatched = EncryptionDecryption.Verify(model.Password, Hash, Salt);
                     if (isPasswordMatched)
                     {
-                        model.Password = res.Password;
-                        model.IsAdmin = true;
-                        LoginResponseModel result = await _accountService.LoginUser(model);
-                        if (result != null && result.AdminUserId > 0)
+                        EmailNotification.EmailSetting setting = new EmailSetting
                         {
-                            TokenModel objTokenData = new TokenModel();
-                            objTokenData.EmailId = model.EmailId;
-                            objTokenData.UserId = result.AdminUserId != null ? result.AdminUserId : 0;
-                            objTokenData.FullName = result.FullName;
-                            objTokenData.IsAdmin = true;
-                            objTokenData.IsEaziBusinessPartner = true;
-                            AccessTokenModel objAccessTokenData = _jwtAuthenticationService.GenerateToken(objTokenData, _appSettings.JWT_Secret, _appSettings.JWT_Validity_Mins);
-                            result.JWTToken = objAccessTokenData.Token;
-                            await _accountService.UpdateLoginToken(objAccessTokenData.Token, objAccessTokenData.UserId, true);
-                            response.Message = ErrorMessages.LoginSuccess;
-                            response.Success = true;
-                            response.Data.JWTToken = result.JWTToken.ToString();
-                            response.Data.AdminUserId = result.AdminUserId;
-                            response.Data.FullName = result.FullName;
-                            response.Data.EmailId = result.EmailId;
-                            response.Data.IsFirstLogin = result.IsFirstLogin;
-                            response.Data.IsEaziBusinessPartner = true;
-                            string path = _hostingEnvironment.WebRootPath + _config["Data:UserProfilePhoto"] + result.Photo;
-                            if (System.IO.File.Exists(path))
-                            {
-                                string urlPath = _httpContextAccessor.HttpContext.Request.Scheme + "://" + HttpContext.Request.Host.Value;
+                            EmailEnableSsl = Convert.ToBoolean(_smtpSettings.EmailEnableSsl),
+                            EmailHostName = _smtpSettings.EmailHostName,
+                            EmailPassword = _smtpSettings.EmailPassword,
+                            EmailAppPassword = _smtpSettings.EmailAppPassword,
+                            EmailPort = Convert.ToInt32(_smtpSettings.EmailPort),
+                            FromEmail = _smtpSettings.FromEmail,
+                            FromName = _smtpSettings.FromName,
+                            EmailUsername = _smtpSettings.EmailUsername,
+                        };
 
-                                string imagePath = urlPath + _config["Data:UserProfilePhoto"] + result.Photo;
-                                result.Photo = imagePath;
+                        string RandomNumer = CommonMethods.GenerateNewRandom();
+                        int OtpRandom = Convert.ToInt32(RandomNumer);
+                        string emailBody = string.Empty;
+                        string BasePath = Path.Combine(Directory.GetCurrentDirectory(), Constants.ExceptionReportPath);
+                        if (!Directory.Exists(BasePath))
+                        {
+                            Directory.CreateDirectory(BasePath);
+                        }
+                        bool isSuccess = false;
+                        using (StreamReader reader = new StreamReader(Path.Combine(BasePath, Constants.LoginVerificationEmailtem)))
+                        {
+                            emailBody = reader.ReadToEnd();
+                        }
+                        var path = _httpContextAccessor.HttpContext.Request.Scheme + "://" + HttpContext.Request.Host.Value;
+                        TokenModel tokenModel = new TokenModel();
+                        string jwtToken = _httpContextAccessor.HttpContext.Request.Headers[HeaderNames.Authorization].ToString().Replace(JwtBearerDefaults.AuthenticationScheme + " ", "");
+                        if (!string.IsNullOrEmpty(jwtToken))
+                        {
+                            tokenModel = _jwtAuthenticationService.GetUserTokenData(jwtToken);
+                        }
+                        emailBody = emailBody.Replace("##LogoURL##", path + "/" + _config["FileConfiguration:LogoPath"]);
+                        emailBody = emailBody.Replace("##BrandName##", "Focus FM");
+                        emailBody = emailBody.Replace("##Password##", RandomNumer);
+                        emailBody = emailBody.Replace("##currentYear##", DateTime.Now.Year.ToString());
+                        isSuccess = await Task.Run(() => SendMailMessage(model.EmailId, null, null, "Login OTP", emailBody, setting, null));
+                        if (res.AdminUserId != 0) {
+                            int issaveopt = await _accountService.SaveOTP(res.AdminUserId, OtpRandom, model.EmailId, true);
+                            if (isSuccess == true && issaveopt == 1)
+                            {
+                                response.Message = ErrorMessages.MailSuccess;
+                                response.Success = true;
                             }
                             else
                             {
-                                result.Photo = string.Empty;
+                                response.Message = ErrorMessages.MailError;
+                                response.Success = false;
                             }
-                            response.Data.Photo = result.Photo;
-                            return response;
                         }
-                        else
-                        {
-                            response.Success = false;
-                            response.Message = ErrorMessages.InvalidCredential;
-                            return response;
-                        }
+                        //model.Password = res.Password;
+                        //model.IsAdmin = true;
+                        //
                     }
                     else
                     {
@@ -148,6 +159,7 @@ namespace FocusFMAPI.Controllers
                 response.Message = ErrorMessages.InvalidEmailId;
                 return response;
             }
+            return response;
         }
 
         /// <summary>
@@ -227,13 +239,13 @@ namespace FocusFMAPI.Controllers
                 emailBody = emailBody.Replace("##userName##", result.FullName.ToString());
                 if (result.IsEaziBusinessPartner == true)
                 {
-                    emailBody = emailBody.Replace("##LogoURL##", path + "/" + _config["Path:Logo"]);
-                    emailBody = emailBody.Replace("##BrandName##", "EAZI-BUSINESS");
+                    emailBody = emailBody.Replace("##LogoURL##", path+ "/" + _config["FileConfiguration:LogoPath"]);
+                    emailBody = emailBody.Replace("##BrandName##", "Focus FM");
                 }
                 else
                 {
-                    emailBody = emailBody.Replace("##LogoURL##", path + "/" + _config["Path:NonBrandLogo"]);
-                    emailBody = emailBody.Replace("##BrandName##", "Cost Calculator");
+                    emailBody = emailBody.Replace("##LogoURL##", path + "/" + _config["FileConfiguration:LogoPath"]);
+                    emailBody = emailBody.Replace("##BrandName##", "Focus FM");
                 }
                 emailBody = emailBody.Replace("##Password##", RandomNumer);
                 emailBody = emailBody.Replace("##currentYear##", DateTime.Now.Year.ToString());
@@ -243,12 +255,12 @@ namespace FocusFMAPI.Controllers
                 int issaveopt = await _accountService.SaveOTP(result.AdminUserId, OtpRandom, result.EmailId, true);
                 if (isSuccess == true && issaveopt == 1)
                 {
-                    response.Message = ErrorMessages.ForgetPasswordSuccess;
+                    response.Message = ErrorMessages.MailSuccess;
                     response.Success = true;
                 }
                 else
                 {
-                    response.Message = ErrorMessages.ForgetPasswordError;
+                    response.Message = ErrorMessages.MailError;
                     response.Success = false;
                 }
                 return response;
@@ -269,7 +281,7 @@ namespace FocusFMAPI.Controllers
         [HttpPost("verification-code")]
         public async Task<BaseApiResponse> verificationCode([FromBody] VerificationOTPRequestModel model)
         {
-            BaseApiResponse response = new BaseApiResponse();
+            ApiPostResponse<LoginResponseModel> response = new ApiPostResponse<LoginResponseModel>() { Data = new LoginResponseModel() }; ;
             if (ModelState.IsValid)
             {
                 int PasswrodValid = _appSettings.PasswordLinkValidityMins;
@@ -279,6 +291,46 @@ namespace FocusFMAPI.Controllers
                 {
                     response.Message = ErrorMessages.VerifyCode;
                     response.Success = true;
+                    LoginRequestModel loginModel = new LoginRequestModel();
+                    loginModel.EmailId=model.EmailId;
+                    loginModel.IsAdmin = true;
+                    LoginResponseModel loginresult = await _accountService.LoginUser(loginModel);
+                    if (loginresult != null && loginresult.AdminUserId > 0)
+                    {
+                        TokenModel objTokenData = new TokenModel();
+                        objTokenData.EmailId = model.EmailId;
+                        objTokenData.UserId = loginresult.AdminUserId != null ? loginresult.AdminUserId : 0;
+                        objTokenData.FullName = loginresult.FullName;
+                        objTokenData.IsAdmin = true;
+                        objTokenData.IsEaziBusinessPartner = true;
+                        AccessTokenModel objAccessTokenData = _jwtAuthenticationService.GenerateToken(objTokenData, _appSettings.JWT_Secret, _appSettings.JWT_Validity_Mins);
+                        loginresult.JWTToken = objAccessTokenData.Token;
+                        await _accountService.UpdateLoginToken(objAccessTokenData.Token, objAccessTokenData.UserId, true);
+                        response.Message = ErrorMessages.LoginSuccess;
+                        response.Success = true;
+                        response.Data.JWTToken = loginresult.JWTToken.ToString();
+                        response.Data.AdminUserId = loginresult.AdminUserId;
+                        response.Data.FullName = loginresult.FullName;
+                        response.Data.EmailId = loginresult.EmailId;
+                        response.Data.IsFirstLogin = loginresult.IsFirstLogin;
+                        if (loginresult.Photo != null)
+                        {
+                            string originalPath = loginresult.Photo.ToString();
+
+
+                            // Example: Replace part of the path or add prefix
+                            loginresult.Photo = originalPath.Replace(Directory.GetCurrentDirectory(), _config["AppSettings:APIURL"]);
+                            loginresult.Photo = loginresult.Photo.Replace("\\", "/");
+                        }
+                        response.Data.Photo = loginresult.Photo;
+                        return response;
+                    }
+                    else
+                    {
+                        response.Success = false;
+                        response.Message = ErrorMessages.InvalidCredential;
+                        return response;
+                    }
                 }
                 else
                 {

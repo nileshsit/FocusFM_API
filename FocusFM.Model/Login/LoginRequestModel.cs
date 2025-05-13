@@ -13,6 +13,7 @@ namespace FocusFM.Model.Login
 
     public class SaltResponseModel
     {
+        public long AdminUserId { get; set; }
         public string PasswordSalt { get; set; }
         public string Password { get; set; }
         public bool IsDeleted { get; set; }

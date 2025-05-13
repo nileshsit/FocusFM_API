@@ -2,18 +2,15 @@
 {
     public class LoginResponseModel
     {
-        public int AdminUserId { get; set; }
+        public long AdminUserId { get; set; }
         public string FullName { get; set; }
         public string EmailId { get; set; }
         public string JWTToken { get; set; }
-        public string CurrencySign { get; set; }
         public bool IsFirstLogin { get; set; }
         public bool IsAdmin { get; set; }
-        public long AdminRoleId { get; set; }
-        public long CompanyId { get; set; }
+        //public long CompanyId { get; set; }
         public string Photo { get; set; }
-        public bool? IsEaziBusinessPartner { get; set; }
-        public decimal? MarginInPer { get; set; }
+        //public decimal? MarginInPer { get; set; }
     }
 
     public class ForgetPasswordResponseModel
