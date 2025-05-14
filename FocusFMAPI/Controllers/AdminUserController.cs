@@ -166,12 +166,12 @@ namespace FocusFMAPI.Controllers
                     if (tokenModel.IsEaziBusinessPartner == true)
                     {
                         emailBody = emailBody.Replace("##LogoURL##", path + "/" + _config["Path:Logo"]);
-                        emailBody = emailBody.Replace("##BrandName##", "EAZI-BUSINESS");
+                        emailBody = emailBody.Replace("##BrandName##", "Focus FM");
                     }
                     else
                     {
                         emailBody = emailBody.Replace("##LogoURL##", path + "/" + _config["Path:NonBrandLogo"]);
-                        emailBody = emailBody.Replace("##BrandName##", "Cost Calculator");
+                        emailBody = emailBody.Replace("##BrandName##", "Focus FM");
                     }
                     emailBody = emailBody.Replace("##Password##", Generatepassword);
                     emailBody = emailBody.Replace("##currentYear##", DateTime.Now.Year.ToString());
