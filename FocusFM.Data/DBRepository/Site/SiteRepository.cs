@@ -42,7 +42,7 @@ namespace FocusFM.Data.DBRepository.Site
             param.Add("@City", model.City);
             param.Add("@Country", model.Country);
             param.Add("@PinCode", model.PinCode);
-            param.Add("@SiteImage", "");
+            param.Add("@SiteImage", fileName);
             param.Add("@CreatedBy", id);
             var result = await QueryFirstOrDefaultAsync<int>(StoredProcedures.SaveSite, param, commandType: CommandType.StoredProcedure);
             return result;
@@ -59,18 +59,20 @@ namespace FocusFM.Data.DBRepository.Site
             var data = await QueryAsync<SiteResponseModel>(StoredProcedures.GetSiteList, param, commandType: CommandType.StoredProcedure);
             return data.ToList();
         }
-        public async Task<int> DeleteSite(int SiteId)
+        public async Task<int> DeleteSite(long SiteId, long CurrentUserId)
         {
             var param = new DynamicParameters();
             param.Add("@SiteId", SiteId);
+            param.Add("@ModifiedBy", CurrentUserId);
             var result = await QueryFirstOrDefaultAsync<int>(StoredProcedures.DeleteSite, param, commandType: CommandType.StoredProcedure);
             return result;
         }
 
-        public async Task<int> ActiveInActiveSite(int SiteId)
+        public async Task<int> ActiveInActiveSite(long SiteId, long CurrentUserId)
         {
             var param = new DynamicParameters();
             param.Add("@SiteId", SiteId);
+            param.Add("@ModifiedBy", CurrentUserId);
             var result = await QueryFirstOrDefaultAsync<int>(StoredProcedures.ActiveInActiveSite, param, commandType: CommandType.StoredProcedure);
             return result;
         }

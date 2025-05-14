@@ -1,4 +1,5 @@
-﻿using FocusFM.Common.CommonMethod;
+﻿using System.IdentityModel.Tokens.Jwt;
+using FocusFM.Common.CommonMethod;
 using FocusFM.Common.EmailNotification;
 using FocusFM.Common.Enum;
 using FocusFM.Common.Helpers;
@@ -14,6 +15,7 @@ using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Options;
 using Microsoft.Net.Http.Headers;
+using Newtonsoft.Json;
 using static FocusFM.Common.EmailNotification.EmailNotification;
 
 namespace FocusFMAPI.Controllers
@@ -262,7 +264,19 @@ namespace FocusFMAPI.Controllers
         public async Task<BaseApiResponse> DeleteUser(long id)
         {
             BaseApiResponse response = new BaseApiResponse();
-            var result = await _userService.DeleteUser(id);
+            long UserId = 0;
+            if (Request.Headers.TryGetValue("Authorization", out var authHeader))
+            {
+                // Parse the JWT token
+                var token = authHeader.ToString().Substring("Bearer ".Length).Trim();
+                var handler = new JwtSecurityTokenHandler();
+                var jwtToken = handler.ReadJwtToken(token);
+
+                var j = JsonConvert.DeserializeObject<Dictionary<string, string>>(jwtToken.Claims.FirstOrDefault(c => c.Type == "unique_name").Value);
+
+                UserId = long.TryParse(j["UserId"], out var val) ? val : 0;
+            }
+            var result = await _userService.DeleteUser(id,UserId);
             if (result == 0)
             {
                 response.Message = ErrorMessages.DeleteUserSuccess;
@@ -285,7 +299,19 @@ namespace FocusFMAPI.Controllers
         public async Task<BaseApiResponse> InActiveUser(long id)
         {
             BaseApiResponse response = new BaseApiResponse();
-            var result = await _userService.InActiveUser(id);
+            long UserId = 0;
+            if (Request.Headers.TryGetValue("Authorization", out var authHeader))
+            {
+                // Parse the JWT token
+                var token = authHeader.ToString().Substring("Bearer ".Length).Trim();
+                var handler = new JwtSecurityTokenHandler();
+                var jwtToken = handler.ReadJwtToken(token);
+
+                var j = JsonConvert.DeserializeObject<Dictionary<string, string>>(jwtToken.Claims.FirstOrDefault(c => c.Type == "unique_name").Value);
+
+                UserId = long.TryParse(j["UserId"], out var val) ? val : 0;
+            }
+            var result = await _userService.InActiveUser(id,UserId);
             if (result == ActiveStatus.Inactive)
             {
                 response.Message = ErrorMessages.UserInactive;

@@ -54,18 +54,20 @@ namespace FocusFM.Data.DBRepository.Providers
             var data = await QueryAsync<ProviderResponseModel>(StoredProcedures.GetProviderList, param, commandType: CommandType.StoredProcedure);
             return data.ToList();
         }
-        public async Task<int> DeleteProvider(int ProviderId)
+        public async Task<int> DeleteProvider(int ProviderId, long CurrentUserId)
         {
             var param = new DynamicParameters();
             param.Add("@ProviderId", ProviderId);
+            param.Add("@ModifiedBy", CurrentUserId);
             var result = await QueryFirstOrDefaultAsync<int>(StoredProcedures.DeleteProvider, param, commandType: CommandType.StoredProcedure);
             return result;
         }
 
-        public async Task<int> ActiveInActiveProvider(int ProviderId)
+        public async Task<int> ActiveInActiveProvider(int ProviderId, long CurrentUserId)
         {
             var param = new DynamicParameters();
             param.Add("@ProviderId", ProviderId);
+            param.Add("@ModifiedBy", CurrentUserId);
             var result = await QueryFirstOrDefaultAsync<int>(StoredProcedures.ActiveInActiveProvider, param, commandType: CommandType.StoredProcedure);
             return result;
         }

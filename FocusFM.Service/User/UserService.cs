@@ -34,14 +34,14 @@ namespace FocusFM.Service.User
             return _repository.GetUserList(model);
         }
 
-        public Task<int> DeleteUser(long UserId)
+        public Task<int> DeleteUser(long UserId, long CurrentUserId)
         {
-            return _repository.DeleteUser(UserId);
+            return _repository.DeleteUser(UserId,CurrentUserId);
         }
 
-        public Task<int> ActiveInActiveUser(long UserId)
+        public Task<int> ActiveInActiveUser(long UserId, long CurrentUserId)
         {
-            return _repository.ActiveInActiveUser(UserId);
+            return _repository.ActiveInActiveUser(UserId,CurrentUserId);
         }
         #endregion
     }

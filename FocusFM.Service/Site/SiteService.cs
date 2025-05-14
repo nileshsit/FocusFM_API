@@ -34,14 +34,14 @@ namespace FocusFM.Service.Site
             return _repository.GetSiteList(model);
         }
 
-        public Task<int> DeleteSite(int SiteId)
+        public Task<int> DeleteSite(long SiteId, long CurrentUserId)
         {
-            return _repository.DeleteSite(SiteId);
+            return _repository.DeleteSite(SiteId,CurrentUserId);
         }
 
-        public Task<int> ActiveInActiveSite(int SiteId)
+        public Task<int> ActiveInActiveSite(long SiteId, long CurrentUserId)
         {
-            return _repository.ActiveInActiveSite(SiteId);
+            return _repository.ActiveInActiveSite(SiteId,CurrentUserId);
         }
         #endregion
     }

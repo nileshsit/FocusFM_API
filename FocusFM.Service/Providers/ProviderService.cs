@@ -34,14 +34,14 @@ namespace FocusFM.Service.Providers
             return _repository.GetProviderList(model);
         }
 
-        public Task<int> DeleteProvider(int ProviderId)
+        public Task<int> DeleteProvider(int ProviderId, long CurrentUserId)
         {
-            return _repository.DeleteProvider(ProviderId);
+            return _repository.DeleteProvider(ProviderId,CurrentUserId);
         }
 
-        public Task<int> ActiveInActiveProvider(int ProviderId)
+        public Task<int> ActiveInActiveProvider(int ProviderId, long CurrentUserId)
         {
-            return _repository.ActiveInActiveProvider(ProviderId);
+            return _repository.ActiveInActiveProvider(ProviderId,CurrentUserId);
         }
         #endregion
     }

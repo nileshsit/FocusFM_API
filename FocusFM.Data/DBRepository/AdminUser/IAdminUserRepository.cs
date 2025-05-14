@@ -9,7 +9,7 @@ namespace FocusFM.Data.DBRepository.AdminUser
         Task<List<AdminUserResponseModel>> GetUserListAdmin(CommonPaginationModel model);
         Task<List<AdminUserResponseModel>> GetUserById(long UserId);
         Task<string> GetUserByReceiveDocEmail();
-        Task<int> DeleteUser(long UserId);
-        Task<int> InActiveUser(long UserId);
+        Task<int> DeleteUser(long UserId, long CurrentUserId);
+        Task<int> InActiveUser(long UserId, long CurrentUserId);
     }
 }

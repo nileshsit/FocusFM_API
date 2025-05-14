@@ -12,7 +12,7 @@ namespace FocusFM.Data.DBRepository.Site
     {
         Task<List<SiteResponseModel>> GetSiteList(CommonPaginationModel model);
         Task<int> SaveSite(SiteRequestModel model, long CurrentUserId, string? fileName);
-        Task<int> DeleteSite(int SiteId);
-        Task<int> ActiveInActiveSite(int SiteId);
+        Task<int> DeleteSite(long SiteId, long CurrentUserId);
+        Task<int> ActiveInActiveSite(long SiteId, long CurrentUserId);
     }
 }

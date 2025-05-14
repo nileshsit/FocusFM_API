@@ -160,7 +160,19 @@ namespace FocusFMAPI.Controllers
         public async Task<BaseApiResponse> DeleteProvider(int id)
         {
             BaseApiResponse response = new BaseApiResponse();
-            var result = await _ProviderService.DeleteProvider(id);
+            long UserId = 0;
+            if (Request.Headers.TryGetValue("Authorization", out var authHeader))
+            {
+                // Parse the JWT token
+                var token = authHeader.ToString().Substring("Bearer ".Length).Trim();
+                var handler = new JwtSecurityTokenHandler();
+                var jwtToken = handler.ReadJwtToken(token);
+
+                var j = JsonConvert.DeserializeObject<Dictionary<string, string>>(jwtToken.Claims.FirstOrDefault(c => c.Type == "unique_name").Value);
+
+                UserId = long.TryParse(j["UserId"], out var val) ? val : 0;
+            }
+            var result = await _ProviderService.DeleteProvider(id,UserId);
             if (result == 0)
             {
                 response.Message = ErrorMessages.DeleteProviderSuccess;
@@ -178,7 +190,19 @@ namespace FocusFMAPI.Controllers
         public async Task<BaseApiResponse> ActiveInActiveProvider(int id)
         {
             BaseApiResponse response = new BaseApiResponse();
-            var result = await _ProviderService.ActiveInActiveProvider(id);
+            long UserId = 0;
+            if (Request.Headers.TryGetValue("Authorization", out var authHeader))
+            {
+                // Parse the JWT token
+                var token = authHeader.ToString().Substring("Bearer ".Length).Trim();
+                var handler = new JwtSecurityTokenHandler();
+                var jwtToken = handler.ReadJwtToken(token);
+
+                var j = JsonConvert.DeserializeObject<Dictionary<string, string>>(jwtToken.Claims.FirstOrDefault(c => c.Type == "unique_name").Value);
+
+                UserId = long.TryParse(j["UserId"], out var val) ? val : 0;
+            }
+            var result = await _ProviderService.ActiveInActiveProvider(id,UserId);
             if (result == ActiveStatus.Inactive)
             {
                 response.Message = ErrorMessages.ProviderInactive;

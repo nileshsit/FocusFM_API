@@ -61,18 +61,20 @@ namespace FocusFM.Data.DBRepository.User
             var data = await QueryAsync<UserResponseModel>(StoredProcedures.GetUserList, param, commandType: CommandType.StoredProcedure);
             return data.ToList();
         }
-        public async Task<int> DeleteUser(long UserId)
+        public async Task<int> DeleteUser(long UserId, long CurrentUserId)
         {
             var param = new DynamicParameters();
             param.Add("@UserId", UserId);
+            param.Add("@ModifiedBy", CurrentUserId);
             var result = await QueryFirstOrDefaultAsync<int>(StoredProcedures.DeleteUser, param, commandType: CommandType.StoredProcedure);
             return result;
         }
 
-        public async Task<int> ActiveInActiveUser(long UserId)
+        public async Task<int> ActiveInActiveUser(long UserId, long CurrentUserId)
         {
             var param = new DynamicParameters();
             param.Add("@UserId", UserId);
+            param.Add("@ModifiedBy", CurrentUserId);
             var result = await QueryFirstOrDefaultAsync<int>(StoredProcedures.ActiveInActiveUser, param, commandType: CommandType.StoredProcedure);
             return result;
         }

@@ -39,14 +39,14 @@ namespace FocusFM.Service.AdminUser
             return _repository.GetUserByReceiveDocEmail();
         }
 
-        public Task<int> DeleteUser(long UserId)
+        public Task<int> DeleteUser(long UserId, long CurrentUserId)
         {
-            return _repository.DeleteUser(UserId);
+            return _repository.DeleteUser(UserId,CurrentUserId);
         }
 
-        public Task<int> InActiveUser(long UserId)
+        public Task<int> InActiveUser(long UserId, long CurrentUserId)
         {
-            return _repository.InActiveUser(UserId);
+            return _repository.InActiveUser(UserId,CurrentUserId);
         } 
         #endregion
     }

@@ -8,7 +8,7 @@ namespace FocusFM.Data.DBRepository.User
         Task<List<UserTypeResponseModel>> GetUserTypeDropdown();
         Task<List<UserResponseModel>> GetUserList(CommonPaginationModel model);
         Task<int> SaveUser(UserRequestModel model, long CurrentUserId);
-        Task<int> DeleteUser(long UserId);
-        Task<int> ActiveInActiveUser(long UserId);
+        Task<int> DeleteUser(long UserId, long CurrentUserId);
+        Task<int> ActiveInActiveUser(long UserId, long CurrentUserId);
     }
 }

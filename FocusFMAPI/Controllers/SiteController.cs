@@ -10,6 +10,7 @@ using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Newtonsoft.Json;
+using Newtonsoft.Json.Linq;
 
 namespace FocusFMAPI.Controllers
 {
@@ -78,7 +79,7 @@ namespace FocusFMAPI.Controllers
                 if (!arrExtension.Contains(extension))
                 {
                     response.Success = false;
-                    response.Message = ErrorMessages.InvalidExcelFile;
+                    response.Message = ErrorMessages.InvalidImageFile;
                     return response;
                 }
 
@@ -152,10 +153,22 @@ namespace FocusFMAPI.Controllers
         }
 
         [HttpDelete("delete/{id}")]
-        public async Task<BaseApiResponse> DeleteSite(int id)
+        public async Task<BaseApiResponse> DeleteSite(long id)
         {
             BaseApiResponse response = new BaseApiResponse();
-            var result = await _SiteService.DeleteSite(id);
+            long UserId = 0;
+            if (Request.Headers.TryGetValue("Authorization", out var authHeader))
+            {
+                // Parse the JWT token
+                var token = authHeader.ToString().Substring("Bearer ".Length).Trim();
+                var handler = new JwtSecurityTokenHandler();
+                var jwtToken = handler.ReadJwtToken(token);
+
+                var j = JsonConvert.DeserializeObject<Dictionary<string, string>>(jwtToken.Claims.FirstOrDefault(c => c.Type == "unique_name").Value);
+
+                UserId = long.TryParse(j["UserId"], out var val) ? val : 0;
+            }
+            var result = await _SiteService.DeleteSite(id,UserId);
             if (result == 0)
             {
                 response.Message = ErrorMessages.DeleteSiteSuccess;
@@ -170,10 +183,23 @@ namespace FocusFMAPI.Controllers
         }
 
         [HttpGet("active-inactive/{id}")]
-        public async Task<BaseApiResponse> ActiveInActiveSite(int id)
+        public async Task<BaseApiResponse> ActiveInActiveSite(long id)
         {
             BaseApiResponse response = new BaseApiResponse();
-            var result = await _SiteService.ActiveInActiveSite(id);
+            long UserId = 0;
+            if (Request.Headers.TryGetValue("Authorization", out var authHeader))
+            {
+                // Parse the JWT token
+                var token = authHeader.ToString().Substring("Bearer ".Length).Trim();
+                var handler = new JwtSecurityTokenHandler();
+                var jwtToken = handler.ReadJwtToken(token);
+
+                var j = JsonConvert.DeserializeObject<Dictionary<string, string>>(jwtToken.Claims.FirstOrDefault(c => c.Type == "unique_name").Value);
+
+                UserId = long.TryParse(j["UserId"], out var val) ? val : 0;
+            }
+
+            var result = await _SiteService.ActiveInActiveSite(id,UserId);
             if (result == ActiveStatus.Inactive)
             {
                 response.Message = ErrorMessages.SiteInactive;

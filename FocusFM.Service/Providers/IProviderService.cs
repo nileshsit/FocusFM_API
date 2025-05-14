@@ -13,7 +13,7 @@ namespace FocusFM.Service.Providers
     {
         Task<List<ProviderResponseModel>> GetProviderList(CommonPaginationModel model);
         Task<int> SaveProvider(ProviderRequestModel model, long CurrentUserId,string? fileName);
-        Task<int> DeleteProvider(int ProviderId);
-        Task<int> ActiveInActiveProvider(int ProviderId);
+        Task<int> DeleteProvider(int ProviderId, long CurrentUserId);
+        Task<int> ActiveInActiveProvider(int ProviderId, long CurrentUserId);
     }
 }

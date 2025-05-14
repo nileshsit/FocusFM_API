@@ -82,18 +82,20 @@ namespace FocusFM.Data.DBRepository.AdminUser
             return data;
         }
 
-        public async Task<int> DeleteUser(long UserId)
+        public async Task<int> DeleteUser(long UserId, long CurrentUserId)
         {
             var param = new DynamicParameters();
             param.Add("@UserId", UserId);
+            param.Add("@ModifiedBy", CurrentUserId);
             var result = await QueryFirstOrDefaultAsync<int>(StoredProcedures.DeleteAdminUser, param, commandType: CommandType.StoredProcedure);
             return result;
         }
 
-        public async Task<int> InActiveUser(long UserId)
+        public async Task<int> InActiveUser(long UserId, long CurrentUserId)
         {
             var param = new DynamicParameters();
             param.Add("@UserId", UserId);
+            param.Add("@ModifiedBy", CurrentUserId);
             var result = await QueryFirstOrDefaultAsync<int>(StoredProcedures.InActiveAdminUser, param, commandType: CommandType.StoredProcedure);
             return result;
         }
