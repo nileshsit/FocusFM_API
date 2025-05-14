@@ -1,45 +1,40 @@
-﻿using System.Configuration;
-using System.Globalization;
-using System.IdentityModel.Tokens.Jwt;
+﻿using System.IdentityModel.Tokens.Jwt;
 using FocusFM.Common.CommonMethod;
 using FocusFM.Common.Enum;
 using FocusFM.Common.Helpers;
 using FocusFM.Model.CommonPagination;
-using FocusFM.Model.Providers;
-using FocusFM.Model.Token;
+using FocusFM.Model.Site;
 using FocusFM.Service.JWTAuthentication;
-using FocusFM.Service.Providers;
-using Microsoft.AspNetCore.Authentication.JwtBearer;
+using FocusFM.Service.Site;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
-using Microsoft.Net.Http.Headers;
 using Newtonsoft.Json;
 
 namespace FocusFMAPI.Controllers
 {
-    [Route("api/provider")]
+    [Route("api/site")]
     [ApiController]
     [Authorize]
-    public class ProviderController : ControllerBase
+    public class SiteController : ControllerBase
     {
         #region Fields
-        private readonly IProviderService _ProviderService;
+        private readonly ISiteService _SiteService;
         private readonly IHttpContextAccessor _httpContextAccessor;
         private readonly IJWTAuthenticationService _jwtAuthenticationService;
         private readonly IConfiguration _config;
         #endregion
 
         #region Constructor
-        public ProviderController
+        public SiteController
         (
-            IProviderService ProviderService,
+            ISiteService SiteService,
             IHttpContextAccessor httpContextAccessor,
             IJWTAuthenticationService jwtAuthenticationService,
             IConfiguration config
         )
         {
-            _ProviderService = ProviderService;
+            _SiteService = SiteService;
             _httpContextAccessor = httpContextAccessor;
             _jwtAuthenticationService = jwtAuthenticationService;
             _config = config;
@@ -47,11 +42,11 @@ namespace FocusFMAPI.Controllers
         #endregion
 
         [HttpPost("save")]
-        public async Task<BaseApiResponse> SaveProvider([FromForm] ProviderRequestModel model)
+        public async Task<BaseApiResponse> SaveSite([FromForm] SiteRequestModel model)
         {
             IFormFile file = model.File;
-            ApiResponse<ProviderResponseModel> response = new ApiResponse<ProviderResponseModel>();
-            if (model.ProviderId == null)
+            ApiResponse<SiteResponseModel> response = new ApiResponse<SiteResponseModel>();
+            if (model.SiteId == null)
             {
                 if (file == null || file.Length == 0)
                 {
@@ -61,8 +56,8 @@ namespace FocusFMAPI.Controllers
                     return response;
                 }
             }
-            long UserId=0;
-            string fileName=null;
+            long UserId = 0;
+            string fileName = null;
             if (Request.Headers.TryGetValue("Authorization", out var authHeader))
             {
                 // Parse the JWT token
@@ -77,7 +72,7 @@ namespace FocusFMAPI.Controllers
             }
             if (file != null)
             {
-                string[] arrExtension = _config["FileConfiguration:AllowedProviderFileFormat"].Split(",");
+                string[] arrExtension = _config["FileConfiguration:AllowedProfileFileFormat"].Split(",");
                 var extension = Path.GetExtension(file.FileName).ToLowerInvariant();
 
                 if (!arrExtension.Contains(extension))
@@ -87,7 +82,7 @@ namespace FocusFMAPI.Controllers
                     return response;
                 }
 
-                long allowedSize = long.Parse(_config["FileConfiguration:AllowedProviderFileSize"]);
+                long allowedSize = long.Parse(_config["FileConfiguration:AllowedProfileFileSize"]);
 
                 if (file.Length > allowedSize)
                 {
@@ -96,20 +91,20 @@ namespace FocusFMAPI.Controllers
                     return response;
                 }
 
-                fileName = await CommonMethods.UploadDocument(file,_config["FileConfiguration:ProviderTemplateFilePath"] +"/" + model.ProviderName + "/");
+                fileName = await CommonMethods.UploadDocument(file, _config["FileConfiguration:SiteImageFilePath"]+"/");
             }
-            var result = await _ProviderService.SaveProvider(model, UserId, fileName);
+            var result = await _SiteService.SaveSite(model, UserId, fileName);
             var issend = false;
             if (result == Status.Success)
             {
-                if (model.ProviderId > 0)
+                if (model.SiteId > 0)
                 {
-                    response.Message = ErrorMessages.UpdateProviderSuccess;
+                    response.Message = ErrorMessages.UpdateSiteSuccess;
                     response.Success = true;
                 }
                 else
                 {
-                    response.Message = ErrorMessages.SaveProviderSuccess;
+                    response.Message = ErrorMessages.SaveSiteSuccess;
                     response.Success = true;
                 }
             }
@@ -129,22 +124,22 @@ namespace FocusFMAPI.Controllers
         }
 
         [HttpPost("list")]
-        public async Task<ApiResponse<ProviderResponseModel>> GetProviderList(CommonPaginationModel model)
+        public async Task<ApiResponse<SiteResponseModel>> GetSiteList(CommonPaginationModel model)
         {
-            ApiResponse<ProviderResponseModel> response = new ApiResponse<ProviderResponseModel>() { Data = new List<ProviderResponseModel>() };
-            var result = await _ProviderService.GetProviderList(model);
+            ApiResponse<SiteResponseModel> response = new ApiResponse<SiteResponseModel>() { Data = new List<SiteResponseModel>() };
+            var result = await _SiteService.GetSiteList(model);
             foreach (var record in result)
             {
                 // Example: Update file path if it exists
-                if (record.ProviderTemplate != null)
+                if (record.SiteImage != null)
                 {
-                    string originalPath = record.ProviderTemplate.ToString();
+                    string originalPath = record.SiteImage.ToString();
 
                     var path = _httpContextAccessor.HttpContext.Request.Scheme + "://" + HttpContext.Request.Host.Value;
 
                     // Example: Replace part of the path or add prefix
-                    record.ProviderTemplate = originalPath.Replace(path, _config["AppSettings:APIURL"]);
-                    record.ProviderTemplate = record.ProviderTemplate.Replace("\\","/");
+                    record.SiteImage = originalPath.Replace(path, _config["AppSettings:APIURL"]);
+                    record.SiteImage = record.SiteImage.Replace("\\", "/");
                 }
             }
             if (result != null)
@@ -156,13 +151,13 @@ namespace FocusFMAPI.Controllers
         }
 
         [HttpDelete("delete/{id}")]
-        public async Task<BaseApiResponse> DeleteProvider(int id)
+        public async Task<BaseApiResponse> DeleteSite(int id)
         {
             BaseApiResponse response = new BaseApiResponse();
-            var result = await _ProviderService.DeleteProvider(id);
+            var result = await _SiteService.DeleteSite(id);
             if (result == 0)
             {
-                response.Message = ErrorMessages.DeleteProviderSuccess;
+                response.Message = ErrorMessages.DeleteSiteSuccess;
                 response.Success = true;
             }
             else
@@ -174,18 +169,18 @@ namespace FocusFMAPI.Controllers
         }
 
         [HttpGet("active-inactive/{id}")]
-        public async Task<BaseApiResponse> ActiveInActiveProvider(int id)
+        public async Task<BaseApiResponse> ActiveInActiveSite(int id)
         {
             BaseApiResponse response = new BaseApiResponse();
-            var result = await _ProviderService.ActiveInActiveProvider(id);
+            var result = await _SiteService.ActiveInActiveSite(id);
             if (result == ActiveStatus.Inactive)
             {
-                response.Message = ErrorMessages.ProviderInactive;
+                response.Message = ErrorMessages.SiteInactive;
                 response.Success = true;
             }
             else if (result == ActiveStatus.Active)
             {
-                response.Message = ErrorMessages.ProviderActive;
+                response.Message = ErrorMessages.SiteActive;
                 response.Success = true;
             }
             else

@@ -60,5 +60,12 @@
         public const string InvalidImageFile = "Only .PNG and .JPG files allowed.";
         public const string InvalidExcelFile = "Only .xls and .xlsx files allowed.";
         public const string FileSizeExceeds = "File Size Exceeds.";
+
+        // Sites 
+        public const string SaveSiteSuccess = "Site saved successfully.";
+        public const string UpdateSiteSuccess = "Site updated successfully.";
+        public const string SiteInactive = "Site inactivated successfully.";
+        public const string SiteActive = "Site activated successfully.";
+        public const string DeleteSiteSuccess = "Site deleted successfully.";
     }
 }

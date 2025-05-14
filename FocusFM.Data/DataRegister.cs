@@ -1,6 +1,7 @@
 ﻿using FocusFM.Data.DBRepository.Account;
 using FocusFM.Data.DBRepository.AdminUser;
 using FocusFM.Data.DBRepository.Providers;
+using FocusFM.Data.DBRepository.Site;
 using FocusFM.Data.DBRepository.User;
 
 namespace FocusFM.Data
@@ -15,6 +16,7 @@ namespace FocusFM.Data
                 {typeof(IAccountRepository),typeof(AccountRepository) },
                 {typeof(IUserRepository),typeof(UserRepository) },
                 {typeof(IProviderRepository),typeof(ProviderRepository) },
+                {typeof(ISiteRepository),typeof(SiteRepository) },
             };
             return dataDictionary;
         }

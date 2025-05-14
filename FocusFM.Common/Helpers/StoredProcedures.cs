@@ -42,6 +42,13 @@
         public const string DeleteProvider = "SP_DeleteProvider";
         #endregion
 
+        #region Site
+        public const string SaveSite = "SP_SaveSite";
+        public const string GetSiteList = "SP_GetSiteList";
+        public const string ActiveInActiveSite = "SP_ActiveInActiveSite";
+        public const string DeleteSite = "SP_DeleteSite";
+        #endregion
+
 
     }
 }

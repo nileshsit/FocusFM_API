@@ -119,8 +119,7 @@ namespace FocusFMAPI.Controllers
                     return response;
                 }
 
-                var path = _httpContextAccessor.HttpContext.Request.Scheme + "://" + HttpContext.Request.Host.Value;
-                fileName = await CommonMethods.UploadDocument(file, path+"/"+_config["FileConfiguration:UserProfileFilePath"] + "/" + model.FirstName+"_"+model.LastName + "/");
+                fileName = await CommonMethods.UploadDocument(file, _config["FileConfiguration:UserProfileFilePath"] + "/" + model.FirstName+"_"+model.LastName + "/");
             }
             var result = await _userService.SaveUser(model, tokenModel.UserId, password, passSalt,fileName);
             var issend = false;
