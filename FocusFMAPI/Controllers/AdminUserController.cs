@@ -236,7 +236,7 @@ namespace FocusFMAPI.Controllers
 
                     string path = _httpContextAccessor.HttpContext.Request.Scheme + "://" + HttpContext.Request.Host.Value;
                     // Example: Replace part of the path or add prefix
-                    record.Photo = originalPath.Replace(path, _config["AppSettings:APIURL"]);
+                    record.Photo = originalPath.Replace(Directory.GetCurrentDirectory(), _config["AppSettings:APIURL"]);
                     record.Photo = record.Photo.Replace("\\", "/");
                 }
             }

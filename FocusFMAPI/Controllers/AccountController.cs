@@ -317,7 +317,7 @@ namespace FocusFMAPI.Controllers
 
                             string path = _httpContextAccessor.HttpContext.Request.Scheme + "://" + HttpContext.Request.Host.Value;
                             // Example: Replace part of the path or add prefix
-                            loginresult.Photo = originalPath.Replace(path, _config["AppSettings:APIURL"]);
+                            loginresult.Photo = originalPath.Replace(Directory.GetCurrentDirectory(), _config["AppSettings:APIURL"]);
                             loginresult.Photo = loginresult.Photo.Replace("\\", "/");
                         }
                         response.Data.Photo = loginresult.Photo;

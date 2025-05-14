@@ -143,7 +143,7 @@ namespace FocusFMAPI.Controllers
                     var path = _httpContextAccessor.HttpContext.Request.Scheme + "://" + HttpContext.Request.Host.Value;
 
                     // Example: Replace part of the path or add prefix
-                    record.ProviderTemplate = originalPath.Replace(path, _config["AppSettings:APIURL"]);
+                    record.ProviderTemplate = originalPath.Replace(Directory.GetCurrentDirectory(), _config["AppSettings:APIURL"]);
                     record.ProviderTemplate = record.ProviderTemplate.Replace("\\","/");
                 }
             }
