@@ -243,6 +243,9 @@ namespace FocusFMAPI.Controllers
                 emailBody = emailBody.Replace("##currentYear##", DateTime.Now.Year.ToString());
                 emailBody = emailBody.Replace("##Link##", (url + '/' + EncryptedEamilId).ToString());
                 emailBody = emailBody.Replace("##portalUrl##", portalUrl.ToString());
+            var logger = NLog.Web.NLogBuilder.ConfigureNLog("NLog.config").GetCurrentClassLogger();
+                logger.Info("Logo URL:" + path + "/" + _config["FileConfiguration:LogoPath"]);
+                logger.Info("Full Template:" + emailBody);
                 isSuccess = await Task.Run(() => SendMailMessage(model.EmailId, null, null, "Reset Password OTP", emailBody, setting, null));
                 int issaveopt = await _accountService.SaveOTP(result.AdminUserId, OtpRandom, result.EmailId, true);
                 if (isSuccess == true && issaveopt == 1)

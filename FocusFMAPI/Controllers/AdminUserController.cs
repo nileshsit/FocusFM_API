@@ -170,7 +170,9 @@ namespace FocusFMAPI.Controllers
                     emailBody = emailBody.Replace("##Password##", Generatepassword);
                     emailBody = emailBody.Replace("##currentYear##", DateTime.Now.Year.ToString());
                     emailBody = emailBody.Replace("##PortalURL##", _config["AppSettings:AdminPortalUrl"]);
-
+                    var logger = NLog.Web.NLogBuilder.ConfigureNLog("NLog.config").GetCurrentClassLogger();
+                    logger.Info("Logo URL:" + path + "/" + _config["FileConfiguration:LogoPath"]);
+                    logger.Info("Full Template:" + emailBody);
                     issend = await Task.Run(() => SendMailMessage(model.EmailId, null, null, "User Password", emailBody, setting, null));
                     #endregion
 
@@ -182,7 +184,9 @@ namespace FocusFMAPI.Controllers
                     adminEmailBody = adminEmailBody.Replace("##RegisteredOn##", DateTime.Now.ToString("dd/MM/yyyy"));
                     adminEmailBody = adminEmailBody.Replace("##currentYear##", DateTime.Now.Year.ToString());
                     adminEmailBody = adminEmailBody.Replace("##PortalURL##", _config["AppSettings:AdminPortalUrl"]);
-
+                    var logger1 = NLog.Web.NLogBuilder.ConfigureNLog("NLog.config").GetCurrentClassLogger();
+                    logger1.Info("Logo URL:" + path + "/" + _config["FileConfiguration:LogoPath"]);
+                    logger1.Info("Full Template:" + adminEmailBody);
                     bool isAdminMailSent = await Task.Run(() => SendMailMessage(adminEmail, null, null, "New User Registration", adminEmailBody, setting, null));
                     #endregion
 

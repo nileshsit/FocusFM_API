@@ -23,7 +23,6 @@ namespace FocusFM.Model.Login
     {
         [Required(ErrorMessage = "EmailId is required")]
         public string? EmailId { get; set; }
-        public bool? IsEaziBusinessPartner { get; set; }
     }
 
     public class VerificationOTPRequestModel
