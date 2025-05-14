@@ -121,7 +121,6 @@ namespace FocusFMAPI.Controllers
                 response.Success = false;
             }
             return response;
-            return response;
         }
 
         [HttpPost("list")]
