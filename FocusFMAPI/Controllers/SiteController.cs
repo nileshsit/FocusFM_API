@@ -138,9 +138,9 @@ namespace FocusFMAPI.Controllers
                     var path = _httpContextAccessor.HttpContext.Request.Scheme + "://" + HttpContext.Request.Host.Value;
 
                     // Example: Replace part of the path or add prefix
-                    record.SiteImage = originalPath.Replace("/wwwroot", "");
                     record.SiteImage = originalPath.Replace(Directory.GetCurrentDirectory(), _config["AppSettings:APIURL"]);
                     record.SiteImage = record.SiteImage.Replace("\\", "/");
+                    record.SiteImage = record.SiteImage.Replace("/wwwroot", "");
                 }
             }
             if (result != null)
