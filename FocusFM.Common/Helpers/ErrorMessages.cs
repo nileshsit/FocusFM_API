@@ -45,6 +45,7 @@
 
         // User Management
         public const string SaveUserSuccess = "User saved successfully.";
+        public const string UserExists = "User already exists.";
         public const string UpdateUserSuccess = "User updated successfully.";
         public const string UserInactive = "User inactivated successfully.";
         public const string UserActive = "User activated successfully.";
@@ -60,6 +61,7 @@
         public const string InvalidImageFile = "Only .PNG and .JPG files allowed.";
         public const string InvalidExcelFile = "Only .xls and .xlsx files allowed.";
         public const string FileSizeExceeds = "File Size Exceeds.";
+        public const string ProviderExists = "Provider already exists.";
 
         // Sites 
         public const string SaveSiteSuccess = "Site saved successfully.";
@@ -67,5 +69,6 @@
         public const string SiteInactive = "Site inactivated successfully.";
         public const string SiteActive = "Site activated successfully.";
         public const string DeleteSiteSuccess = "Site deleted successfully.";
+        public const string SiteExists = "Site already exists.";
     }
 }

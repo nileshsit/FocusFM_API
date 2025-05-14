@@ -122,7 +122,6 @@ namespace FocusFM.Data.DBRepository.Account
             param.Add("@UserId", UserId);
             param.Add("@Password", Password);
             param.Add("@Salt", Salt);
-            param.Add("@IsAdmin", IsAdmin);
             return await QueryFirstOrDefaultAsync<string>(StoredProcedures.ChangePassword, param, commandType: CommandType.StoredProcedure);
         }
 

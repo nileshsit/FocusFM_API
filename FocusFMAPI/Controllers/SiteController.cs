@@ -112,7 +112,7 @@ namespace FocusFMAPI.Controllers
 
             else if (result == Status.AlredyExists)
             {
-                response.Message = ErrorMessages.EmailExists;
+                response.Message = ErrorMessages.SiteExists;
                 response.Success = false;
             }
             else
