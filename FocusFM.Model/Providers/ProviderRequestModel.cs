@@ -12,6 +12,7 @@ namespace FocusFM.Model.Providers
     {
         public int? ProviderId { get; set; }
         [Required(ErrorMessage = "Provider Name is required.")]
+        [StringLength(100, ErrorMessage = "ProviderName - Only 100 Character allowed.")]
         public string ProviderName { get; set; }
         public IFormFile? File { get; set; }
     }
