@@ -198,7 +198,6 @@ namespace FocusFMAPI.Controllers
             BaseApiResponse response = new BaseApiResponse();
             var result = await _accountService.ForgetPassword(model.EmailId, true);
             var url = _httpContextAccessor.HttpContext.Request.Headers["Referer"].ToString() + "verification-code";
-            var portalUrl = _httpContextAccessor.HttpContext.Request.Headers["Referer"].ToString().TrimEnd('/');
             if (result.AdminUserId > 0)
             {
                 string EncryptedUserId = HttpUtility.UrlEncode(EncryptionDecryption.GetEncrypt(result.AdminUserId.ToString()));
@@ -242,7 +241,6 @@ namespace FocusFMAPI.Controllers
                 emailBody = emailBody.Replace("##Password##", RandomNumer);
                 emailBody = emailBody.Replace("##currentYear##", DateTime.Now.Year.ToString());
                 emailBody = emailBody.Replace("##Link##", (url + '/' + EncryptedEamilId).ToString());
-                emailBody = emailBody.Replace("##portalUrl##", portalUrl.ToString());
             var logger = NLog.Web.NLogBuilder.ConfigureNLog("NLog.config").GetCurrentClassLogger();
                 logger.Info("Logo URL:" + path + "/" + _config["FileConfiguration:LogoPath"]);
                 logger.Info("Full Template:" + emailBody);
