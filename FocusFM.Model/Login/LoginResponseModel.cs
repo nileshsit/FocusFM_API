@@ -19,7 +19,6 @@
         public DateTime LastForgetPasswordSend { get; set; }
         public string FullName { get; set; }
         public string EmailId { get; set; }
-        public bool? IsEaziBusinessPartner { get; set; }
     }
 
     public class ResetPasswordRequestModel

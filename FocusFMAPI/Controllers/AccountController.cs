@@ -237,16 +237,8 @@ namespace FocusFMAPI.Controllers
                     tokenModel = _jwtAuthenticationService.GetUserTokenData(jwtToken);
                 }
                 emailBody = emailBody.Replace("##userName##", result.FullName.ToString());
-                if (result.IsEaziBusinessPartner == true)
-                {
-                    emailBody = emailBody.Replace("##LogoURL##", path+ "/" + _config["FileConfiguration:LogoPath"]);
-                    emailBody = emailBody.Replace("##BrandName##", "Focus FM");
-                }
-                else
-                {
-                    emailBody = emailBody.Replace("##LogoURL##", path + "/" + _config["FileConfiguration:LogoPath"]);
-                    emailBody = emailBody.Replace("##BrandName##", "Focus FM");
-                }
+                emailBody = emailBody.Replace("##LogoURL##", path + "/" + _config["FileConfiguration:LogoPath"]);
+                emailBody = emailBody.Replace("##BrandName##", "Focus FM");
                 emailBody = emailBody.Replace("##Password##", RandomNumer);
                 emailBody = emailBody.Replace("##currentYear##", DateTime.Now.Year.ToString());
                 emailBody = emailBody.Replace("##Link##", (url + '/' + EncryptedEamilId).ToString());
@@ -300,7 +292,6 @@ namespace FocusFMAPI.Controllers
                         objTokenData.UserId = loginresult.AdminUserId != null ? loginresult.AdminUserId : 0;
                         objTokenData.FullName = loginresult.FullName;
                         objTokenData.IsAdmin = true;
-                        objTokenData.IsEaziBusinessPartner = true;
                         AccessTokenModel objAccessTokenData = _jwtAuthenticationService.GenerateToken(objTokenData, _appSettings.JWT_Secret, _appSettings.JWT_Validity_Mins);
                         loginresult.JWTToken = objAccessTokenData.Token;
                         await _accountService.UpdateLoginToken(objAccessTokenData.Token, objAccessTokenData.UserId, true);

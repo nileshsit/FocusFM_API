@@ -163,16 +163,8 @@ namespace FocusFMAPI.Controllers
 
                     #region Send Mail to User
                     emailBody = emailBody.Replace("##userName##", model.FirstName);
-                    if (tokenModel.IsEaziBusinessPartner == true)
-                    {
-                        emailBody = emailBody.Replace("##LogoURL##", path + "/" + _config["Path:Logo"]);
-                        emailBody = emailBody.Replace("##BrandName##", "Focus FM");
-                    }
-                    else
-                    {
-                        emailBody = emailBody.Replace("##LogoURL##", path + "/" + _config["Path:NonBrandLogo"]);
-                        emailBody = emailBody.Replace("##BrandName##", "Focus FM");
-                    }
+                    emailBody = emailBody.Replace("##LogoURL##", path + "/" + _config["FileConfiguration:LogoPath"]);
+                    emailBody = emailBody.Replace("##BrandName##", "Focus FM");
                     emailBody = emailBody.Replace("##Password##", Generatepassword);
                     emailBody = emailBody.Replace("##currentYear##", DateTime.Now.Year.ToString());
                     emailBody = emailBody.Replace("##PortalURL##", _config["AppSettings:AdminPortalUrl"]);
@@ -182,19 +174,12 @@ namespace FocusFMAPI.Controllers
 
                     #region Send Mail to Admin
                     adminEmailBody = adminEmailBody.Replace("##userName##", model.FirstName + " " + model.LastName);
-                    if (tokenModel.IsEaziBusinessPartner == true)
-                    {
-                        adminEmailBody = adminEmailBody.Replace("##LogoURL##", path + "/" + _config["Path:Logo"]);
-                        adminEmailBody = adminEmailBody.Replace("##BrandName##", "Focus FM");
-                    }
-                    else
-                    {
-                        adminEmailBody = adminEmailBody.Replace("##LogoURL##", path + "/" + _config["Path:NonBrandLogo"]);
-                        adminEmailBody = adminEmailBody.Replace("##BrandName##", "Focus FM");
-                    }
+                    adminEmailBody = adminEmailBody.Replace("##LogoURL##", path + "/" + _config["FileConfiguration:LogoPath"]);
+                    adminEmailBody = adminEmailBody.Replace("##BrandName##", "Focus FM");
                     adminEmailBody = adminEmailBody.Replace("##Email##", model.EmailId);
                     adminEmailBody = adminEmailBody.Replace("##RegisteredOn##", DateTime.Now.ToString("dd/MM/yyyy"));
                     adminEmailBody = adminEmailBody.Replace("##currentYear##", DateTime.Now.Year.ToString());
+                    adminEmailBody = adminEmailBody.Replace("##PortalURL##", _config["AppSettings:AdminPortalUrl"]);
 
                     bool isAdminMailSent = await Task.Run(() => SendMailMessage(adminEmail, null, null, "New User Registration", adminEmailBody, setting, null));
                     #endregion
@@ -236,6 +221,7 @@ namespace FocusFMAPI.Controllers
 
                     string path = _httpContextAccessor.HttpContext.Request.Scheme + "://" + HttpContext.Request.Host.Value;
                     // Example: Replace part of the path or add prefix
+                    record.Photo = originalPath.Replace("/wwwroot", "");
                     record.Photo = originalPath.Replace(Directory.GetCurrentDirectory(), _config["AppSettings:APIURL"]);
                     record.Photo = record.Photo.Replace("\\", "/");
                 }
