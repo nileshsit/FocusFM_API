@@ -176,19 +176,19 @@ namespace FocusFMAPI.Controllers
                     issend = await Task.Run(() => SendMailMessage(model.EmailId, null, null, "User Password", emailBody, setting, null));
                     #endregion
 
-                    #region Send Mail to Admin
-                    adminEmailBody = adminEmailBody.Replace("##userName##", model.FirstName + " " + model.LastName);
-                    adminEmailBody = adminEmailBody.Replace("##LogoURL##", path + "/" + _config["FileConfiguration:LogoPath"]);
-                    adminEmailBody = adminEmailBody.Replace("##BrandName##", "Focus FM");
-                    adminEmailBody = adminEmailBody.Replace("##Email##", model.EmailId);
-                    adminEmailBody = adminEmailBody.Replace("##RegisteredOn##", DateTime.Now.ToString("dd/MM/yyyy"));
-                    adminEmailBody = adminEmailBody.Replace("##currentYear##", DateTime.Now.Year.ToString());
-                    adminEmailBody = adminEmailBody.Replace("##PortalURL##", _config["AppSettings:AdminPortalUrl"]);
-                    var logger1 = NLog.Web.NLogBuilder.ConfigureNLog("NLog.config").GetCurrentClassLogger();
-                    logger1.Info("Logo URL:" + path + "/" + _config["FileConfiguration:LogoPath"]);
-                    logger1.Info("Full Template:" + adminEmailBody);
-                    bool isAdminMailSent = await Task.Run(() => SendMailMessage(adminEmail, null, null, "New User Registration", adminEmailBody, setting, null));
-                    #endregion
+                    //#region Send Mail to Admin
+                    //adminEmailBody = adminEmailBody.Replace("##userName##", model.FirstName + " " + model.LastName);
+                    //adminEmailBody = adminEmailBody.Replace("##LogoURL##", path + "/" + _config["FileConfiguration:LogoPath"]);
+                    //adminEmailBody = adminEmailBody.Replace("##BrandName##", "Focus FM");
+                    //adminEmailBody = adminEmailBody.Replace("##Email##", model.EmailId);
+                    //adminEmailBody = adminEmailBody.Replace("##RegisteredOn##", DateTime.Now.ToString("dd/MM/yyyy"));
+                    //adminEmailBody = adminEmailBody.Replace("##currentYear##", DateTime.Now.Year.ToString());
+                    //adminEmailBody = adminEmailBody.Replace("##PortalURL##", _config["AppSettings:AdminPortalUrl"]);
+                    //var logger1 = NLog.Web.NLogBuilder.ConfigureNLog("NLog.config").GetCurrentClassLogger();
+                    //logger1.Info("Logo URL:" + path + "/" + _config["FileConfiguration:LogoPath"]);
+                    //logger1.Info("Full Template:" + adminEmailBody);
+                    //bool isAdminMailSent = await Task.Run(() => SendMailMessage(adminEmail, null, null, "New User Registration", adminEmailBody, setting, null));
+                    //#endregion
 
                     response.Message = ErrorMessages.SaveUserSuccess;
                     response.Success = true;
