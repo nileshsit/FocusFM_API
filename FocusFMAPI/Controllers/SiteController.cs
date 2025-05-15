@@ -42,7 +42,7 @@ namespace FocusFMAPI.Controllers
         }
         #endregion
 
-        [HttpPost("save")]
+        [HttpPost("save-site")]
         public async Task<BaseApiResponse> SaveSite([FromForm] SiteRequestModel model)
         {
             IFormFile file = model.File;
@@ -123,7 +123,7 @@ namespace FocusFMAPI.Controllers
             return response;
         }
 
-        [HttpPost("list")]
+        [HttpPost("list-site")]
         public async Task<ApiResponse<SiteResponseModel>> GetSiteList(CommonPaginationModel model)
         {
             ApiResponse<SiteResponseModel> response = new ApiResponse<SiteResponseModel>() { Data = new List<SiteResponseModel>() };
@@ -151,7 +151,7 @@ namespace FocusFMAPI.Controllers
             return response;
         }
 
-        [HttpDelete("delete/{id}")]
+        [HttpDelete("delete-site/{id}")]
         public async Task<BaseApiResponse> DeleteSite(long id)
         {
             BaseApiResponse response = new BaseApiResponse();
@@ -181,7 +181,7 @@ namespace FocusFMAPI.Controllers
             return response;
         }
 
-        [HttpGet("active-inactive/{id}")]
+        [HttpGet("active-inactive-site/{id}")]
         public async Task<BaseApiResponse> ActiveInActiveSite(long id)
         {
             BaseApiResponse response = new BaseApiResponse();
@@ -216,5 +216,134 @@ namespace FocusFMAPI.Controllers
             }
             return response;
         }
+
+        #region Site Floor Methods
+
+        [HttpPost("save-floor")]
+        public async Task<BaseApiResponse> SaveFloor([FromForm] SiteFloorRequestModel model)
+        {
+            ApiResponse<SiteFloorResponseModel> response = new ApiResponse<SiteFloorResponseModel>();
+            long UserId = 0;
+            string fileName = null;
+            if (Request.Headers.TryGetValue("Authorization", out var authHeader))
+            {
+                // Parse the JWT token
+                var token = authHeader.ToString().Substring("Bearer ".Length).Trim();
+                var handler = new JwtSecurityTokenHandler();
+                var jwtToken = handler.ReadJwtToken(token);
+
+                // Extract user ID from the token claims
+                var j = JsonConvert.DeserializeObject<Dictionary<string, string>>(jwtToken.Claims.FirstOrDefault(c => c.Type == "unique_name").Value);
+
+                UserId = long.TryParse(j["UserId"], out var val) ? val : 0;
+            }
+            var result = await _SiteService.SaveFloor(model, UserId);
+            var issend = false;
+            if (result == Status.Success)
+            {
+                if (model.FloorId > 0)
+                {
+                    response.Message = ErrorMessages.UpdateFloorSuccess;
+                    response.Success = true;
+                }
+                else
+                {
+                    response.Message = ErrorMessages.SaveFloorSuccess;
+                    response.Success = true;
+                }
+            }
+
+            else if (result == Status.AlredyExists)
+            {
+                response.Message = ErrorMessages.FloorExists;
+                response.Success = false;
+            }
+            else
+            {
+                response.Message = ErrorMessages.SomethingWentWrong;
+                response.Success = false;
+            }
+            return response;
+        }
+
+        [HttpPost("list-floor")]
+        public async Task<ApiResponse<SiteFloorResponseModel>> GetFloorList(GetSiteFloorModel model)
+        {
+            ApiResponse<SiteFloorResponseModel> response = new ApiResponse<SiteFloorResponseModel>() { Data = new List<SiteFloorResponseModel>() };
+            var result = await _SiteService.GetFloorList(model);
+            if (result != null)
+            {
+                response.Data = result;
+            }
+            response.Success = true;
+            return response;
+        }
+
+        [HttpDelete("delete-floor/{id}")]
+        public async Task<BaseApiResponse> DeleteFloor(long id)
+        {
+            BaseApiResponse response = new BaseApiResponse();
+            long UserId = 0;
+            if (Request.Headers.TryGetValue("Authorization", out var authHeader))
+            {
+                // Parse the JWT token
+                var token = authHeader.ToString().Substring("Bearer ".Length).Trim();
+                var handler = new JwtSecurityTokenHandler();
+                var jwtToken = handler.ReadJwtToken(token);
+
+                var j = JsonConvert.DeserializeObject<Dictionary<string, string>>(jwtToken.Claims.FirstOrDefault(c => c.Type == "unique_name").Value);
+
+                UserId = long.TryParse(j["UserId"], out var val) ? val : 0;
+            }
+            var result = await _SiteService.DeleteFloor(id, UserId);
+            if (result == 0)
+            {
+                response.Message = ErrorMessages.DeleteFloorSuccess;
+                response.Success = true;
+            }
+            else
+            {
+                response.Message = ErrorMessages.SomethingWentWrong;
+                response.Success = false;
+            }
+            return response;
+        }
+
+        [HttpGet("active-inactive-floor/{id}")]
+        public async Task<BaseApiResponse> ActiveInActiveFloor(long id)
+        {
+            BaseApiResponse response = new BaseApiResponse();
+            long UserId = 0;
+            if (Request.Headers.TryGetValue("Authorization", out var authHeader))
+            {
+                // Parse the JWT token
+                var token = authHeader.ToString().Substring("Bearer ".Length).Trim();
+                var handler = new JwtSecurityTokenHandler();
+                var jwtToken = handler.ReadJwtToken(token);
+
+                var j = JsonConvert.DeserializeObject<Dictionary<string, string>>(jwtToken.Claims.FirstOrDefault(c => c.Type == "unique_name").Value);
+
+                UserId = long.TryParse(j["UserId"], out var val) ? val : 0;
+            }
+
+            var result = await _SiteService.ActiveInActiveFloor(id, UserId);
+            if (result == ActiveStatus.Inactive)
+            {
+                response.Message = ErrorMessages.FloorInactive;
+                response.Success = true;
+            }
+            else if (result == ActiveStatus.Active)
+            {
+                response.Message = ErrorMessages.FloorActive;
+                response.Success = true;
+            }
+            else
+            {
+                response.Message = ErrorMessages.SomethingWentWrong;
+                response.Success = false;
+            }
+            return response;
+        }
+        #endregion
     }
 }

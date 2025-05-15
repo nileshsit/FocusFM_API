@@ -70,5 +70,13 @@
         public const string SiteActive = "Site activated successfully.";
         public const string DeleteSiteSuccess = "Site deleted successfully.";
         public const string SiteExists = "Site already exists.";
+
+        // Sites Floor
+        public const string SaveFloorSuccess = "Floor saved successfully.";
+        public const string UpdateFloorSuccess = "Floor updated successfully.";
+        public const string FloorInactive = "Floor inactivated successfully.";
+        public const string FloorActive = "Floor activated successfully.";
+        public const string DeleteFloorSuccess = "Floor deleted successfully.";
+        public const string FloorExists = "Floor already exists.";
     }
 }

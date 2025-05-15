@@ -49,6 +49,13 @@
         public const string DeleteSite = "SP_DeleteSite";
         #endregion
 
+        #region Site Floor
+        public const string SaveFloor = "SP_SaveFloor";
+        public const string GetFloorList = "SP_GetFloorList";
+        public const string ActiveInActiveFloor = "SP_ActiveInActiveFloor";
+        public const string DeleteFloor = "SP_DeleteFloor";
+        #endregion
+
 
     }
 }

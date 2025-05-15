@@ -28,7 +28,7 @@ namespace FocusFM.Data.DBRepository.Site
         }
         #endregion
 
-        #region Methods
+        #region Site Methods
         public async Task<int> SaveSite(SiteRequestModel model, long id, string? fileName)
         {
             var param = new DynamicParameters();
@@ -76,5 +76,48 @@ namespace FocusFM.Data.DBRepository.Site
             return result;
         }
         #endregion
-}
+
+        #region Site Floor Methods
+        public async Task<int> SaveFloor(SiteFloorRequestModel model, long id)
+        {
+            var param = new DynamicParameters();
+            param.Add("@SiteId", model.SiteId);
+            param.Add("@FloorName", model.FloorName);
+            param.Add("@FloorId", model.FloorId);
+            param.Add("@CreatedBy", id);
+            var result = await QueryFirstOrDefaultAsync<int>(StoredProcedures.SaveFloor, param, commandType: CommandType.StoredProcedure);
+            return result;
+        }
+
+        public async Task<List<SiteFloorResponseModel>> GetFloorList(GetSiteFloorModel model)
+        {
+            var param = new DynamicParameters();
+            param.Add("@SiteId", model.SiteId);
+            param.Add("@pageIndex", model.PageNumber);
+            param.Add("@pageSize", model.PageSize);
+            param.Add("@orderBy", model.SortColumn);
+            param.Add("@sortOrder", model.SortOrder);
+            param.Add("@strSearch", model.StrSearch);
+            var data = await QueryAsync<SiteFloorResponseModel>(StoredProcedures.GetFloorList, param, commandType: CommandType.StoredProcedure);
+            return data.ToList();
+        }
+        public async Task<int> DeleteFloor(long FloorId, long CurrentUserId)
+        {
+            var param = new DynamicParameters();
+            param.Add("@FloorId", FloorId);
+            param.Add("@ModifiedBy", CurrentUserId);
+            var result = await QueryFirstOrDefaultAsync<int>(StoredProcedures.DeleteFloor, param, commandType: CommandType.StoredProcedure);
+            return result;
+        }
+
+        public async Task<int> ActiveInActiveFloor(long FloorId, long CurrentUserId)
+        {
+            var param = new DynamicParameters();
+            param.Add("@FloorId", FloorId);
+            param.Add("@ModifiedBy", CurrentUserId);
+            var result = await QueryFirstOrDefaultAsync<int>(StoredProcedures.ActiveInActiveFloor, param, commandType: CommandType.StoredProcedure);
+            return result;
+        }
+        #endregion
+    }
 }

@@ -22,7 +22,7 @@ namespace FocusFM.Service.Site
         }
         #endregion
 
-        #region Methods
+        #region Site Methods
 
         public Task<int> SaveSite(SiteRequestModel model, long id, string? fileName)
         {
@@ -42,6 +42,29 @@ namespace FocusFM.Service.Site
         public Task<int> ActiveInActiveSite(long SiteId, long CurrentUserId)
         {
             return _repository.ActiveInActiveSite(SiteId,CurrentUserId);
+        }
+        #endregion
+
+        #region Site Floor Methods
+
+        public Task<int> SaveFloor(SiteFloorRequestModel model, long id)
+        {
+            return _repository.SaveFloor(model, id);
+        }
+
+        public Task<List<SiteFloorResponseModel>> GetFloorList(GetSiteFloorModel model)
+        {
+            return _repository.GetFloorList(model);
+        }
+
+        public Task<int> DeleteFloor(long FloorId, long CurrentUserId)
+        {
+            return _repository.DeleteFloor(FloorId, CurrentUserId);
+        }
+
+        public Task<int> ActiveInActiveFloor(long FloorId, long CurrentUserId)
+        {
+            return _repository.ActiveInActiveFloor(FloorId, CurrentUserId);
         }
         #endregion
     }
