@@ -19,5 +19,6 @@ namespace FocusFM.Model.Site
         public string PinCode { get; set; }
         public string ContactPersonEmailId { get; set; }
         public string SiteImage { get; set; }
+        public int FloorCount { get; set; }
     }
 }
