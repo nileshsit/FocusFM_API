@@ -42,7 +42,7 @@ namespace FocusFMAPI.Controllers
         }
         #endregion
 
-        [HttpPost("save-site")]
+        [HttpPost("save")]
         public async Task<BaseApiResponse> SaveSite([FromForm] SiteRequestModel model)
         {
             IFormFile file = model.File;
@@ -123,7 +123,7 @@ namespace FocusFMAPI.Controllers
             return response;
         }
 
-        [HttpPost("list-site")]
+        [HttpPost("list")]
         public async Task<ApiResponse<SiteResponseModel>> GetSiteList(CommonPaginationModel model)
         {
             ApiResponse<SiteResponseModel> response = new ApiResponse<SiteResponseModel>() { Data = new List<SiteResponseModel>() };
@@ -151,7 +151,7 @@ namespace FocusFMAPI.Controllers
             return response;
         }
 
-        [HttpDelete("delete-site/{id}")]
+        [HttpDelete("delete/{id}")]
         public async Task<BaseApiResponse> DeleteSite(long id)
         {
             BaseApiResponse response = new BaseApiResponse();
@@ -181,7 +181,7 @@ namespace FocusFMAPI.Controllers
             return response;
         }
 
-        [HttpGet("active-inactive-site/{id}")]
+        [HttpGet("active-inactive/{id}")]
         public async Task<BaseApiResponse> ActiveInActiveSite(long id)
         {
             BaseApiResponse response = new BaseApiResponse();
@@ -219,7 +219,7 @@ namespace FocusFMAPI.Controllers
 
         #region Site Floor Methods
 
-        [HttpPost("save-floor")]
+        [HttpPost("floor/save")]
         public async Task<BaseApiResponse> SaveFloor([FromForm] SiteFloorRequestModel model)
         {
             ApiResponse<SiteFloorResponseModel> response = new ApiResponse<SiteFloorResponseModel>();
@@ -266,7 +266,7 @@ namespace FocusFMAPI.Controllers
             return response;
         }
 
-        [HttpPost("list-floor")]
+        [HttpPost("floor/list")]
         public async Task<ApiResponse<SiteFloorResponseModel>> GetFloorList(GetSiteFloorModel model)
         {
             ApiResponse<SiteFloorResponseModel> response = new ApiResponse<SiteFloorResponseModel>() { Data = new List<SiteFloorResponseModel>() };
@@ -279,7 +279,7 @@ namespace FocusFMAPI.Controllers
             return response;
         }
 
-        [HttpDelete("delete-floor/{id}")]
+        [HttpDelete("floor/delete/{id}")]
         public async Task<BaseApiResponse> DeleteFloor(long id)
         {
             BaseApiResponse response = new BaseApiResponse();
@@ -309,7 +309,7 @@ namespace FocusFMAPI.Controllers
             return response;
         }
 
-        [HttpGet("active-inactive-floor/{id}")]
+        [HttpGet("floor/active-inactive/{id}")]
         public async Task<BaseApiResponse> ActiveInActiveFloor(long id)
         {
             BaseApiResponse response = new BaseApiResponse();
