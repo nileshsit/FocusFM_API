@@ -40,7 +40,6 @@ namespace FocusFM.Data.DBRepository.Site
             param.Add("@ContactPersonMobNo", model.ContactPersonMobNo);
             param.Add("@Address", model.Address);
             param.Add("@City", model.City);
-            param.Add("@Country", model.Country);
             param.Add("@PinCode", model.PinCode);
             param.Add("@SiteImage", fileName);
             param.Add("@CreatedBy", id);

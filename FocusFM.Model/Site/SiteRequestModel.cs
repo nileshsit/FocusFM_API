@@ -34,9 +34,6 @@ namespace FocusFM.Model.Site
         [Required(ErrorMessage = "City is required.")]
         [StringLength(50, ErrorMessage = "City - Only 50 Character allowed.")]
         public string City { get; set; }
-        [Required(ErrorMessage = "Country is required.")]
-        [StringLength(100, ErrorMessage = "Country - Only 100 Character allowed.")]
-        public string Country { get; set; }
 
         [Required(ErrorMessage = "PinCode is required.")]
         [StringLength(6, ErrorMessage = "PinCode must be at least 6 characters long.", MinimumLength = 4)]

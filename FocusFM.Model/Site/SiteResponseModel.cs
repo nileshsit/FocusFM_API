@@ -16,7 +16,6 @@ namespace FocusFM.Model.Site
         public string ContactPersonMobNo { get; set; }
         public string Address { get; set; }
         public string City { get; set; }
-        public string Country { get; set; }
         public string PinCode { get; set; }
         public string ContactPersonEmailId { get; set; }
         public string SiteImage { get; set; }
