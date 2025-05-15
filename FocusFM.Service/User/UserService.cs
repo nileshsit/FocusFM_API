@@ -43,6 +43,11 @@ namespace FocusFM.Service.User
         {
             return _repository.ActiveInActiveUser(UserId,CurrentUserId);
         }
+
+        public Task<List<UserDropdownResponseModel>> GetUserDropdown(int TypeId)
+        {
+            return _repository.GetUserDropdown(TypeId);
+        }
         #endregion
     }
 }

@@ -33,6 +33,7 @@
         public const string GetUserTyeDropdown = "SP_GetUserTypeDropdown";
         public const string ActiveInActiveUser = "SP_ActiveInActiveUser";
         public const string DeleteUser = "SP_DeleteUser";
+        public const string GetUserDropdown = "SP_GetUserDropdown";
         #endregion
 
         #region Provider
@@ -40,6 +41,7 @@
         public const string GetProviderList = "SP_GetProviderList";
         public const string ActiveInActiveProvider = "SP_ActiveInActiveProvider";
         public const string DeleteProvider = "SP_DeleteProvider";
+        public const string GetProviderDropdown = "SP_GetProviderDropdown";
         #endregion
 
         #region Site
@@ -54,6 +56,13 @@
         public const string GetFloorList = "SP_GetFloorList";
         public const string ActiveInActiveFloor = "SP_ActiveInActiveFloor";
         public const string DeleteFloor = "SP_DeleteFloor";
+        public const string GetFloorDropdown = "SP_GetFloorDropdown";
+        #endregion
+
+        #region Meter
+        public const string GetMeterTypeDropdown = "SP_GetMeterTypeDropdown";
+        public const string GetMeterReadingTypeDropdown = "SP_GetMeterReadingTypeDropdown";
+
         #endregion
 
 

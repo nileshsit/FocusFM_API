@@ -5,6 +5,7 @@
         // Common
         public const string InvalidSortOrder = "Invalid Sort Order: The specified sort order value exceeds the total number of records available.";
         public const string NoParametersPassed = "No parameters passed.";
+        public const string LinkedData = "Record linked with other data.Kindly delete those data and try again.";
 
         // Login
         public const string InvalidEmailId = "Invalid email address.";

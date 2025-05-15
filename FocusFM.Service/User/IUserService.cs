@@ -15,5 +15,6 @@ namespace FocusFM.Service.User
         Task<int> SaveUser(UserRequestModel model, long CurrentUserId);
         Task<int> DeleteUser(long UserId, long CurrentUserId);
         Task<int> ActiveInActiveUser(long UserId, long CurrentUserId);
+        Task<List<UserDropdownResponseModel>> GetUserDropdown(int UserTypeId);          // 1=Tenant,2=Landlord
     }
 }

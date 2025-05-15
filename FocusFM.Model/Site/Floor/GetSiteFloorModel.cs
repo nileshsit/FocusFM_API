@@ -5,7 +5,7 @@ using System.Text;
 using System.Threading.Tasks;
 using FocusFM.Model.CommonPagination;
 
-namespace FocusFM.Model.Site
+namespace FocusFM.Model.Site.Floor
 {
     public class GetSiteFloorModel: CommonPaginationModel
     {

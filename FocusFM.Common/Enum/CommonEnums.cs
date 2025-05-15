@@ -30,4 +30,9 @@
         public const int Success = 1;
         public const int Rejected = 2;
     }
+    public static class UserType
+    {
+        public const int Tenant = 1;
+        public const int Landlord = 2;
+    }
 }

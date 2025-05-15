@@ -15,5 +15,6 @@ namespace FocusFM.Service.Providers
         Task<int> SaveProvider(ProviderRequestModel model, long CurrentUserId,string? fileName);
         Task<int> DeleteProvider(int ProviderId, long CurrentUserId);
         Task<int> ActiveInActiveProvider(int ProviderId, long CurrentUserId);
+        Task<List<ProviderDropdownResponseModel>> GetProviderDropdown();
     }
 }

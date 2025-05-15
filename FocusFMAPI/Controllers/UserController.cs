@@ -197,5 +197,31 @@ namespace FocusFMAPI.Controllers
             response.Success = true;
             return response;
         }
+
+        [HttpPost("landlord-dropdown")]
+        public async Task<ApiResponse<UserDropdownResponseModel>> GetLandlordDropdown()
+        {
+            ApiResponse<UserDropdownResponseModel> response = new ApiResponse<UserDropdownResponseModel>() { Data = new List<UserDropdownResponseModel>() };
+            var result = await _userService.GetUserDropdown(UserType.Landlord);
+            if (result != null)
+            {
+                response.Data = result;
+            }
+            response.Success = true;
+            return response;
+        }
+
+        [HttpPost("tenant-dropdown")]
+        public async Task<ApiResponse<UserDropdownResponseModel>> GetTenantDropdown()
+        {
+            ApiResponse<UserDropdownResponseModel> response = new ApiResponse<UserDropdownResponseModel>() { Data = new List<UserDropdownResponseModel>() };
+            var result = await _userService.GetUserDropdown(UserType.Tenant);
+            if (result != null)
+            {
+                response.Data = result;
+            }
+            response.Success = true;
+            return response;
+        }
     }
 }

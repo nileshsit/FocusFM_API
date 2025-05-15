@@ -1,11 +1,15 @@
 ﻿
 
+using System;
 using System.Data;
 using Dapper;
 using FocusFM.Common.Helpers;
 using FocusFM.Model.CommonPagination;
 using FocusFM.Model.Config;
 using FocusFM.Model.Site;
+using FocusFM.Model.Site.Floor;
+using FocusFM.Model.Site.Meter;
+using FocusFM.Model.User;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.Options;
 
@@ -118,6 +122,30 @@ namespace FocusFM.Data.DBRepository.Site
             var result = await QueryFirstOrDefaultAsync<int>(StoredProcedures.ActiveInActiveFloor, param, commandType: CommandType.StoredProcedure);
             return result;
         }
+
+        public async Task<List<FloorDropdownResponseModel>> GetFloorDropdown(long SiteId)
+        {
+            var param = new DynamicParameters();
+            param.Add("@SiteId", SiteId);
+            var data = await QueryAsync<FloorDropdownResponseModel>(StoredProcedures.GetFloorDropdown, param, commandType: CommandType.StoredProcedure);
+            return data.ToList();
+        }
+
+        #endregion
+
+        #region Meter
+        public async Task<List<MeterReadingTypeResponseModel>> GetMeterReadingTypeDropdown()
+        {
+            var data = await QueryAsync<MeterReadingTypeResponseModel>(StoredProcedures.GetMeterReadingTypeDropdown, null, commandType: CommandType.StoredProcedure);
+            return data.ToList();
+        }
+
+        public async Task<List<MeterTypeResponseModel>> GetMeterTypeDropdown()
+        {
+            var data = await QueryAsync<MeterTypeResponseModel>(StoredProcedures.GetMeterTypeDropdown, null, commandType: CommandType.StoredProcedure);
+            return data.ToList();
+        }
+
         #endregion
     }
 }

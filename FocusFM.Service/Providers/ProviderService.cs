@@ -43,6 +43,10 @@ namespace FocusFM.Service.Providers
         {
             return _repository.ActiveInActiveProvider(ProviderId,CurrentUserId);
         }
+        public Task<List<ProviderDropdownResponseModel>> GetProviderDropdown()
+        {
+            return _repository.GetProviderDropdown();
+        }
         #endregion
     }
 }

@@ -4,7 +4,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace FocusFM.Model.Site
+namespace FocusFM.Model.Site.Floor
 {
     public class SiteFloorRequestModel
     {

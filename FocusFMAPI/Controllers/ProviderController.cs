@@ -7,6 +7,7 @@ using FocusFM.Common.Helpers;
 using FocusFM.Model.CommonPagination;
 using FocusFM.Model.Providers;
 using FocusFM.Model.Token;
+using FocusFM.Model.User;
 using FocusFM.Service.JWTAuthentication;
 using FocusFM.Service.Providers;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
@@ -217,6 +218,19 @@ namespace FocusFMAPI.Controllers
                 response.Message = ErrorMessages.SomethingWentWrong;
                 response.Success = false;
             }
+            return response;
+        }
+
+        [HttpPost("dropdown")]
+        public async Task<ApiResponse<ProviderDropdownResponseModel>> GetProviderDropdown()
+        {
+            ApiResponse<ProviderDropdownResponseModel> response = new ApiResponse<ProviderDropdownResponseModel>() { Data = new List<ProviderDropdownResponseModel>() };
+            var result = await _ProviderService.GetProviderDropdown();
+            if (result != null)
+            {
+                response.Data = result;
+            }
+            response.Success = true;
             return response;
         }
     }

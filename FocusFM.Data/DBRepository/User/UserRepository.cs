@@ -78,6 +78,15 @@ namespace FocusFM.Data.DBRepository.User
             var result = await QueryFirstOrDefaultAsync<int>(StoredProcedures.ActiveInActiveUser, param, commandType: CommandType.StoredProcedure);
             return result;
         }
+
+        public async Task<List<UserDropdownResponseModel>> GetUserDropdown(int typeId)
+        {
+            var param = new DynamicParameters();
+            param.Add("@UserTypeId", typeId);
+            var data = await QueryAsync<UserDropdownResponseModel>(StoredProcedures.GetUserDropdown, param, commandType: CommandType.StoredProcedure);
+            return data.ToList();
+        }
+
         #endregion
     }
 }

@@ -9,6 +9,7 @@ using FocusFM.Common.Helpers;
 using FocusFM.Model.CommonPagination;
 using FocusFM.Model.Config;
 using FocusFM.Model.Providers;
+using FocusFM.Model.User;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.Options;
 
@@ -71,6 +72,13 @@ namespace FocusFM.Data.DBRepository.Providers
             var result = await QueryFirstOrDefaultAsync<int>(StoredProcedures.ActiveInActiveProvider, param, commandType: CommandType.StoredProcedure);
             return result;
         }
+
+        public async Task<List<ProviderDropdownResponseModel>> GetProviderDropdown()
+        {
+            var data = await QueryAsync<ProviderDropdownResponseModel>(StoredProcedures.GetProviderDropdown, null, commandType: CommandType.StoredProcedure);
+            return data.ToList();
+        }
+
         #endregion
     }
 }

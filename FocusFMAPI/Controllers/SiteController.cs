@@ -3,7 +3,10 @@ using FocusFM.Common.CommonMethod;
 using FocusFM.Common.Enum;
 using FocusFM.Common.Helpers;
 using FocusFM.Model.CommonPagination;
+using FocusFM.Model.Providers;
 using FocusFM.Model.Site;
+using FocusFM.Model.Site.Floor;
+using FocusFM.Model.Site.Meter;
 using FocusFM.Service.JWTAuthentication;
 using FocusFM.Service.Site;
 using Microsoft.AspNetCore.Authorization;
@@ -109,7 +112,6 @@ namespace FocusFMAPI.Controllers
                     response.Success = true;
                 }
             }
-
             else if (result == Status.AlredyExists)
             {
                 response.Message = ErrorMessages.SiteExists;
@@ -168,10 +170,15 @@ namespace FocusFMAPI.Controllers
                 UserId = long.TryParse(j["UserId"], out var val) ? val : 0;
             }
             var result = await _SiteService.DeleteSite(id,UserId);
-            if (result == 0)
+            if (result == Status.Success)
             {
                 response.Message = ErrorMessages.DeleteSiteSuccess;
                 response.Success = true;
+            }
+            else if (result == Status.DataInUse)
+            {
+                response.Message = ErrorMessages.LinkedData;
+                response.Success = false;
             }
             else
             {
@@ -199,15 +206,23 @@ namespace FocusFMAPI.Controllers
             }
 
             var result = await _SiteService.ActiveInActiveSite(id,UserId);
-            if (result == ActiveStatus.Inactive)
+            if (result == Status.Success)
             {
-                response.Message = ErrorMessages.SiteInactive;
-                response.Success = true;
+                if (result == ActiveStatus.Inactive)
+                {
+                    response.Message = ErrorMessages.SiteInactive;
+                    response.Success = true;
+                }
+                else if (result == ActiveStatus.Active)
+                {
+                    response.Message = ErrorMessages.SiteActive;
+                    response.Success = true;
+                }
             }
-            else if (result == ActiveStatus.Active)
+            else if (result == Status.DataInUse)
             {
-                response.Message = ErrorMessages.SiteActive;
-                response.Success = true;
+                response.Message = ErrorMessages.LinkedData;
+                response.Success = false;
             }
             else
             {
@@ -220,7 +235,7 @@ namespace FocusFMAPI.Controllers
         #region Site Floor Methods
 
         [HttpPost("floor/save")]
-        public async Task<BaseApiResponse> SaveFloor([FromForm] SiteFloorRequestModel model)
+        public async Task<BaseApiResponse> SaveFloor(SiteFloorRequestModel model)
         {
             ApiResponse<SiteFloorResponseModel> response = new ApiResponse<SiteFloorResponseModel>();
             long UserId = 0;
@@ -342,6 +357,48 @@ namespace FocusFMAPI.Controllers
                 response.Message = ErrorMessages.SomethingWentWrong;
                 response.Success = false;
             }
+            return response;
+        }
+
+        [HttpPost("floor/dropdown")]
+        public async Task<ApiResponse<FloorDropdownResponseModel>> GetFloorDropdown(long SiteId)
+        {
+            ApiResponse<FloorDropdownResponseModel> response = new ApiResponse<FloorDropdownResponseModel>() { Data = new List<FloorDropdownResponseModel>() };
+            var result = await _SiteService.GetFloorDropdown(SiteId);
+            if (result != null)
+            {
+                response.Data = result;
+            }
+            response.Success = true;
+            return response;
+        }
+
+        #endregion
+
+        #region Meter Reading Type
+        [HttpPost("MeterReadingType/dropdown")]
+        public async Task<ApiResponse<MeterReadingTypeResponseModel>> GetMeterReadingTypeDropdown()
+        {
+            ApiResponse<MeterReadingTypeResponseModel> response = new ApiResponse<MeterReadingTypeResponseModel>() { Data = new List<MeterReadingTypeResponseModel>() };
+            var result = await _SiteService.GetMeterReadingTypeDropdown();
+            if (result != null)
+            {
+                response.Data = result;
+            }
+            response.Success = true;
+            return response;
+        }
+
+        [HttpPost("MeterType/dropdown")]
+        public async Task<ApiResponse<MeterTypeResponseModel>> GetMeterTypeDropdown()
+        {
+            ApiResponse<MeterTypeResponseModel> response = new ApiResponse<MeterTypeResponseModel>() { Data = new List<MeterTypeResponseModel>() };
+            var result = await _SiteService.GetMeterTypeDropdown();
+            if (result != null)
+            {
+                response.Data = result;
+            }
+            response.Success = true;
             return response;
         }
         #endregion

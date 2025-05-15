@@ -6,6 +6,8 @@ using System.Threading.Tasks;
 using FocusFM.Data.DBRepository.Site;
 using FocusFM.Model.CommonPagination;
 using FocusFM.Model.Site;
+using FocusFM.Model.Site.Floor;
+using FocusFM.Model.Site.Meter;
 
 namespace FocusFM.Service.Site
 {
@@ -65,6 +67,22 @@ namespace FocusFM.Service.Site
         public Task<int> ActiveInActiveFloor(long FloorId, long CurrentUserId)
         {
             return _repository.ActiveInActiveFloor(FloorId, CurrentUserId);
+        }
+        public Task<List<FloorDropdownResponseModel>> GetFloorDropdown(long SiteId)
+        {
+            return _repository.GetFloorDropdown(SiteId);
+        }
+
+        #endregion
+
+        #region Meter
+        public Task<List<MeterReadingTypeResponseModel>> GetMeterReadingTypeDropdown()
+        {
+            return _repository.GetMeterReadingTypeDropdown();
+        }
+        public Task<List<MeterTypeResponseModel>> GetMeterTypeDropdown()
+        {
+            return _repository.GetMeterTypeDropdown();
         }
         #endregion
     }
