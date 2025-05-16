@@ -10,5 +10,6 @@ namespace FocusFM.Model.Site.Meter
     public class GetMeterListRequestModel:CommonPaginationModel
     {
         public int MeterTypeId { get; set; }
+        public long SiteId { get; set; }
     }
 }
