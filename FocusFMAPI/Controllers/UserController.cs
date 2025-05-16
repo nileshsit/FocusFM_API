@@ -108,7 +108,7 @@ namespace FocusFMAPI.Controllers
         }
 
         [HttpPost("list")]
-        public async Task<ApiResponse<UserResponseModel>> GetUserList(CommonPaginationModel model)
+        public async Task<ApiResponse<UserResponseModel>> GetUserList(GetUserListRequestModel model)
         {
             ApiResponse<UserResponseModel> response = new ApiResponse<UserResponseModel>() { Data = new List<UserResponseModel>() };
             var result = await _userService.GetUserList(model);

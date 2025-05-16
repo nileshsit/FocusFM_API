@@ -29,7 +29,7 @@ namespace FocusFM.Service.User
             return _repository.SaveUser(model, id);
         }
 
-        public Task<List<UserResponseModel>> GetUserList(CommonPaginationModel model)
+        public Task<List<UserResponseModel>> GetUserList(GetUserListRequestModel model)
         {
             return _repository.GetUserList(model);
         }

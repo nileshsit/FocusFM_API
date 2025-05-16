@@ -50,9 +50,10 @@ namespace FocusFM.Data.DBRepository.User
             return result;
         }
 
-        public async Task<List<UserResponseModel>> GetUserList(CommonPaginationModel model)
+        public async Task<List<UserResponseModel>> GetUserList(GetUserListRequestModel model)
         {
             var param = new DynamicParameters();
+            param.Add("@UserTypeIds", model.UserTypeIds);
             param.Add("@pageIndex", model.PageNumber);
             param.Add("@pageSize", model.PageSize);
             param.Add("@orderBy", model.SortColumn);
