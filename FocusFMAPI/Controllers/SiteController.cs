@@ -376,7 +376,7 @@ namespace FocusFMAPI.Controllers
         #endregion
 
         #region Meter Reading Type
-        [HttpPost("MeterReadingType/dropdown")]
+        [HttpPost("meterreadingtype/dropdown")]
         public async Task<ApiResponse<MeterReadingTypeResponseModel>> GetMeterReadingTypeDropdown()
         {
             ApiResponse<MeterReadingTypeResponseModel> response = new ApiResponse<MeterReadingTypeResponseModel>() { Data = new List<MeterReadingTypeResponseModel>() };
@@ -389,7 +389,7 @@ namespace FocusFMAPI.Controllers
             return response;
         }
 
-        [HttpPost("MeterType/dropdown")]
+        [HttpPost("metertype/dropdown")]
         public async Task<ApiResponse<MeterTypeResponseModel>> GetMeterTypeDropdown()
         {
             ApiResponse<MeterTypeResponseModel> response = new ApiResponse<MeterTypeResponseModel>() { Data = new List<MeterTypeResponseModel>() };
@@ -401,6 +401,133 @@ namespace FocusFMAPI.Controllers
             response.Success = true;
             return response;
         }
+
+        [HttpPost("meter/save")]
+        public async Task<BaseApiResponse> SaveMeter(MeterRequestModel model)
+        {
+            ApiResponse<MeterResponseModel> response = new ApiResponse<MeterResponseModel>();
+            long UserId = 0;
+            string fileName = null;
+            if (Request.Headers.TryGetValue("Authorization", out var authHeader))
+            {
+                // Parse the JWT token
+                var token = authHeader.ToString().Substring("Bearer ".Length).Trim();
+                var handler = new JwtSecurityTokenHandler();
+                var jwtToken = handler.ReadJwtToken(token);
+
+                // Extract user ID from the token claims
+                var j = JsonConvert.DeserializeObject<Dictionary<string, string>>(jwtToken.Claims.FirstOrDefault(c => c.Type == "unique_name").Value);
+
+                UserId = long.TryParse(j["UserId"], out var val) ? val : 0;
+            }
+            var result = await _SiteService.SaveMeter(model, UserId);
+            var issend = false;
+            if (result == Status.Success)
+            {
+                if (model.MeterId > 0)
+                {
+                    response.Message = ErrorMessages.UpdateMeterSuccess;
+                    response.Success = true;
+                }
+                else
+                {
+                    response.Message = ErrorMessages.SaveMeterSuccess;
+                    response.Success = true;
+                }
+            }
+
+            else if (result == Status.AlredyExists)
+            {
+                response.Message = ErrorMessages.MeterExists;
+                response.Success = false;
+            }
+            else
+            {
+                response.Message = ErrorMessages.SomethingWentWrong;
+                response.Success = false;
+            }
+            return response;
+        }
+
+        [HttpPost("meter/list")]
+        public async Task<ApiResponse<MeterResponseModel>> GetMeterList(GetMeterListRequestModel model)
+        {
+            ApiResponse<MeterResponseModel> response = new ApiResponse<MeterResponseModel>() { Data = new List<MeterResponseModel>() };
+            var result = await _SiteService.GetMeterList(model);
+            if (result != null)
+            {
+                response.Data = result;
+            }
+            response.Success = true;
+            return response;
+        }
+
+        [HttpDelete("meter/delete/{id}")]
+        public async Task<BaseApiResponse> DeleteMeter(long id)
+        {
+            BaseApiResponse response = new BaseApiResponse();
+            long UserId = 0;
+            if (Request.Headers.TryGetValue("Authorization", out var authHeader))
+            {
+                // Parse the JWT token
+                var token = authHeader.ToString().Substring("Bearer ".Length).Trim();
+                var handler = new JwtSecurityTokenHandler();
+                var jwtToken = handler.ReadJwtToken(token);
+
+                var j = JsonConvert.DeserializeObject<Dictionary<string, string>>(jwtToken.Claims.FirstOrDefault(c => c.Type == "unique_name").Value);
+
+                UserId = long.TryParse(j["UserId"], out var val) ? val : 0;
+            }
+            var result = await _SiteService.DeleteMeter(id, UserId);
+            if (result == 0)
+            {
+                response.Message = ErrorMessages.DeleteMeterSuccess;
+                response.Success = true;
+            }
+            else
+            {
+                response.Message = ErrorMessages.SomethingWentWrong;
+                response.Success = false;
+            }
+            return response;
+        }
+
+        [HttpGet("meter/active-inactive/{id}")]
+        public async Task<BaseApiResponse> ActiveInActiveMeter(long id)
+        {
+            BaseApiResponse response = new BaseApiResponse();
+            long UserId = 0;
+            if (Request.Headers.TryGetValue("Authorization", out var authHeader))
+            {
+                // Parse the JWT token
+                var token = authHeader.ToString().Substring("Bearer ".Length).Trim();
+                var handler = new JwtSecurityTokenHandler();
+                var jwtToken = handler.ReadJwtToken(token);
+
+                var j = JsonConvert.DeserializeObject<Dictionary<string, string>>(jwtToken.Claims.FirstOrDefault(c => c.Type == "unique_name").Value);
+
+                UserId = long.TryParse(j["UserId"], out var val) ? val : 0;
+            }
+
+            var result = await _SiteService.ActiveInActiveMeter(id, UserId);
+            if (result == ActiveStatus.Inactive)
+            {
+                response.Message = ErrorMessages.MeterInactive;
+                response.Success = true;
+            }
+            else if (result == ActiveStatus.Active)
+            {
+                response.Message = ErrorMessages.MeterActive;
+                response.Success = true;
+            }
+            else
+            {
+                response.Message = ErrorMessages.SomethingWentWrong;
+                response.Success = false;
+            }
+            return response;
+        }
+
         #endregion
     }
 }

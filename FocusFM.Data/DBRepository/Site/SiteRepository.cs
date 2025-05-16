@@ -2,6 +2,7 @@
 
 using System;
 using System.Data;
+using System.Diagnostics.Metrics;
 using Dapper;
 using FocusFM.Common.Helpers;
 using FocusFM.Model.CommonPagination;
@@ -146,6 +147,54 @@ namespace FocusFM.Data.DBRepository.Site
             return data.ToList();
         }
 
+        public async Task<int> SaveMeter(MeterRequestModel model, long id)
+        {
+            var param = new DynamicParameters();
+            param.Add("@MeterId", model.MeterId);
+            param.Add("@SiteId", model.SiteId);
+            param.Add("@MeterName", model.MeterName);
+            param.Add("@MeterSerialNo", model.MeterSerialNo);
+            param.Add("@MeterReadingTypeId", model.MeterReadingTypeId);
+            param.Add("@MeterTypeId", model.MeterTypeId);
+            param.Add("@UserTypeId", model.UserTypeId);
+            param.Add("@ProviderId", model.ProviderId);
+            param.Add("@LandlordId", model.LandlordId);
+            param.Add("@TenantId", model.TenantId);
+            param.Add("@FloorId", model.FloorId);
+            param.Add("@CreatedBy", id);
+            var result = await QueryFirstOrDefaultAsync<int>(StoredProcedures.SaveMeter, param, commandType: CommandType.StoredProcedure);
+            return result;
+        }
+
+        public async Task<List<MeterResponseModel>> GetMeterList(GetMeterListRequestModel model)
+        {
+            var param = new DynamicParameters();
+            param.Add("@MeterTypeId", model.MeterTypeId);
+            param.Add("@pageIndex", model.PageNumber);
+            param.Add("@pageSize", model.PageSize);
+            param.Add("@orderBy", model.SortColumn);
+            param.Add("@sortOrder", model.SortOrder);
+            param.Add("@strSearch", model.StrSearch);
+            var data = await QueryAsync<MeterResponseModel>(StoredProcedures.GetMeterList, param, commandType: CommandType.StoredProcedure);
+            return data.ToList();
+        }
+        public async Task<int> DeleteMeter(long MeterId, long CurrentUserId)
+        {
+            var param = new DynamicParameters();
+            param.Add("@MeterId", MeterId);
+            param.Add("@ModifiedBy", CurrentUserId);
+            var result = await QueryFirstOrDefaultAsync<int>(StoredProcedures.DeleteMeter, param, commandType: CommandType.StoredProcedure);
+            return result;
+        }
+
+        public async Task<int> ActiveInActiveMeter(long MeterId, long CurrentUserId)
+        {
+            var param = new DynamicParameters();
+            param.Add("@MeterId", MeterId);
+            param.Add("@ModifiedBy", CurrentUserId);
+            var result = await QueryFirstOrDefaultAsync<int>(StoredProcedures.ActiveInActiveMeter, param, commandType: CommandType.StoredProcedure);
+            return result;
+        }
         #endregion
     }
 }

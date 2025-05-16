@@ -31,7 +31,10 @@ namespace FocusFM.Data.DBRepository.Site
         #region Meter
         Task<List<MeterReadingTypeResponseModel>> GetMeterReadingTypeDropdown();
         Task<List<MeterTypeResponseModel>> GetMeterTypeDropdown();
-
+        public Task<int> SaveMeter(MeterRequestModel model, long id);
+        public Task<List<MeterResponseModel>> GetMeterList(GetMeterListRequestModel model);
+        Task<int> DeleteMeter(long MeterId, long CurrentUserId);
+        Task<int> ActiveInActiveMeter(long MeterId, long CurrentUserId);
         #endregion
 
     }

@@ -84,6 +84,23 @@ namespace FocusFM.Service.Site
         {
             return _repository.GetMeterTypeDropdown();
         }
+        public Task<int> SaveMeter(MeterRequestModel model, long id)
+        {
+            return _repository.SaveMeter(model, id);
+        }
+        public Task<List<MeterResponseModel>> GetMeterList(GetMeterListRequestModel model)
+        {
+            return _repository.GetMeterList(model);
+        }
+        public Task<int> DeleteMeter(long MeterId, long CurrentUserId)
+        {
+            return _repository.DeleteMeter(MeterId, CurrentUserId);
+        }
+
+        public Task<int> ActiveInActiveMeter(long MeterId, long CurrentUserId)
+        {
+            return _repository.ActiveInActiveMeter(MeterId, CurrentUserId);
+        }
         #endregion
     }
 }

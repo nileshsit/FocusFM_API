@@ -62,6 +62,10 @@
         #region Meter
         public const string GetMeterTypeDropdown = "SP_GetMeterTypeDropdown";
         public const string GetMeterReadingTypeDropdown = "SP_GetMeterReadingTypeDropdown";
+        public const string SaveMeter = "SP_SaveMeter";
+        public const string GetMeterList = "SP_GetMeterList";
+        public const string ActiveInActiveMeter = "SP_ActiveInActiveMeter";
+        public const string DeleteMeter = "SP_DeleteMeter";
 
         #endregion
 

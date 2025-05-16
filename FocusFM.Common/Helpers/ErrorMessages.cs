@@ -79,5 +79,13 @@
         public const string FloorActive = "Floor activated successfully.";
         public const string DeleteFloorSuccess = "Floor deleted successfully.";
         public const string FloorExists = "Floor already exists.";
+
+        // Sites Meter
+        public const string SaveMeterSuccess = "Meter saved successfully.";
+        public const string UpdateMeterSuccess = "Meter updated successfully.";
+        public const string MeterInactive = "Meter inactivated successfully.";
+        public const string MeterActive = "Meter activated successfully.";
+        public const string DeleteMeterSuccess = "Meter deleted successfully.";
+        public const string MeterExists = "Meter already exists.";
     }
 }
