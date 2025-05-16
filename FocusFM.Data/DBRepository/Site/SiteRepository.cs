@@ -170,6 +170,7 @@ namespace FocusFM.Data.DBRepository.Site
         {
             var param = new DynamicParameters();
             param.Add("@MeterTypeId", model.MeterTypeId);
+            param.Add("@SiteId", model.SiteId);
             param.Add("@pageIndex", model.PageNumber);
             param.Add("@pageSize", model.PageSize);
             param.Add("@orderBy", model.SortColumn);
