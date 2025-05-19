@@ -4,6 +4,7 @@ using System;
 using System.Data;
 using System.Diagnostics.Metrics;
 using Dapper;
+using DocumentFormat.OpenXml.Spreadsheet;
 using FocusFM.Common.Helpers;
 using FocusFM.Model.CommonPagination;
 using FocusFM.Model.Config;
@@ -13,6 +14,7 @@ using FocusFM.Model.Site.Meter;
 using FocusFM.Model.User;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.Options;
+using Newtonsoft.Json;
 
 namespace FocusFM.Data.DBRepository.Site
 {
@@ -205,6 +207,30 @@ namespace FocusFM.Data.DBRepository.Site
             var data = await QueryAsync<MeterExportResponseModel>(StoredProcedures.GetMeterExportData, param, commandType: CommandType.StoredProcedure);
             return data.ToList();
         }
+
+        public async Task<List<MeterDropdownResponseModel>> GetMeterDropdown(MeterDropdownRequestModel model)
+        {
+            var param = new DynamicParameters();
+            param.Add("@SiteId", model.SiteId);
+            param.Add("@MeterTypeId", model.MeterTypeId);
+            param.Add("@ProviderId", model.ProviderId);
+            var data = await QueryAsync<MeterDropdownResponseModel>(StoredProcedures.GetMeterDropdown, param, commandType: CommandType.StoredProcedure);
+            return data.ToList();
+        }
+
+        public async Task<List<MeterBulkImportResponseModel>> ValidateInsertMeterBulkImport(List<MeterBulkImportRequestModel> model, long id)
+        {
+            var param = new DynamicParameters();
+
+            // Create a parameter for the table-valued parameter (TVP)
+            param.Add("@MeterData", JsonConvert.SerializeObject(model));
+            param.Add("@CreatedBy", id);
+
+
+            var result = await QueryAsync<MeterBulkImportResponseModel>(StoredProcedures.GetMeterBulkImport, param, commandType: CommandType.StoredProcedure);
+            return result.ToList();
+        }
+
         #endregion
     }
 }

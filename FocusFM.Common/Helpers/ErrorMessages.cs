@@ -87,5 +87,7 @@
         public const string MeterActive = "Meter activated successfully.";
         public const string DeleteMeterSuccess = "Meter deleted successfully.";
         public const string MeterExists = "Meter already exists.";
+        public const string MeterBulkImportSuccess = "Successfully validated file and meter data has been addeded successfully.";
+        public const string MeterBulkImportFail = "Uploaded File contains inavalid data.Kindly check uploaded data and try again.";
     }
 }

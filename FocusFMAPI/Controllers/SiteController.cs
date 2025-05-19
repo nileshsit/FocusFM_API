@@ -1,5 +1,6 @@
 ﻿using System.Data;
 using System.IdentityModel.Tokens.Jwt;
+using ClosedXML.Excel;
 using FocusFM.Common.CommonMethod;
 using FocusFM.Common.Enum;
 using FocusFM.Common.Helpers;
@@ -557,6 +558,113 @@ namespace FocusFMAPI.Controllers
             }
             return BadRequest();
         }
+
+
+        [HttpPost("meter/dropdown")]
+        public async Task<ApiResponse<MeterDropdownResponseModel>> GetMeterDropdown(MeterDropdownRequestModel model)
+        {
+            ApiResponse<MeterDropdownResponseModel> response = new ApiResponse<MeterDropdownResponseModel>() { Data = new List<MeterDropdownResponseModel>() };
+            var result = await _SiteService.GetMeterDropdown(model);
+            if (result != null)
+            {
+                response.Data = result;
+            }
+            response.Success = true;
+            return response;
+        }
+
+        [HttpPost("meter/import")]
+        public async Task<ApiResponse<MeterBulkImportResponseModel>> ValidateInsertMeterBulkImport(IFormFile file)
+        {
+            ApiResponse<MeterBulkImportResponseModel> response = new ApiResponse<MeterBulkImportResponseModel>() { Data = new List<MeterBulkImportResponseModel>() };
+            long UserId = 0;
+            if (file == null || file.Length == 0)
+            {
+                response.Data = null;
+                response.Success = false;
+                response.Message = ErrorMessages.NoFile;
+                return response;
+            }
+
+            using var stream = new MemoryStream();
+            await file.CopyToAsync(stream);
+
+            using var workbook = new XLWorkbook(stream);
+            var worksheet = workbook.Worksheet(1);
+
+            // Read headers and map to model properties
+            var headerMap = worksheet.Row(1)
+                                     .CellsUsed()
+                                     .ToDictionary(cell => cell.GetValue<string>().Trim(), cell => cell.Address.ColumnNumber);
+
+            // Prepare a list of MeterDataRow models
+            var model = new List<MeterBulkImportRequestModel>();
+
+            // Loop through rows (skip header)
+            foreach (var row in worksheet.RowsUsed().Skip(1))
+            {
+                var meterData = new MeterBulkImportRequestModel
+                {
+                    // Map Excel column names to model properties
+                    MeterName = row.Cell(headerMap["Meter Name"]).GetValue<string>().Trim(),
+                    MeterSerialNo = row.Cell(headerMap["Meter Id"]).GetValue<string>().Trim(),
+                    SiteName = row.Cell(headerMap["Site Name"]).GetValue<string>().Trim(),
+                    FloorName = row.Cell(headerMap["Floor Name"]).GetValue<string>().Trim(),
+                    ProviderName = row.Cell(headerMap["Provider Name"]).GetValue<string>().Trim(),
+                    MeterReadingType = row.Cell(headerMap["Unit"]).GetValue<string>().Trim(),
+                    MeterType = row.Cell(headerMap["Meter Type"]).GetValue<string>().Trim(),
+                    UserType = row.Cell(headerMap["Paid By"]).GetValue<string>().Trim(),
+                    LandlordName = row.Cell(headerMap["Landlord Name"]).GetValue<string>().Trim(),
+                    TenantName = row.Cell(headerMap["Tenant Name"]).GetValue<string>().Trim(),
+                };
+
+                model.Add(meterData);
+            }
+
+            if (Request.Headers.TryGetValue("Authorization", out var authHeader))
+            {
+                // Parse the JWT token
+                var token = authHeader.ToString().Substring("Bearer ".Length).Trim();
+                var handler = new JwtSecurityTokenHandler();
+                var jwtToken = handler.ReadJwtToken(token);
+
+                var j = JsonConvert.DeserializeObject<Dictionary<string, string>>(jwtToken.Claims.FirstOrDefault(c => c.Type == "unique_name").Value);
+
+                UserId = long.TryParse(j["UserId"], out var val) ? val : 0;
+            }
+            var result = await _SiteService.ValidateInsertMeterBulkImport(model,UserId);
+            if (result != null)
+            {
+                response.Data = result;
+                if (response.Data.Count <= 0)
+                {
+                    response.Success = true;
+                    response.Message = ErrorMessages.MeterBulkImportSuccess;
+
+                }
+                else
+                {
+                    response.Success = false;
+                    response.Message = ErrorMessages.MeterBulkImportFail;
+                }
+            }
+            return response;
+        }
+
+        [HttpGet("meter/download-sample")]
+        public IActionResult GetSampleImportFile()
+        {
+            var filePath = Path.Combine(Directory.GetCurrentDirectory(), "wwwroot", "SampleFiles", "MeterBuIkImportSampleFile.xlsx");
+
+            if (!System.IO.File.Exists(filePath))
+                return NotFound("Sample file not found.");
+
+            var mimeType = "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet"; // or application/vnd.openxmlformats-officedocument.spreadsheetml.sheet for Excel
+            var fileName = "MeterBuIkImportSampleFile.xlsx";
+
+            return PhysicalFile(filePath, mimeType, fileName);
+        }
+
         #endregion
     }
 }

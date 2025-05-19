@@ -68,6 +68,8 @@
         public const string ActiveInActiveMeter = "SP_ActiveInActiveMeter";
         public const string DeleteMeter = "SP_DeleteMeter";
         public const string GetMeterExportData = "SP_GetMeterExportList";
+        public const string GetMeterDropdown = "SP_GetMeterDropdown";
+        public const string GetMeterBulkImport = "SP_MeterBulkImport";
 
         #endregion
 

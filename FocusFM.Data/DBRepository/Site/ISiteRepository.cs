@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using FocusFM.Common.Helpers;
 using FocusFM.Model.CommonPagination;
 using FocusFM.Model.Site;
 using FocusFM.Model.Site.Floor;
@@ -36,6 +37,8 @@ namespace FocusFM.Data.DBRepository.Site
         Task<int> DeleteMeter(long MeterId, long CurrentUserId);
         Task<int> ActiveInActiveMeter(long MeterId, long CurrentUserId);
         public Task<List<MeterExportResponseModel>> GetMeterExportData(MeterExportRequestModel model);
+        public Task<List<MeterDropdownResponseModel>> GetMeterDropdown(MeterDropdownRequestModel model);
+        public Task<List<MeterBulkImportResponseModel>> ValidateInsertMeterBulkImport(List<MeterBulkImportRequestModel> model, long id);
         #endregion
 
     }
