@@ -11,5 +11,6 @@ namespace FocusFM.Data.DBRepository.User
         Task<int> DeleteUser(long UserId, long CurrentUserId);
         Task<int> ActiveInActiveUser(long UserId, long CurrentUserId);
         Task<List<UserDropdownResponseModel>> GetUserDropdown(int TypeId);
+        Task<List<UserExportResponseModel>> GetUserExportData(UserExportRequestModel model);
     }
 }

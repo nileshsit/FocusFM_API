@@ -1,4 +1,5 @@
-﻿using System.IdentityModel.Tokens.Jwt;
+﻿using System.Data;
+using System.IdentityModel.Tokens.Jwt;
 using FocusFM.Common.CommonMethod;
 using FocusFM.Common.Enum;
 using FocusFM.Common.Helpers;
@@ -7,6 +8,7 @@ using FocusFM.Model.Providers;
 using FocusFM.Model.Site;
 using FocusFM.Model.Site.Floor;
 using FocusFM.Model.Site.Meter;
+using FocusFM.Model.User;
 using FocusFM.Service.JWTAuthentication;
 using FocusFM.Service.Site;
 using Microsoft.AspNetCore.Authorization;
@@ -528,6 +530,33 @@ namespace FocusFMAPI.Controllers
             return response;
         }
 
+        [HttpPost("meter/export")]
+        public async Task<IActionResult> ExportMeterData(MeterExportRequestModel model)
+        {
+            var result = await _SiteService.GetMeterExportData(model);
+            if (result != null)
+            {
+                DataTable dt = Utility.ToDataTable(result);
+                dt.Columns["SiteName"].ColumnName = "Site Name";
+                dt.Columns["UserType"].ColumnName = "Paid By";
+                dt.Columns["MeterReadingType"].ColumnName = "Unit";
+                dt.Columns["MeterType"].ColumnName = "Meter Type";
+                dt.Columns["ProviderName"].ColumnName = "Provider Name";
+                dt.Columns["MeterName"].ColumnName = "Meter Name";
+                dt.Columns["MeterSerialNo"].ColumnName = "Meter Id";
+                dt.Columns["FloorName"].ColumnName = "Floor Name";
+                dt.Columns["LandlordName"].ColumnName = "Landlord Name";
+                dt.Columns["TenantName"].ColumnName = "Tenant Name";
+                // Get Excel as byte array
+                var fileBytes = ExportHelper.ExportToExcel(dt, "Meter List", "Meters");
+
+                // Return the file directly without stream
+                return File(fileBytes,
+                    "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet",
+                    "Meters.xlsx");
+            }
+            return BadRequest();
+        }
         #endregion
     }
 }

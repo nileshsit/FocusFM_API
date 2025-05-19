@@ -196,6 +196,15 @@ namespace FocusFM.Data.DBRepository.Site
             var result = await QueryFirstOrDefaultAsync<int>(StoredProcedures.ActiveInActiveMeter, param, commandType: CommandType.StoredProcedure);
             return result;
         }
+        public async Task<List<MeterExportResponseModel>> GetMeterExportData(MeterExportRequestModel model)
+        {
+            var param = new DynamicParameters();
+            param.Add("@SiteId", model.SiteId);
+            param.Add("@MeterTypeId", model.MeterTypeId);
+            param.Add("@strSearch", model.StrSearch);
+            var data = await QueryAsync<MeterExportResponseModel>(StoredProcedures.GetMeterExportData, param, commandType: CommandType.StoredProcedure);
+            return data.ToList();
+        }
         #endregion
     }
 }

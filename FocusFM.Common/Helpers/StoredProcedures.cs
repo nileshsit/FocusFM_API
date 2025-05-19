@@ -34,6 +34,7 @@
         public const string ActiveInActiveUser = "SP_ActiveInActiveUser";
         public const string DeleteUser = "SP_DeleteUser";
         public const string GetUserDropdown = "SP_GetUserDropdown";
+        public const string GetUserExportData = "SP_GetUserExportList";
         #endregion
 
         #region Provider
@@ -66,6 +67,7 @@
         public const string GetMeterList = "SP_GetMeterList";
         public const string ActiveInActiveMeter = "SP_ActiveInActiveMeter";
         public const string DeleteMeter = "SP_DeleteMeter";
+        public const string GetMeterExportData = "SP_GetMeterExportList";
 
         #endregion
 

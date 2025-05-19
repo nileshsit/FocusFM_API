@@ -8,6 +8,7 @@ using FocusFM.Model.CommonPagination;
 using FocusFM.Model.Site;
 using FocusFM.Model.Site.Floor;
 using FocusFM.Model.Site.Meter;
+using FocusFM.Model.User;
 
 namespace FocusFM.Service.Site
 {
@@ -100,6 +101,11 @@ namespace FocusFM.Service.Site
         public Task<int> ActiveInActiveMeter(long MeterId, long CurrentUserId)
         {
             return _repository.ActiveInActiveMeter(MeterId, CurrentUserId);
+        }
+
+        public Task<List<MeterExportResponseModel>> GetMeterExportData(MeterExportRequestModel model)
+        {
+            return _repository.GetMeterExportData(model);
         }
         #endregion
     }

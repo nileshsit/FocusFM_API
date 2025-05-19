@@ -88,6 +88,14 @@ namespace FocusFM.Data.DBRepository.User
             return data.ToList();
         }
 
+        public async Task<List<UserExportResponseModel>> GetUserExportData(UserExportRequestModel model)
+        {
+            var param = new DynamicParameters();
+            param.Add("@UserTypeIds", model.UserTypeIds);
+            param.Add("@strSearch", model.StrSearch);
+            var data = await QueryAsync<UserExportResponseModel>(StoredProcedures.GetUserExportData, param, commandType: CommandType.StoredProcedure);
+            return data.ToList();
+        }
         #endregion
     }
 }

@@ -1,4 +1,5 @@
-﻿using System.IdentityModel.Tokens.Jwt;
+﻿using System.Data;
+using System.IdentityModel.Tokens.Jwt;
 using FocusFM.Common.CommonMethod;
 using FocusFM.Common.EmailNotification;
 using FocusFM.Common.Enum;
@@ -222,6 +223,29 @@ namespace FocusFMAPI.Controllers
             }
             response.Success = true;
             return response;
+        }
+
+        [HttpPost("export")]
+        public async Task<IActionResult> ExportUserData(UserExportRequestModel model)
+        {
+            ApiResponse<UserExportResponseModel> response = new ApiResponse<UserExportResponseModel>() { Data = new List<UserExportResponseModel>() };
+            var result = await _userService.GetUserExportData(model);
+            if (result != null)
+            {
+                DataTable dt = Utility.ToDataTable(result);
+                dt.Columns["FirstName"].ColumnName = "Name";
+                dt.Columns["UserType"].ColumnName = "User Type";
+                dt.Columns["EmailId"].ColumnName = "Email";
+                dt.Columns["MobileNo"].ColumnName = "Phone No.";
+                // Get Excel as byte array
+                var fileBytes = ExportHelper.ExportToExcel(dt,"Tenant(s) / LandLord(s)", "Users");
+
+                // Return the file directly without stream
+                return File(fileBytes,
+                    "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet",
+                    "Users.xlsx");
+            }
+            return BadRequest();
         }
     }
 }

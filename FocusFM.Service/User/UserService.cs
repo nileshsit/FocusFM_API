@@ -48,6 +48,10 @@ namespace FocusFM.Service.User
         {
             return _repository.GetUserDropdown(TypeId);
         }
+        public Task<List<UserExportResponseModel>> GetUserExportData(UserExportRequestModel model)
+        {
+            return _repository.GetUserExportData(model);
+        }
         #endregion
     }
 }

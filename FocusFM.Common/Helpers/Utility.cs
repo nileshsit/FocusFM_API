@@ -1,4 +1,5 @@
 ﻿using System.ComponentModel;
+using System.Data;
 using System.Net.Mail;
 using System.Reflection;
 
@@ -340,6 +341,25 @@ namespace FocusFM.Common.Helpers
         public static int GetRoundedValue(decimal value)
         {
             return (int)Math.Ceiling((double)value / 5) * 5;
+        }
+
+        public static DataTable ToDataTable<T>(List<T> items)
+        {
+            var dataTable = new DataTable(typeof(T).Name);
+            var properties = typeof(T).GetProperties();
+
+            foreach (var prop in properties)
+                dataTable.Columns.Add(prop.Name, Nullable.GetUnderlyingType(prop.PropertyType) ?? prop.PropertyType);
+
+            foreach (var item in items)
+            {
+                var row = dataTable.NewRow();
+                foreach (var prop in properties)
+                    row[prop.Name] = prop.GetValue(item) ?? DBNull.Value;
+                dataTable.Rows.Add(row);
+            }
+
+            return dataTable;
         }
     }
 }

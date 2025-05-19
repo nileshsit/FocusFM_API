@@ -35,6 +35,7 @@ namespace FocusFM.Data.DBRepository.Site
         public Task<List<MeterResponseModel>> GetMeterList(GetMeterListRequestModel model);
         Task<int> DeleteMeter(long MeterId, long CurrentUserId);
         Task<int> ActiveInActiveMeter(long MeterId, long CurrentUserId);
+        public Task<List<MeterExportResponseModel>> GetMeterExportData(MeterExportRequestModel model);
         #endregion
 
     }
