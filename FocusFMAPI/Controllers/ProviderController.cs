@@ -6,8 +6,6 @@ using FocusFM.Common.Enum;
 using FocusFM.Common.Helpers;
 using FocusFM.Model.CommonPagination;
 using FocusFM.Model.Providers;
-using FocusFM.Model.Token;
-using FocusFM.Model.User;
 using FocusFM.Service.JWTAuthentication;
 using FocusFM.Service.Providers;
 using Microsoft.AspNetCore.Authentication.JwtBearer;

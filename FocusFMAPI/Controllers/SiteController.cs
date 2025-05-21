@@ -9,7 +9,7 @@ using FocusFM.Model.Providers;
 using FocusFM.Model.Site;
 using FocusFM.Model.Site.Floor;
 using FocusFM.Model.Site.Meter;
-using FocusFM.Model.User;
+using FocusFM.Model.MeterOccupier;
 using FocusFM.Service.JWTAuthentication;
 using FocusFM.Service.Site;
 using Microsoft.AspNetCore.Authorization;
@@ -539,7 +539,7 @@ namespace FocusFMAPI.Controllers
             {
                 DataTable dt = Utility.ToDataTable(result);
                 dt.Columns["SiteName"].ColumnName = "Site Name";
-                dt.Columns["UserType"].ColumnName = "Paid By";
+                dt.Columns["MeterOccupierType"].ColumnName = "Paid By";
                 dt.Columns["MeterReadingType"].ColumnName = "Unit";
                 dt.Columns["MeterType"].ColumnName = "Meter Type";
                 dt.Columns["ProviderName"].ColumnName = "Provider Name";
@@ -613,7 +613,7 @@ namespace FocusFMAPI.Controllers
                     ProviderName = row.Cell(headerMap["Provider Name"]).GetValue<string>().Trim(),
                     MeterReadingType = row.Cell(headerMap["Unit"]).GetValue<string>().Trim(),
                     MeterType = row.Cell(headerMap["Meter Type"]).GetValue<string>().Trim(),
-                    UserType = row.Cell(headerMap["Paid By"]).GetValue<string>().Trim(),
+                    MeterOccupierType = row.Cell(headerMap["Paid By"]).GetValue<string>().Trim(),
                     LandlordName = row.Cell(headerMap["Landlord Name"]).GetValue<string>().Trim(),
                     TenantName = row.Cell(headerMap["Tenant Name"]).GetValue<string>().Trim(),
                 };

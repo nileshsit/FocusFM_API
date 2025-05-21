@@ -5,7 +5,6 @@ using System.Text;
 using System.Threading.Tasks;
 using FocusFM.Model.CommonPagination;
 using FocusFM.Model.Providers;
-using FocusFM.Model.User;
 
 namespace FocusFM.Service.Providers
 {

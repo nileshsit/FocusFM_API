@@ -129,7 +129,7 @@ namespace FocusFMAPI.Controllers
             {
                 if (model.UserId > 0)
                 {
-                    response.Message = ErrorMessages.UpdateUserSuccess;
+                    response.Message = ErrorMessages.UpdateMeterOccupierSuccess;
                     response.Success = true;
                 }
                 else
@@ -190,7 +190,7 @@ namespace FocusFMAPI.Controllers
                     //bool isAdminMailSent = await Task.Run(() => SendMailMessage(adminEmail, null, null, "New User Registration", adminEmailBody, setting, null));
                     //#endregion
 
-                    response.Message = ErrorMessages.SaveUserSuccess;
+                    response.Message = ErrorMessages.SaveMeterOccupierSuccess;
                     response.Success = true;
                 }
             }
@@ -283,7 +283,7 @@ namespace FocusFMAPI.Controllers
             var result = await _userService.DeleteUser(id,UserId);
             if (result == 0)
             {
-                response.Message = ErrorMessages.DeleteUserSuccess;
+                response.Message = ErrorMessages.DeleteMeterOccupierSuccess;
                 response.Success = true;
             }
             else
@@ -318,12 +318,12 @@ namespace FocusFMAPI.Controllers
             var result = await _userService.InActiveUser(id,UserId);
             if (result == ActiveStatus.Inactive)
             {
-                response.Message = ErrorMessages.UserInactive;
+                response.Message = ErrorMessages.MeterOccupierInactive;
                 response.Success = true;
             }
             else if (result == ActiveStatus.Active)
             {
-                response.Message = ErrorMessages.UserActive;
+                response.Message = ErrorMessages.MeterOccupierActive;
                 response.Success = true;
             }
             else

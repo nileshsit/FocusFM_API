@@ -9,7 +9,6 @@ using FocusFM.Common.Helpers;
 using FocusFM.Model.CommonPagination;
 using FocusFM.Model.Config;
 using FocusFM.Model.Providers;
-using FocusFM.Model.User;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.Options;
 

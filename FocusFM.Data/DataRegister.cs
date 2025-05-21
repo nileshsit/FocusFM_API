@@ -1,8 +1,8 @@
 ﻿using FocusFM.Data.DBRepository.Account;
 using FocusFM.Data.DBRepository.AdminUser;
+using FocusFM.Data.DBRepository.MeterOccupier;
 using FocusFM.Data.DBRepository.Providers;
 using FocusFM.Data.DBRepository.Site;
-using FocusFM.Data.DBRepository.User;
 
 namespace FocusFM.Data
 {

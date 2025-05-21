@@ -2,16 +2,13 @@
 
 using System;
 using System.Data;
-using System.Diagnostics.Metrics;
 using Dapper;
-using DocumentFormat.OpenXml.Spreadsheet;
 using FocusFM.Common.Helpers;
 using FocusFM.Model.CommonPagination;
 using FocusFM.Model.Config;
 using FocusFM.Model.Site;
 using FocusFM.Model.Site.Floor;
 using FocusFM.Model.Site.Meter;
-using FocusFM.Model.User;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.Options;
 using Newtonsoft.Json;
@@ -158,7 +155,7 @@ namespace FocusFM.Data.DBRepository.Site
             param.Add("@MeterSerialNo", model.MeterSerialNo);
             param.Add("@MeterReadingTypeId", model.MeterReadingTypeId);
             param.Add("@MeterTypeId", model.MeterTypeId);
-            param.Add("@UserTypeId", model.UserTypeId);
+            param.Add("@MeterOccupierTypeId", model.MeterOccupierTypeId);
             param.Add("@ProviderId", model.ProviderId);
             param.Add("@LandlordId", model.LandlordId);
             param.Add("@TenantId", model.TenantId);
