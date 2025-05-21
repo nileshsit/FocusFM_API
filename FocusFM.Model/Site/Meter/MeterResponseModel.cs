@@ -26,7 +26,7 @@ namespace FocusFM.Model.Site.Meter
         public string LandlordName { get; set; }
         public long? TenantId { get; set; }
         public string TenantName { get; set; }
-        public int UserTypeId { get; set; }
-        public string UserType { get; set; }
+        public int MeterOccupierTypeId { get; set; }
+        public string MeterOccupierType { get; set; }
     }
 }

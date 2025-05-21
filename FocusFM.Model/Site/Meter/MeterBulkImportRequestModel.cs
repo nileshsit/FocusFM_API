@@ -17,6 +17,6 @@ namespace FocusFM.Model.Site.Meter
         public string FloorName { get; set; }
         public string LandlordName { get; set; }
         public string TenantName { get; set; }
-        public string UserType { get; set; }
+        public string MeterOccupierType { get; set; }
     }
 }

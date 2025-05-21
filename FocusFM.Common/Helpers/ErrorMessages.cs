@@ -44,13 +44,13 @@
         public const string PasswordCheck = "Please enter a valid old password.";
         public const string PasswordFieldValidation = "One or more fields are required.";
 
-        // User Management
-        public const string SaveUserSuccess = "User saved successfully.";
-        public const string UserExists = "User already exists.";
-        public const string UpdateUserSuccess = "User updated successfully.";
-        public const string UserInactive = "User inactivated successfully.";
-        public const string UserActive = "User activated successfully.";
-        public const string DeleteUserSuccess = "User deleted successfully.";
+        // Meter Occupier
+        public const string SaveMeterOccupierSuccess = "Meter Occupier saved successfully.";
+        public const string MeterOccupierExists = "Meter Occupier already exists.";
+        public const string UpdateMeterOccupierSuccess = "Meter Occupier updated successfully.";
+        public const string MeterOccupierInactive = "Meter Occupier inactivated successfully.";
+        public const string MeterOccupierActive = "Meter Occupier activated successfully.";
+        public const string DeleteMeterOccupierSuccess = "Meter Occupier deleted successfully.";
 
         // Providers 
         public const string SaveProviderSuccess = "Provider saved successfully.";

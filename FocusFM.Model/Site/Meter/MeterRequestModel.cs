@@ -30,7 +30,7 @@ namespace FocusFM.Model.Site.Meter
         public long LandlordId { get; set; }
         [Required(ErrorMessage = "TenantId is required.")]
         public long? TenantId { get; set; }
-        [Required(ErrorMessage = "UserTypeId is required.")]
-        public int UserTypeId { get; set; }
+        [Required(ErrorMessage = "MeterOccupierTypeId is required.")]
+        public int MeterOccupierTypeId { get; set; }
     }
 }

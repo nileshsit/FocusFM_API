@@ -16,7 +16,7 @@ namespace FocusFM.Service
             {
                 { typeof(IAccountService), typeof(AccountService) },
                 { typeof(IAdminUserService), typeof(AdminUserService) },
-                { typeof(IUserService), typeof(UserService) },
+                { typeof(IMeterOccupierService), typeof(MeterOccupierService) },
                 { typeof(IProviderService), typeof(ProviderService) },
                 { typeof(ISiteService), typeof(SiteService) },
             };

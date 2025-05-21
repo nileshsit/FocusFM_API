@@ -1,15 +1,8 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using FocusFM.Common.Helpers;
-using FocusFM.Data.DBRepository.Site;
+﻿using FocusFM.Data.DBRepository.Site;
 using FocusFM.Model.CommonPagination;
 using FocusFM.Model.Site;
 using FocusFM.Model.Site.Floor;
 using FocusFM.Model.Site.Meter;
-using FocusFM.Model.User;
 
 namespace FocusFM.Service.Site
 {

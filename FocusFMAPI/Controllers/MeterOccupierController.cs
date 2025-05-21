@@ -4,51 +4,43 @@ using FocusFM.Common.CommonMethod;
 using FocusFM.Common.EmailNotification;
 using FocusFM.Common.Enum;
 using FocusFM.Common.Helpers;
-using FocusFM.Model.AdminUser;
-using FocusFM.Model.CommonPagination;
-using FocusFM.Model.Settings;
-using FocusFM.Model.Token;
-using FocusFM.Model.User;
+using FocusFM.Model.MeterOccupier;
 using FocusFM.Service.JWTAuthentication;
-using FocusFM.Service.User;
-using Microsoft.AspNetCore.Authentication.JwtBearer;
+using FocusFM.Service.MeterOccupier;
 using Microsoft.AspNetCore.Authorization;
-using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
-using Microsoft.Extensions.Options;
-using Microsoft.Net.Http.Headers;
 using Newtonsoft.Json;
 using static FocusFM.Common.EmailNotification.EmailNotification;
 
 namespace FocusFMAPI.Controllers
 {
-    [Route("api/user")]
+    [Route("api/meteroccupier")]
     [ApiController]
     [Authorize]
-    public class UserController : ControllerBase
+    public class MeterOccupierController : ControllerBase
     {
         #region Fields
-        private readonly IUserService _userService;
+        private readonly IMeterOccupierService _MeterOccupierService;
         private readonly IHttpContextAccessor _httpContextAccessor;
         private readonly IJWTAuthenticationService _jwtAuthenticationService;
         #endregion
 
         #region Constructor
-        public UserController
+        public MeterOccupierController
         (
-            IUserService UserService,
+            IMeterOccupierService MeterOccupierService,
             IHttpContextAccessor httpContextAccessor,
             IJWTAuthenticationService jwtAuthenticationService
         )
         {
-            _userService = UserService;
+            _MeterOccupierService = MeterOccupierService;
             _httpContextAccessor = httpContextAccessor;
             _jwtAuthenticationService = jwtAuthenticationService;
         }
         #endregion
 
         [HttpPost("save")]
-        public async Task<BaseApiResponse> SaveUser([FromBody] UserRequestModel model)
+        public async Task<BaseApiResponse> SaveMeterOccupier([FromBody] MeterOccupierRequestModel model)
         {
             BaseApiResponse response = new BaseApiResponse();
 
@@ -79,25 +71,25 @@ namespace FocusFMAPI.Controllers
 
                 UserId = long.TryParse(j["UserId"], out var val) ? val : 0;
             }
-            var result = await _userService.SaveUser(model, UserId);
+            var result = await _MeterOccupierService.SaveMeterOccupier(model, UserId);
             var issend = false;
             if (result == Status.Success)
             {
-                if (model.UserId > 0)
+                if (model.MeterOccupierId > 0)
                 {
-                    response.Message = ErrorMessages.UpdateUserSuccess;
+                    response.Message = ErrorMessages.UpdateMeterOccupierSuccess;
                     response.Success = true;
                 }
                 else
                 {
-                    response.Message = ErrorMessages.SaveUserSuccess;
+                    response.Message = ErrorMessages.SaveMeterOccupierSuccess;
                     response.Success = true;
                 }
             }
 
             else if (result == Status.AlredyExists)
             {
-                response.Message = ErrorMessages.UserExists;
+                response.Message = ErrorMessages.MeterOccupierExists;
                 response.Success = false;
             }
             else
@@ -109,10 +101,10 @@ namespace FocusFMAPI.Controllers
         }
 
         [HttpPost("list")]
-        public async Task<ApiResponse<UserResponseModel>> GetUserList(GetUserListRequestModel model)
+        public async Task<ApiResponse<MeterOccupierResponseModel>> GetMeterOccupierList(GetMeterOccupierListRequestModel model)
         {
-            ApiResponse<UserResponseModel> response = new ApiResponse<UserResponseModel>() { Data = new List<UserResponseModel>() };
-            var result = await _userService.GetUserList(model);
+            ApiResponse<MeterOccupierResponseModel> response = new ApiResponse<MeterOccupierResponseModel>() { Data = new List<MeterOccupierResponseModel>() };
+            var result = await _MeterOccupierService.GetMeterOccupierList(model);
             if (result != null)
             {
                 response.Data = result;
@@ -122,7 +114,7 @@ namespace FocusFMAPI.Controllers
         }
 
         [HttpDelete("delete/{id}")]
-        public async Task<BaseApiResponse> DeleteUser(long id)
+        public async Task<BaseApiResponse> DeleteMeterOccupier(long id)
         {
             BaseApiResponse response = new BaseApiResponse();
             long UserId = 0;
@@ -137,10 +129,10 @@ namespace FocusFMAPI.Controllers
 
                 UserId = long.TryParse(j["UserId"], out var val) ? val : 0;
             }
-            var result = await _userService.DeleteUser(id,UserId);
+            var result = await _MeterOccupierService.DeleteMeterOccupier(id,UserId);
             if (result == 0)
             {
-                response.Message = ErrorMessages.DeleteUserSuccess;
+                response.Message = ErrorMessages.DeleteMeterOccupierSuccess;
                 response.Success = true;
             }
             else
@@ -152,7 +144,7 @@ namespace FocusFMAPI.Controllers
         }
 
         [HttpGet("active-inactive/{id}")]
-        public async Task<BaseApiResponse> ActiveInActiveUser(long id)
+        public async Task<BaseApiResponse> ActiveInActiveMeterOccupier(long id)
         {
             BaseApiResponse response = new BaseApiResponse();
             long UserId = 0;
@@ -167,15 +159,15 @@ namespace FocusFMAPI.Controllers
 
                 UserId = long.TryParse(j["UserId"], out var val) ? val : 0;
             }
-            var result = await _userService.ActiveInActiveUser(id,UserId);
+            var result = await _MeterOccupierService.ActiveInActiveMeterOccupier(id,UserId);
             if (result == ActiveStatus.Inactive)
             {
-                response.Message = ErrorMessages.UserInactive;
+                response.Message = ErrorMessages.MeterOccupierInactive;
                 response.Success = true;
             }
             else if (result == ActiveStatus.Active)
             {
-                response.Message = ErrorMessages.UserActive;
+                response.Message = ErrorMessages.MeterOccupierActive;
                 response.Success = true;
             }
             else
@@ -186,11 +178,11 @@ namespace FocusFMAPI.Controllers
             return response;
         }
 
-        [HttpPost("user-type-dropdown")]
-        public async Task<ApiResponse<UserTypeResponseModel>> GetUserTypeDropdown()
+        [HttpPost("meteroccupier-type-dropdown")]
+        public async Task<ApiResponse<MeterOccupierTypeResponseModel>> GetMeterOccupierTypeDropdown()
         {
-            ApiResponse<UserTypeResponseModel> response = new ApiResponse<UserTypeResponseModel>() { Data = new List<UserTypeResponseModel>() };
-            var result = await _userService.GetUserTypeDropdown();
+            ApiResponse<MeterOccupierTypeResponseModel> response = new ApiResponse<MeterOccupierTypeResponseModel>() { Data = new List<MeterOccupierTypeResponseModel>() };
+            var result = await _MeterOccupierService.GetMeterOccupierTypeDropdown();
             if (result != null)
             {
                 response.Data = result;
@@ -200,10 +192,10 @@ namespace FocusFMAPI.Controllers
         }
 
         [HttpPost("landlord-dropdown")]
-        public async Task<ApiResponse<UserDropdownResponseModel>> GetLandlordDropdown()
+        public async Task<ApiResponse<MeterOccupierDropdownResponseModel>> GetLandlordDropdown()
         {
-            ApiResponse<UserDropdownResponseModel> response = new ApiResponse<UserDropdownResponseModel>() { Data = new List<UserDropdownResponseModel>() };
-            var result = await _userService.GetUserDropdown(UserType.Landlord);
+            ApiResponse<MeterOccupierDropdownResponseModel> response = new ApiResponse<MeterOccupierDropdownResponseModel>() { Data = new List<MeterOccupierDropdownResponseModel>() };
+            var result = await _MeterOccupierService.GetMeterOccupierDropdown(MeterOccupierType.Landlord);
             if (result != null)
             {
                 response.Data = result;
@@ -213,10 +205,10 @@ namespace FocusFMAPI.Controllers
         }
 
         [HttpPost("tenant-dropdown")]
-        public async Task<ApiResponse<UserDropdownResponseModel>> GetTenantDropdown()
+        public async Task<ApiResponse<MeterOccupierDropdownResponseModel>> GetTenantDropdown()
         {
-            ApiResponse<UserDropdownResponseModel> response = new ApiResponse<UserDropdownResponseModel>() { Data = new List<UserDropdownResponseModel>() };
-            var result = await _userService.GetUserDropdown(UserType.Tenant);
+            ApiResponse<MeterOccupierDropdownResponseModel> response = new ApiResponse<MeterOccupierDropdownResponseModel>() { Data = new List<MeterOccupierDropdownResponseModel>() };
+            var result = await _MeterOccupierService.GetMeterOccupierDropdown(MeterOccupierType.Tenant);
             if (result != null)
             {
                 response.Data = result;
@@ -226,24 +218,24 @@ namespace FocusFMAPI.Controllers
         }
 
         [HttpPost("export")]
-        public async Task<IActionResult> ExportUserData(UserExportRequestModel model)
+        public async Task<IActionResult> ExportMeterOccupierData(MeterOccupierExportRequestModel model)
         {
-            ApiResponse<UserExportResponseModel> response = new ApiResponse<UserExportResponseModel>() { Data = new List<UserExportResponseModel>() };
-            var result = await _userService.GetUserExportData(model);
+            ApiResponse<MeterOccupierExportResponseModel> response = new ApiResponse<MeterOccupierExportResponseModel>() { Data = new List<MeterOccupierExportResponseModel>() };
+            var result = await _MeterOccupierService.GetMeterOccupierExportData(model);
             if (result != null)
             {
                 DataTable dt = Utility.ToDataTable(result);
                 dt.Columns["FirstName"].ColumnName = "Name";
-                dt.Columns["UserType"].ColumnName = "User Type";
+                dt.Columns["MeterOccupierType"].ColumnName = "Meter Occupier Type";
                 dt.Columns["EmailId"].ColumnName = "Email";
                 dt.Columns["MobileNo"].ColumnName = "Phone No.";
                 // Get Excel as byte array
-                var fileBytes = ExportHelper.ExportToExcel(dt,"Tenant(s) / LandLord(s)", "Users");
+                var fileBytes = ExportHelper.ExportToExcel(dt,"Tenant(s) / LandLord(s)", "MeterOccupiers");
 
                 // Return the file directly without stream
                 return File(fileBytes,
                     "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet",
-                    "Users.xlsx");
+                    "MeterOccupiers.xlsx");
             }
             return BadRequest();
         }

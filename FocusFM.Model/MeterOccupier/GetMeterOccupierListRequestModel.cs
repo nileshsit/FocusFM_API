@@ -5,10 +5,10 @@ using System.Text;
 using System.Threading.Tasks;
 using FocusFM.Model.CommonPagination;
 
-namespace FocusFM.Model.User
+namespace FocusFM.Model.MeterOccupier
 {
-    public class GetUserListRequestModel:CommonPaginationModel
+    public class GetMeterOccupierListRequestModel:CommonPaginationModel
     {
-        public string UserTypeIds { get; set; }
+        public string MeterOccupierTypeIds { get; set; }
     }
 }

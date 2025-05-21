@@ -27,14 +27,14 @@
         public const string GetAdminUserByReceiveDocEmail = "SP_GetAdminUserByReceiveDocEmail";
         #endregion
 
-        #region User
-        public const string SaveUser = "SP_SaveUser";
-        public const string GetUserList = "SP_GetUserList";
-        public const string GetUserTyeDropdown = "SP_GetUserTypeDropdown";
-        public const string ActiveInActiveUser = "SP_ActiveInActiveUser";
-        public const string DeleteUser = "SP_DeleteUser";
-        public const string GetUserDropdown = "SP_GetUserDropdown";
-        public const string GetUserExportData = "SP_GetUserExportList";
+        #region MeterOccupier
+        public const string SaveMeterOccupier = "SP_SaveMeterOccupier";
+        public const string GetMeterOccupierList = "SP_GetMeterOccupierList";
+        public const string GetMeterOccupierTyeDropdown = "SP_GetMeterOccupierTypeDropdown";
+        public const string ActiveInActiveMeterOccupier = "SP_ActiveInActiveMeterOccupier";
+        public const string DeleteMeterOccupier = "SP_DeleteMeterOccupier";
+        public const string GetMeterOccupierDropdown = "SP_GetMeterOccupierDropdown";
+        public const string GetMeterOccupierExportData = "SP_GetMeterOccupierExportList";
         #endregion
 
         #region Provider

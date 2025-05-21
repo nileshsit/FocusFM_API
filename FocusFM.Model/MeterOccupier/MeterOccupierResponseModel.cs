@@ -5,13 +5,13 @@ using System.Text;
 using System.Threading.Tasks;
 using FocusFM.Model.Common;
 
-namespace FocusFM.Model.User
+namespace FocusFM.Model.MeterOccupier
 {
-    public class UserResponseModel: CommonResponseModel
+    public class MeterOccupierResponseModel: CommonResponseModel
     {
-        public long UserId { get; set; }
-        public int UserTypeId { get; set; }
-        public string UserType { get; set; }
+        public long MeterOccupierId { get; set; }
+        public int MeterOccupierTypeId { get; set; }
+        public string MeterOccupierType { get; set; }
         public string FirstName { get; set; }
         public string EmailId { get; set; }
         public string MobileNo { get; set; }

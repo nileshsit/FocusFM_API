@@ -14,7 +14,7 @@ namespace FocusFM.Data
             {
                 {typeof(IAdminUserRepository),typeof(AdminUserRepository) },
                 {typeof(IAccountRepository),typeof(AccountRepository) },
-                {typeof(IUserRepository),typeof(UserRepository) },
+                {typeof(IMeterOccupierRepository),typeof(MeterOccupierRepository) },
                 {typeof(IProviderRepository),typeof(ProviderRepository) },
                 {typeof(ISiteRepository),typeof(SiteRepository) },
             };

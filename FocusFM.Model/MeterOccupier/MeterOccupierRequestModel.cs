@@ -5,13 +5,13 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace FocusFM.Model.User
+namespace FocusFM.Model.MeterOccupier
 {
-    public class UserRequestModel
+    public class MeterOccupierRequestModel
     {
-        public long? UserId { get; set; }
-        [Required(ErrorMessage = "UserType is required.")]
-        public int UserTypeId { get; set; }
+        public long? MeterOccupierId { get; set; }
+        [Required(ErrorMessage = "MeterOccupierType is required.")]
+        public int MeterOccupierTypeId { get; set; }
         [Required(ErrorMessage = "FirstName is required.")]
         [StringLength(100, ErrorMessage = "FirstName - Only 100 Character allowed.")]
         public string FirstName { get; set; }
