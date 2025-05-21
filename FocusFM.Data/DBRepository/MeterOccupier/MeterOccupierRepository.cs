@@ -93,7 +93,7 @@ namespace FocusFM.Data.DBRepository.MeterOccupier
             var param = new DynamicParameters();
             param.Add("@MeterOccupierTypeIds", model.MeterOccupierTypeIds);
             param.Add("@strSearch", model.StrSearch);
-            var data = await QueryAsync<MeterOccupierExportResponseModel>(StoredProcedures.GetMeterExportData, param, commandType: CommandType.StoredProcedure);
+            var data = await QueryAsync<MeterOccupierExportResponseModel>(StoredProcedures.GetMeterOccupierExportData, param, commandType: CommandType.StoredProcedure);
             return data.ToList();
         }
         #endregion
