@@ -5,7 +5,7 @@ namespace FocusFM.Model.AdminUser
 {
     public class AdminUserResponseModel: CommonResponseModel
     {
-        public long AdminUserId { get; set; }
+        public long UserId { get; set; }
         public string FirstName { get; set; }
         public string LastName { get; set; }
         public string EmailId { get; set; }

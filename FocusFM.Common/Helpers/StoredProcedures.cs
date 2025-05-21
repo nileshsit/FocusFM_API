@@ -19,12 +19,12 @@
         #endregion
 
         #region AdminUser
-        public const string SaveAdminUser = "SP_SaveAdminUser";
-        public const string GetAdminUserList = "SP_GetUserListAdmin";
-        public const string InActiveAdminUser = "SP_InActiveAdminUser";
-        public const string DeleteAdminUser = "SP_DeleteAdminUser";
-        public const string GetAdminUserById = "SP_GetAdminUser_ById";
-        public const string GetAdminUserByReceiveDocEmail = "SP_GetAdminUserByReceiveDocEmail";
+        public const string SaveAdminUser = "SP_SaveUser";
+        public const string GetAdminUserList = "SP_GetUserList";
+        public const string InActiveAdminUser = "SP_InActiveUser";
+        public const string DeleteAdminUser = "SP_DeleteUser";
+        public const string GetAdminUserById = "SP_GetUser_ById";
+        public const string GetAdminUserByReceiveDocEmail = "SP_GetUserByReceiveDocEmail";
         #endregion
 
         #region MeterOccupier

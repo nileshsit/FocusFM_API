@@ -20,10 +20,10 @@ using static FocusFM.Common.EmailNotification.EmailNotification;
 
 namespace FocusFMAPI.Controllers
 {
-    [Route("api/adminuser")]
+    [Route("api/user")]
     [Authorize]
     [ApiController]
-    public class AdminUserController : ControllerBase
+    public class UserController : ControllerBase
     {
         #region Fields
         private readonly AppSettings _appSettings;
@@ -35,7 +35,7 @@ namespace FocusFMAPI.Controllers
         #endregion
 
         #region Constructor
-        public AdminUserController
+        public UserController
         (
             IAdminUserService UserService,
             IHttpContextAccessor httpContextAccessor,
@@ -129,7 +129,7 @@ namespace FocusFMAPI.Controllers
             {
                 if (model.UserId > 0)
                 {
-                    response.Message = ErrorMessages.UpdateMeterOccupierSuccess;
+                    response.Message = ErrorMessages.UpdateUserSuccess;
                     response.Success = true;
                 }
                 else
@@ -190,7 +190,7 @@ namespace FocusFMAPI.Controllers
                     //bool isAdminMailSent = await Task.Run(() => SendMailMessage(adminEmail, null, null, "New User Registration", adminEmailBody, setting, null));
                     //#endregion
 
-                    response.Message = ErrorMessages.SaveMeterOccupierSuccess;
+                    response.Message = ErrorMessages.SaveUserSuccess;
                     response.Success = true;
                 }
             }
@@ -283,7 +283,7 @@ namespace FocusFMAPI.Controllers
             var result = await _userService.DeleteUser(id,UserId);
             if (result == 0)
             {
-                response.Message = ErrorMessages.DeleteMeterOccupierSuccess;
+                response.Message = ErrorMessages.DeleteUserSuccess;
                 response.Success = true;
             }
             else
@@ -318,12 +318,12 @@ namespace FocusFMAPI.Controllers
             var result = await _userService.InActiveUser(id,UserId);
             if (result == ActiveStatus.Inactive)
             {
-                response.Message = ErrorMessages.MeterOccupierInactive;
+                response.Message = ErrorMessages.UserInactive;
                 response.Success = true;
             }
             else if (result == ActiveStatus.Active)
             {
-                response.Message = ErrorMessages.MeterOccupierActive;
+                response.Message = ErrorMessages.UserActive;
                 response.Success = true;
             }
             else
