@@ -198,9 +198,9 @@ namespace FocusFMAPI.Controllers
             BaseApiResponse response = new BaseApiResponse();
             var result = await _accountService.ForgetPassword(model.EmailId, true);
             var url = _httpContextAccessor.HttpContext.Request.Headers["Referer"].ToString() + "verification-code";
-            if (result.AdminUserId > 0)
+            if (result.UserId > 0)
             {
-                string EncryptedUserId = HttpUtility.UrlEncode(EncryptionDecryption.GetEncrypt(result.AdminUserId.ToString()));
+                string EncryptedUserId = HttpUtility.UrlEncode(EncryptionDecryption.GetEncrypt(result.UserId.ToString()));
                 string EncryptedEamilId = HttpUtility.UrlEncode(EncryptionDecryption.GetEncrypt(model.EmailId.ToString()));
                 EmailNotification.EmailSetting setting = new EmailSetting
                 {
@@ -245,7 +245,7 @@ namespace FocusFMAPI.Controllers
                 logger.Info("Logo URL:" + path + "/" + _config["FileConfiguration:LogoPath"]);
                 logger.Info("Full Template:" + emailBody);
                 isSuccess = await Task.Run(() => SendMailMessage(model.EmailId, null, null, "Reset Password OTP", emailBody, setting, null));
-                int issaveopt = await _accountService.SaveOTP(result.AdminUserId, OtpRandom, result.EmailId, true);
+                int issaveopt = await _accountService.SaveOTP(result.UserId, OtpRandom, result.EmailId, true);
                 if (isSuccess == true && issaveopt == 1)
                 {
                     response.Message = ErrorMessages.MailSuccess;
@@ -286,11 +286,11 @@ namespace FocusFMAPI.Controllers
                     loginModel.EmailId=model.EmailId;
                     loginModel.IsAdmin = true;
                     LoginResponseModel loginresult = await _accountService.LoginUser(loginModel);
-                    if (loginresult != null && loginresult.AdminUserId > 0)
+                    if (loginresult != null && loginresult.UserId > 0)
                     {
                         TokenModel objTokenData = new TokenModel();
                         objTokenData.EmailId = model.EmailId;
-                        objTokenData.UserId = loginresult.AdminUserId != null ? loginresult.AdminUserId : 0;
+                        objTokenData.UserId = loginresult.UserId != null ? loginresult.UserId : 0;
                         objTokenData.FullName = loginresult.FullName;
                         objTokenData.IsAdmin = true;
                         AccessTokenModel objAccessTokenData = _jwtAuthenticationService.GenerateToken(objTokenData, _appSettings.JWT_Secret, _appSettings.JWT_Validity_Mins);
@@ -299,7 +299,7 @@ namespace FocusFMAPI.Controllers
                         response.Message = ErrorMessages.LoginSuccess;
                         response.Success = true;
                         response.Data.JWTToken = loginresult.JWTToken.ToString();
-                        response.Data.AdminUserId = loginresult.AdminUserId;
+                        response.Data.UserId = loginresult.UserId;
                         response.Data.FullName = loginresult.FullName;
                         response.Data.EmailId = loginresult.EmailId;
                         response.Data.IsFirstLogin = loginresult.IsFirstLogin;

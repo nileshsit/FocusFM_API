@@ -4,17 +4,17 @@
     {
         #region Login
         public const string LoginUser = "SP_LoginUser";
-        public const string GetUserSaltByEmail = "SP_AdminUserGetSaltByEmail";
+        public const string GetUserSaltByEmail = "SP_UserGetSaltByEmail";
         public const string UpdateLoginToken = "SP_UpdateLoginToken";
         public const string LogoutUser = "SP_LogoutUser";
-        public const string ForgetPassword = "SP_AdminUserForgetPassword";
+        public const string ForgetPassword = "SP_UserForgetPassword";
         public const string SaveOTP = "SP_EmailOTPAdd";
-        public const string GetUserIdByEmail = "SP_GetAdminUserIDByEmail";
+        public const string GetUserIdByEmail = "SP_GetUserIDByEmail";
         public const string VerifyOTP = "SP_EmailOTPVerify";
         public const string ResetPassword = "SP_UpdatePassword";
         public const string ChangePassword = "SP_ChangePassword";
         public const string ValidateToken = "SP_ValidateToken";
-        public const string UserStatusActiveInActive = "SP_AdminUserActiveInActive";
+        public const string UserStatusActiveInActive = "SP_CheckUserActiveOrNot";
         public const string UpdateProfile = "SP_UpdateProfile";
         #endregion
 

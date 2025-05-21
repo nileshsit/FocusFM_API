@@ -2,7 +2,7 @@
 {
     public class LoginResponseModel
     {
-        public long AdminUserId { get; set; }
+        public long UserId { get; set; }
         public string FullName { get; set; }
         public string EmailId { get; set; }
         public string JWTToken { get; set; }
@@ -15,7 +15,7 @@
 
     public class ForgetPasswordResponseModel
     {
-        public long AdminUserId { get; set; }
+        public long UserId { get; set; }
         public DateTime LastForgetPasswordSend { get; set; }
         public string FullName { get; set; }
         public string EmailId { get; set; }

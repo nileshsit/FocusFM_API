@@ -18,7 +18,7 @@
         public const string UpdateUser = "User profile updated successfully.";
         public const string EmailExists = "Email already exists.";
         public const string InvalidId = "ID must be greater than zero.";
-        public const string UserInActive = "Your user ID is inactivated.";
+        public const string UserInActive = "Your Email ID is inactivated.";
         public const string UpdateProfileSuccess = "Profile updated successfully.";
 
         // ForgetPassword
