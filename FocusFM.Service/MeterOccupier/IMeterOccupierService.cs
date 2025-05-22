@@ -11,6 +11,7 @@ namespace FocusFM.Service.MeterOccupier
     public interface IMeterOccupierService
     {
         Task<List<MeterOccupierResponseModel>> GetMeterOccupierList(GetMeterOccupierListRequestModel model);
+        Task<List<GetMeterUsingIdResponseModel>> GetMeterUsingId(GetMeterUsingIdRequestModel model);
         Task<List<MeterOccupierTypeResponseModel>> GetMeterOccupierTypeDropdown();
         Task<int> SaveMeterOccupier(MeterOccupierRequestModel model, long CurrentMeterOccupierId);
         Task<int> DeleteMeterOccupier(long MeterOccupierId, long CurrentMeterOccupierId);

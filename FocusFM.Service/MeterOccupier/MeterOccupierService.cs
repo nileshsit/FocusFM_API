@@ -34,6 +34,10 @@ namespace FocusFM.Service.MeterOccupier
         {
             return _repository.GetMeterOccupierList(model);
         }
+        public Task<List<GetMeterUsingIdResponseModel>> GetMeterUsingId(GetMeterUsingIdRequestModel model)
+        {
+            return _repository.GetMeterUsingId(model);
+        }
 
         public Task<int> DeleteMeterOccupier(long MeterOccupierId, long CurrentMeterOccupierId)
         {

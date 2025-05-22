@@ -61,6 +61,19 @@ namespace FocusFM.Data.DBRepository.MeterOccupier
             param.Add("@strSearch", model.StrSearch);
             var data = await QueryAsync<MeterOccupierResponseModel>(StoredProcedures.GetMeterOccupierList, param, commandType: CommandType.StoredProcedure);
             return data.ToList();
+        } 
+        public async Task<List<GetMeterUsingIdResponseModel>> GetMeterUsingId(GetMeterUsingIdRequestModel model)
+        {
+            var param = new DynamicParameters();
+            param.Add("@MeterOccupierId", model.MeterOccupierId);
+            param.Add("@MeterOccupierTypeId", model.MeterOccupierTypeId);
+            param.Add("@pageIndex", model.PageNumber);
+            param.Add("@pageSize", model.PageSize);
+            param.Add("@orderBy", model.SortColumn);
+            param.Add("@sortOrder", model.SortOrder);
+            param.Add("@strSearch", model.StrSearch);
+            var data = await QueryAsync<GetMeterUsingIdResponseModel>(StoredProcedures.GetMeterUsingId, param, commandType: CommandType.StoredProcedure);
+            return data.ToList();
         }
         public async Task<int> DeleteMeterOccupier(long MeterOccupierId, long CurrentMeterOccupierId)
         {

@@ -7,6 +7,7 @@ namespace FocusFM.Data.DBRepository.MeterOccupier
     {
         Task<List<MeterOccupierTypeResponseModel>> GetMeterOccupierTypeDropdown();
         Task<List<MeterOccupierResponseModel>> GetMeterOccupierList(GetMeterOccupierListRequestModel model);
+        Task<List<GetMeterUsingIdResponseModel>> GetMeterUsingId(GetMeterUsingIdRequestModel model);
         Task<int> SaveMeterOccupier(MeterOccupierRequestModel model, long CurrentMeterOccupierId);
         Task<int> DeleteMeterOccupier(long MeterOccupierId, long CurrentMeterOccupierId);
         Task<int> ActiveInActiveMeterOccupier(long MeterOccupierId, long CurrentMeterOccupierId);

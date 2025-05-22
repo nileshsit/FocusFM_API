@@ -30,6 +30,7 @@
         #region MeterOccupier
         public const string SaveMeterOccupier = "SP_SaveMeterOccupier";
         public const string GetMeterOccupierList = "SP_GetMeterOccupierList";
+        public const string GetMeterUsingId = "SP_GetMeterListById";
         public const string GetMeterOccupierTyeDropdown = "SP_GetMeterOccupierTypeDropdown";
         public const string ActiveInActiveMeterOccupier = "SP_ActiveInActiveMeterOccupier";
         public const string DeleteMeterOccupier = "SP_DeleteMeterOccupier";

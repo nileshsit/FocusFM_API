@@ -239,5 +239,19 @@ namespace FocusFMAPI.Controllers
             }
             return BadRequest();
         }
+
+        [HttpPost("meter-list")]
+        public async Task<ApiResponse<GetMeterUsingIdResponseModel>> GetMeterUsingId(GetMeterUsingIdRequestModel model)
+        {
+            ApiResponse<GetMeterUsingIdResponseModel> response = new ApiResponse<GetMeterUsingIdResponseModel>() { Data = new List<GetMeterUsingIdResponseModel>() };
+            var result = await _MeterOccupierService.GetMeterUsingId(model);
+            if (result != null)
+            {
+                response.Data = result;
+            }
+            response.Success = true;
+            return response;
+        }        
+       
     }
 }
