@@ -197,6 +197,7 @@ namespace FocusFMAPI.Middleware
             };
 
             string emailBody = string.Empty;
+            string BasePath = Path.Combine(Directory.GetCurrentDirectory(), Constants.ExceptionReportPath);
             string path = _httpContextAccessor.HttpContext.Request.Scheme + "://" + _httpContextAccessor.HttpContext.Request.Host.Value;
 
             string BasePath = Path.Combine(path, Constants.ExceptionReportPath);
@@ -210,7 +211,7 @@ namespace FocusFMAPI.Middleware
             {
                 emailBody = reader.ReadToEnd();
             }
-            var logo=path + "/" + _config["FileConfiguration:LogoPath"];
+            var logo = path + "/" + _config["FileConfiguration:LogoPath"];
             emailBody = emailBody.Replace("##LogoURL##", logo);
             emailBody = emailBody.Replace("##DateTime##", Utility.ConvertFromUTC(DateTime.UtcNow, "India Standard Time").ToString("dd/MM/yyyy hh:mm:ss tt"));
             emailBody = emailBody.Replace("##RequestedURL##", context.Request.GetDisplayUrl());
