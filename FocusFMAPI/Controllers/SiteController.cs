@@ -314,10 +314,15 @@ namespace FocusFMAPI.Controllers
                 UserId = long.TryParse(j["UserId"], out var val) ? val : 0;
             }
             var result = await _SiteService.DeleteFloor(id, UserId);
-            if (result == 0)
+            if (result == 1)
             {
                 response.Message = ErrorMessages.DeleteFloorSuccess;
                 response.Success = true;
+            } 
+            else if (result == 0)
+            {
+                response.Message = ErrorMessages.YouHaveNotDeleteFloor;
+                response.Success = false;
             }
             else
             {

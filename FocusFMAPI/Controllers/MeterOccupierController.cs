@@ -130,10 +130,15 @@ namespace FocusFMAPI.Controllers
                 UserId = long.TryParse(j["UserId"], out var val) ? val : 0;
             }
             var result = await _MeterOccupierService.DeleteMeterOccupier(id,UserId);
-            if (result == 0)
+            if (result == 1)
             {
                 response.Message = ErrorMessages.DeleteMeterOccupierSuccess;
                 response.Success = true;
+            } 
+            else if (result == 0)
+            {
+                response.Message = ErrorMessages.YouNotDeleteMeterOccupier;
+                response.Success = false;
             }
             else
             {

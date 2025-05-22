@@ -59,6 +59,7 @@
         public const string MeterOccupierInactive = "Meter Occupier inactivated successfully.";
         public const string MeterOccupierActive = "Meter Occupier activated successfully.";
         public const string DeleteMeterOccupierSuccess = "Meter Occupier deleted successfully.";
+        public const string YouNotDeleteMeterOccupier = "You not delete meter occupier because this already use in meter.";
 
         // Providers 
         public const string SaveProviderSuccess = "Provider saved successfully.";
@@ -86,6 +87,7 @@
         public const string FloorInactive = "Floor inactivated successfully.";
         public const string FloorActive = "Floor activated successfully.";
         public const string DeleteFloorSuccess = "Floor deleted successfully.";
+        public const string YouHaveNotDeleteFloor = "You have not delete this floor because this floor use in meter.";
         public const string FloorExists = "Floor already exists.";
 
         // Sites Meter
