@@ -200,7 +200,6 @@ namespace FocusFMAPI.Middleware
             string BasePath = Path.Combine(Directory.GetCurrentDirectory(), Constants.ExceptionReportPath);
             string path = _httpContextAccessor.HttpContext.Request.Scheme + "://" + _httpContextAccessor.HttpContext.Request.Host.Value;
 
-            string BasePath = Path.Combine(path, Constants.ExceptionReportPath);
             if (!Directory.Exists(BasePath))
             {
                 Directory.CreateDirectory(BasePath);
