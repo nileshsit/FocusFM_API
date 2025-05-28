@@ -12,7 +12,8 @@ namespace FocusFM.Model.MeterOccupier
     {
         public long? MeterId { get; set; }
         public string MeterName { get; set; }
-        public string MeterSerialNo { get; set; }
+        public string FirstName { get; set; }
+        public string MeterNumber { get; set; }
         public int MeterTypeId { get; set; }
         public string MeterType { get; set; }
         public int MeterReadingTypeId { get; set; }

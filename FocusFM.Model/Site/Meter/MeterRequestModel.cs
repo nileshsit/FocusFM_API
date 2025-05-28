@@ -13,9 +13,9 @@ namespace FocusFM.Model.Site.Meter
         [Required(ErrorMessage = "MeterName is required.")]
         [StringLength(100, ErrorMessage = "MeterName - Only 100 Character allowed.")]
         public string MeterName { get; set; }
-        [Required(ErrorMessage = "MeterSerialNo is required.")]
-        [StringLength(50, ErrorMessage = "MeterSerialNo - Only 50 Character allowed.")]
-        public string MeterSerialNo { get; set; }
+        [Required(ErrorMessage = "MeterNumber is required.")]
+        [StringLength(50, ErrorMessage = "MeterNumber - Only 50 Character allowed.")]
+        public string MeterNumber { get; set; }
         [Required(ErrorMessage = "MeterTypeId is required.")]
         public int MeterTypeId { get; set; }
         [Required(ErrorMessage = "MeterReadingTypeId is required.")]

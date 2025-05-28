@@ -549,7 +549,7 @@ namespace FocusFMAPI.Controllers
                 dt.Columns["MeterType"].ColumnName = "Meter Type";
                 dt.Columns["ProviderName"].ColumnName = "Provider Name";
                 dt.Columns["MeterName"].ColumnName = "Meter Name";
-                dt.Columns["MeterSerialNo"].ColumnName = "Meter Id";
+                dt.Columns["MeterNumber"].ColumnName = "Meter Id";
                 dt.Columns["FloorName"].ColumnName = "Floor Name";
                 dt.Columns["LandlordName"].ColumnName = "Landlord Name";
                 dt.Columns["TenantName"].ColumnName = "Tenant Name";
@@ -612,7 +612,7 @@ namespace FocusFMAPI.Controllers
                 {
                     // Map Excel column names to model properties
                     MeterName = row.Cell(headerMap["Meter Name"]).GetValue<string>().Trim(),
-                    MeterSerialNo = row.Cell(headerMap["Meter Id"]).GetValue<string>().Trim(),
+                    MeterNumber = row.Cell(headerMap["Meter Id"]).GetValue<string>().Trim(),
                     SiteName = row.Cell(headerMap["Site Name"]).GetValue<string>().Trim(),
                     FloorName = row.Cell(headerMap["Floor Name"]).GetValue<string>().Trim(),
                     ProviderName = row.Cell(headerMap["Provider Name"]).GetValue<string>().Trim(),

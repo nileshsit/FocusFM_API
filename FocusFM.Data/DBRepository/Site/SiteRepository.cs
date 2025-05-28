@@ -152,7 +152,7 @@ namespace FocusFM.Data.DBRepository.Site
             param.Add("@MeterId", model.MeterId);
             param.Add("@SiteId", model.SiteId);
             param.Add("@MeterName", model.MeterName);
-            param.Add("@MeterSerialNo", model.MeterSerialNo);
+            param.Add("@MeterNumber", model.MeterNumber);
             param.Add("@MeterReadingTypeId", model.MeterReadingTypeId);
             param.Add("@MeterTypeId", model.MeterTypeId);
             param.Add("@MeterOccupierTypeId", model.MeterOccupierTypeId);

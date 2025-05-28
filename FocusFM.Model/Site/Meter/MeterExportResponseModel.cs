@@ -9,7 +9,7 @@ namespace FocusFM.Model.Site.Meter
     public class MeterExportResponseModel
     {
         public string MeterName { get; set; }
-        public string MeterSerialNo { get; set; }
+        public string MeterNumber { get; set; }
         public string MeterType { get; set; }
         public string MeterReadingType { get; set; }
         public string SiteName { get; set; }

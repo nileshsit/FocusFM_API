@@ -128,7 +128,7 @@ namespace FocusFMAPI.Controllers
 
         [HttpPost("list")]
         public async Task<ApiResponse<ProviderResponseModel>> GetProviderList(CommonPaginationModel model)
-        {
+            {
             ApiResponse<ProviderResponseModel> response = new ApiResponse<ProviderResponseModel>() { Data = new List<ProviderResponseModel>() };
             var result = await _ProviderService.GetProviderList(model);
             foreach (var record in result)
