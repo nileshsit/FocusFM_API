@@ -124,7 +124,7 @@ namespace FocusFMAPI.Controllers
                     return response;
                 }
 
-                fileName = await CommonMethods.UploadDocument(file, Path.Combine(_hostingEnvironment.WebRootPath, "/" + _config["FileConfiguration:UserProfileFilePath"]));
+                fileName = await CommonMethods.UploadDocument(file, Path.Combine(_hostingEnvironment.WebRootPath,_config["FileConfiguration:UserProfileFilePath"]));
             }
             var result = await _userService.SaveUser(model, tokenModel.UserId, password, passSalt,fileName);
             var issend = false;
