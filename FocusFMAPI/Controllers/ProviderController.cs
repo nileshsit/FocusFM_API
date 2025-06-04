@@ -27,6 +27,7 @@ namespace FocusFMAPI.Controllers
         private readonly IHttpContextAccessor _httpContextAccessor;
         private readonly IJWTAuthenticationService _jwtAuthenticationService;
         private readonly IConfiguration _config;
+        private readonly IWebHostEnvironment _hostingEnvironment;
         #endregion
 
         #region Constructor
@@ -35,13 +36,15 @@ namespace FocusFMAPI.Controllers
             IProviderService ProviderService,
             IHttpContextAccessor httpContextAccessor,
             IJWTAuthenticationService jwtAuthenticationService,
-            IConfiguration config
+            IConfiguration config,
+            IWebHostEnvironment hostingEnvironment
         )
         {
             _ProviderService = ProviderService;
             _httpContextAccessor = httpContextAccessor;
             _jwtAuthenticationService = jwtAuthenticationService;
             _config = config;
+            _hostingEnvironment = hostingEnvironment;
         }
         #endregion
 
@@ -95,7 +98,7 @@ namespace FocusFMAPI.Controllers
                     return response;
                 }
 
-                fileName = await CommonMethods.UploadDocument(file,_config["FileConfiguration:ProviderTemplateFilePath"] +"/" + model.ProviderName + "/");
+                fileName = await CommonMethods.UploadDocument(file, Path.Combine(_hostingEnvironment.WebRootPath, "/" + _config["FileConfiguration:ProviderTemplateFilePath"]));
             }
             var result = await _ProviderService.SaveProvider(model, UserId, fileName);
             var issend = false;
@@ -141,9 +144,10 @@ namespace FocusFMAPI.Controllers
                     var path = _httpContextAccessor.HttpContext.Request.Scheme + "://" + HttpContext.Request.Host.Value;
 
                     // Example: Replace part of the path or add prefix
-                    record.ProviderTemplate = originalPath.Replace(Directory.GetCurrentDirectory(), _config["AppSettings:APIURL"]);
+                    //record.ProviderTemplate = originalPath.Replace(Directory.GetCurrentDirectory(), _config["AppSettings:APIURL"]);
+                    record.ProviderTemplate =Path.Combine(_config["AppSettings:APIURL"], _config["FileConfiguration:ProviderTemplateFilePath"], record.ProviderTemplate);
                     record.ProviderTemplate = record.ProviderTemplate.Replace("\\","/");
-                    record.ProviderTemplate = record.ProviderTemplate.Replace("/wwwroot", "");
+                    //record.ProviderTemplate = record.ProviderTemplate.Replace("/wwwroot", "");
                 }
             }
             if (result != null)

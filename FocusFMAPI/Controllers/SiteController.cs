@@ -30,6 +30,8 @@ namespace FocusFMAPI.Controllers
         private readonly IHttpContextAccessor _httpContextAccessor;
         private readonly IJWTAuthenticationService _jwtAuthenticationService;
         private readonly IConfiguration _config;
+        private readonly IWebHostEnvironment _hostingEnvironment;
+
         #endregion
 
         #region Constructor
@@ -38,13 +40,15 @@ namespace FocusFMAPI.Controllers
             ISiteService SiteService,
             IHttpContextAccessor httpContextAccessor,
             IJWTAuthenticationService jwtAuthenticationService,
-            IConfiguration config
+            IConfiguration config,
+            IWebHostEnvironment hostingEnvironment
         )
         {
             _SiteService = SiteService;
             _httpContextAccessor = httpContextAccessor;
             _jwtAuthenticationService = jwtAuthenticationService;
             _config = config;
+            _hostingEnvironment = hostingEnvironment;
         }
         #endregion
 
@@ -98,7 +102,7 @@ namespace FocusFMAPI.Controllers
                     return response;
                 }
 
-                fileName = await CommonMethods.UploadDocument(file, _config["FileConfiguration:SiteImageFilePath"]+"/");
+                fileName = await CommonMethods.UploadDocument(file, Path.Combine(_hostingEnvironment.WebRootPath,"/"+_config["FileConfiguration:SiteImageFilePath"]));
             }
             var result = await _SiteService.SaveSite(model, UserId, fileName);
             var issend = false;
@@ -140,12 +144,11 @@ namespace FocusFMAPI.Controllers
                 {
                     string originalPath = record.SiteImage.ToString();
 
-                    var path = _httpContextAccessor.HttpContext.Request.Scheme + "://" + HttpContext.Request.Host.Value;
-
                     // Example: Replace part of the path or add prefix
-                    record.SiteImage = originalPath.Replace(Directory.GetCurrentDirectory(), _config["AppSettings:APIURL"]);
+                    //record.SiteImage = originalPath.Replace(Directory.GetCurrentDirectory(), _config["AppSettings:APIURL"]);
+                    record.SiteImage = Path.Combine(_config["AppSettings:APIURL"], _config["FileConfiguration:SiteImageFilePath"], record.SiteImage);
                     record.SiteImage = record.SiteImage.Replace("\\", "/");
-                    record.SiteImage = record.SiteImage.Replace("/wwwroot", "");
+                    //record.SiteImage = record.SiteImage.Replace("/wwwroot", "");
                 }
             }
             if (result != null)

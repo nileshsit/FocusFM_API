@@ -32,6 +32,7 @@ namespace FocusFMAPI.Controllers
         private readonly IConfiguration _config;
         private readonly IHttpContextAccessor _httpContextAccessor;
         private readonly IJWTAuthenticationService _jwtAuthenticationService;
+        private readonly IWebHostEnvironment _hostingEnvironment;
         #endregion
 
         #region Constructor
@@ -42,7 +43,8 @@ namespace FocusFMAPI.Controllers
             IJWTAuthenticationService jwtAuthenticationService,
             IOptions<SMTPSettings> smtpSettings,
             IOptions<AppSettings> appSettings,
-            IConfiguration config
+            IConfiguration config,
+            IWebHostEnvironment hostingEnvironment
         )
         {
             _userService = UserService;
@@ -51,6 +53,7 @@ namespace FocusFMAPI.Controllers
             _httpContextAccessor = httpContextAccessor;
             _jwtAuthenticationService = jwtAuthenticationService;
             _config = config;
+            _hostingEnvironment = hostingEnvironment;
         }
         #endregion
 
@@ -121,7 +124,7 @@ namespace FocusFMAPI.Controllers
                     return response;
                 }
 
-                fileName = await CommonMethods.UploadDocument(file, _config["FileConfiguration:UserProfileFilePath"] + "/" + model.FirstName+"_"+model.LastName + "/");
+                fileName = await CommonMethods.UploadDocument(file, Path.Combine(_hostingEnvironment.WebRootPath, "/" + _config["FileConfiguration:UserProfileFilePath"]));
             }
             var result = await _userService.SaveUser(model, tokenModel.UserId, password, passSalt,fileName);
             var issend = false;
@@ -227,10 +230,10 @@ namespace FocusFMAPI.Controllers
 
                     string path = _httpContextAccessor.HttpContext.Request.Scheme + "://" + HttpContext.Request.Host.Value;
                     // Example: Replace part of the path or add prefix
-                    
-                    record.Photo = originalPath.Replace(Directory.GetCurrentDirectory(), _config["AppSettings:APIURL"]);
+
+                    //record.Photo = originalPath.Replace(Directory.GetCurrentDirectory(), _config["AppSettings:APIURL"]);
+                    record.Photo = Path.Combine(_config["AppSettings:APIURL"], _config["FileConfiguration:UserProfileFilePath"], record.Photo);
                     record.Photo = record.Photo.Replace("\\", "/");
-                    record.Photo = record.Photo.Replace("/wwwroot", "");
                 }
             }
             if (result != null)

@@ -135,18 +135,17 @@ namespace FocusFM.Common.CommonMethod
             string path;
             string document = string.Empty;
             FileName = userDocument.FileName.Split(".")[0] + "_" + guidFile + Path.GetExtension(userDocument.FileName);
-            BasePath = Path.Combine(Directory.GetCurrentDirectory(), Imagepath);
-            if (!Directory.Exists(BasePath))
+            if (!Directory.Exists(Imagepath))
             {
-                Directory.CreateDirectory(BasePath);
+                Directory.CreateDirectory(Imagepath);
             }
-            path = Path.Combine(BasePath, FileName);
+            path = Path.Combine(Imagepath, FileName);
             using (FileStream stream = new FileStream(path, FileMode.Create))
             {
                 await userDocument.CopyToAsync(stream);
             }
             //document = FileName;
-            return path;
+            return FileName;
         }
         public static string FormatNumber(decimal number)
         {
